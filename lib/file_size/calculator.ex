@@ -29,14 +29,18 @@ defmodule FileSize.Calculator do
   @doc """
   Converts the value with the given prefix to the particular base unit value.
   """
-  @spec normalize(number, prefix) :: number
+  @spec normalize(number, nil | prefix) :: number
   def normalize(value, prefix)
+
+  def normalize(value, nil), do: value
 
   @doc """
   Converts the base unit value to the value for the given prefix.
   """
-  @spec denormalize(number, prefix) :: number
+  @spec denormalize(number, nil | prefix) :: number
   def denormalize(value, prefix)
+
+  def denormalize(value, nil), do: value
 
   Enum.each(@potencies, fn {prefix, {type, exp}} ->
     factor = Math.pow(@factors[type], exp)
