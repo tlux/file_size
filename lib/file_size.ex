@@ -2,6 +2,7 @@ defmodule FileSize do
   alias FileSize.Bit
   alias FileSize.Byte
   alias FileSize.Calculator
+  alias FileSize.Comparable
   alias FileSize.Convertible
   alias FileSize.Formatter
   alias FileSize.Parser
@@ -9,7 +10,6 @@ defmodule FileSize do
 
   @type unit :: Bit.unit() | Byte.unit()
   @type t :: Bit.t() | Byte.t()
-  @type comparison_result :: -1 | 0 | 1
 
   @doc """
   Builds a new file size.
@@ -40,14 +40,14 @@ defmodule FileSize do
   end
 
   @spec from_file(Path.t(), unit) :: {:ok, t} | {:error, File.posix()}
-  def from_file(path, as_unit \\ :byte) do
+  def from_file(path, as_unit \\ :b) do
     with {:ok, %{size: value}} <- File.stat(path) do
       {:ok, from_bytes(value, as_unit)}
     end
   end
 
   @spec from_file!(Path.t(), unit) :: t | no_return
-  def from_file!(path, as_unit \\ :byte) do
+  def from_file!(path, as_unit \\ :b) do
     path
     |> File.stat!()
     |> Map.fetch!(:size)
@@ -56,25 +56,18 @@ defmodule FileSize do
 
   @spec convert(t, unit) :: t | no_return
   def convert(size, to_unit)
-
   def convert(%{unit: unit} = size, unit), do: size
-
-  def convert(size, to_unit) do
-    {type, prefix} = Utils.fetch_unit_info!(to_unit)
-    Convertible.convert(size, to_unit, type, prefix)
-  end
+  def convert(size, to_unit), do: Convertible.convert(size, to_unit)
 
   # -1: the first file size is smaller than the second one
   # 0: both arguments represent the same file size
   # 1: the first file size is greater than the second one
-  @spec compare(t, t) :: comparison_result()
-  def compare(size, other_size) do
-    do_compare(convert(size, :bits), convert(other_size, :bits))
-  end
+  @spec compare(t, t) :: Comparable.comparison_result()
+  def compare(size, other_size), do: Comparable.compare(size, other_size)
 
-  defp do_compare(bits, bits), do: 0
-  defp do_compare(a, b) when a < b, do: -1
-  defp do_compare(a, b) when a > b, do: 1
+  # defp do_compare(bits, bits), do: 0
+  # defp do_compare(a, b) when a < b, do: -1
+  # defp do_compare(a, b) when a > b, do: 1
 
   @spec equals?(t, t) :: boolean
   def equals?(size, other_size) do
@@ -82,22 +75,22 @@ defmodule FileSize do
   end
 
   @spec add(t, t) :: t
-  def add(%{} = size, %{} = other_size) do
+  def add(size, other_size) do
     add(size, other_size, size.unit)
   end
 
   @spec add(t, t, unit) :: t
-  def add(%{} = size, %{} = other_size, as_unit) do
+  def add(size, other_size, as_unit) do
     from_bytes(size.bytes + other_size.bytes, as_unit)
   end
 
   @spec subtract(t, t) :: t
-  def subtract(%{} = size, %{} = other_size) do
+  def subtract(size, other_size) do
     subtract(size, other_size, size.unit)
   end
 
   @spec subtract(t, t, unit) :: t
-  def subtract(%{} = size, %{} = other_size, as_unit) do
+  def subtract(size, other_size, as_unit) do
     from_bytes(size.bytes - other_size.bytes, as_unit)
   end
 

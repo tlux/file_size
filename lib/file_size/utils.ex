@@ -1,6 +1,7 @@
 defmodule FileSize.Utils do
   @moduledoc false
 
+  alias FileSize.Comparable
   alias FileSize.InvalidUnitError
 
   @units_with_prefixes %{
@@ -42,13 +43,17 @@ defmodule FileSize.Utils do
     yib: {:byte, :yobi}
   }
 
-  @spec units_with_prefixes() :: %{optional(atom) => {atom, atom}}
-  def units_with_prefixes, do: @units_with_prefixes
-
+  @spec fetch_unit_info!(FileSize.unit()) :: {atom, nil | atom}
   def fetch_unit_info!(unit) do
     case Map.fetch(@units_with_prefixes, unit) do
       {:ok, info} -> info
       _ -> raise InvalidUnitError, unit: unit
     end
   end
+
+  @spec compare_values(number, number) :: Comparable.comparison_result()
+  def compare_values(first, second)
+  def compare_values(value, value), do: 0
+  def compare_values(a, b) when a < b, do: -1
+  def compare_values(a, b) when a > b, do: 1
 end
