@@ -478,7 +478,16 @@ defmodule FileSizeTest do
   end
 
   describe "add/2" do
-    test "success"
+    test "success" do
+      assert FileSize.add(FileSize.new(1, :b), FileSize.new(2, :b)) ==
+               FileSize.new(3, :b)
+
+      assert FileSize.add(FileSize.new(1, :b), FileSize.new(1, :kib)) ==
+               FileSize.new(1025, :b)
+
+      assert FileSize.add(FileSize.new(1, :b), FileSize.new(1, :bit)) ==
+               FileSize.new(9, :bit)
+    end
   end
 
   describe "add/3" do

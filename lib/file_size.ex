@@ -1,6 +1,7 @@
 defmodule FileSize do
   alias FileSize.Bit
   alias FileSize.Byte
+  alias FileSize.Calculable
   alias FileSize.Calculator
   alias FileSize.Comparable
   alias FileSize.Convertible
@@ -76,22 +77,22 @@ defmodule FileSize do
 
   @spec add(t, t) :: t
   def add(size, other_size) do
-    add(size, other_size, size.unit)
+    Calculable.add(size, other_size)
   end
 
   @spec add(t, t, unit) :: t
   def add(size, other_size, as_unit) do
-    from_bytes(size.bytes + other_size.bytes, as_unit)
+    Calculable.add(size, other_size, as_unit)
   end
 
   @spec subtract(t, t) :: t
   def subtract(size, other_size) do
-    subtract(size, other_size, size.unit)
+    Calculable.subtract(size, other_size)
   end
 
   @spec subtract(t, t, unit) :: t
   def subtract(size, other_size, as_unit) do
-    from_bytes(size.bytes - other_size.bytes, as_unit)
+    Calculable.subtract(size, other_size, as_unit)
   end
 
   @spec parse(any) :: {:ok, t} | :error
