@@ -1,8 +1,13 @@
 defmodule FileSize.Parser do
+  alias FileSize.Bit
+  alias FileSize.Byte
+
   @spec parse(String.t()) :: {:ok, FileSize.t()} | :error
   def parse(value)
 
-  def parse(%FileSize{} = size), do: {:ok, size}
+  def parse(%Bit{} = size), do: {:ok, size}
+
+  def parse(%Byte{} = size), do: {:ok, size}
 
   def parse(value) when is_integer(value) or is_float(value) do
     {:ok, FileSize.new(value)}

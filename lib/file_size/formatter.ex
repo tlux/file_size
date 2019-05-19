@@ -1,6 +1,11 @@
-defmodule FileSize.Formatter do
+defprotocol FileSize.Formatter do
+  @spec format(FileSize.t(), Keyword.t()) :: String.t()
+  def format(size, opts)
+end
+
+defimpl FileSize.Formatter, for: FileSize.Byte do
   @default_symbols %{
-    byte: "Bytes",
+    b: "Bytes",
     kb: "kB",
     mb: "MB",
     gb: "GB",
@@ -8,8 +13,7 @@ defmodule FileSize.Formatter do
     pb: "PB"
   }
 
-  @spec format(FileSize.t(), Keyword.t()) :: String.t()
-  def format(size, opts \\ []) do
+  def format(size, opts) do
     number_opts = Keyword.take(opts, [:precision, :delimiter, :separator])
     value = Number.Delimit.number_to_delimited(size.value, number_opts)
 

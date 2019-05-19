@@ -21,6 +21,7 @@ defmodule FileSize.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:math, "~> 0.3.0"},
       {:number, "~> 1.0.0"}
     ]
   end
