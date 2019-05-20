@@ -1,9 +1,7 @@
 defprotocol FileSize.Calculable do
+  @spec add(FileSize.t(), FileSize.t()) :: FileSize.t()
   def add(size, other_size)
 
-  def add(size, other_size, as_unit)
-
+  @spec subtract(FileSize.t(), FileSize.t()) :: FileSize.t()
   def subtract(size, other_size)
-
-  def subtract(size, other_size, as_unit)
 end

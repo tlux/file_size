@@ -3,7 +3,12 @@ defmodule FileSizeTest do
 
   alias FileSize.Bit
   alias FileSize.Byte
+  alias FileSize.Calculable
+  alias FileSize.Comparable
+  alias FileSize.Convertible
+  alias FileSize.Formatter
   alias FileSize.InvalidUnitError
+  alias FileSize.Parser
 
   describe "new/1" do
     test "use byte as default unit" do
@@ -370,65 +375,53 @@ defmodule FileSizeTest do
     end
   end
 
+  describe "parse/1" do
+    test "delegate to Parser" do
+      value = "1 GB"
+
+      assert FileSize.parse(value) == Parser.parse(value)
+    end
+  end
+
+  describe "parse!/1" do
+    test "delegate to Parser" do
+      value = "1 GB"
+
+      assert FileSize.parse!(value) == Parser.parse!(value)
+    end
+  end
+
+  describe "format/1" do
+    test "delegate to Formatter" do
+      size = FileSize.new(1024, :mb)
+
+      assert FileSize.format(size) == Formatter.format(size)
+    end
+  end
+
+  describe "format/2" do
+    test "delegate to Formatter" do
+      size = FileSize.new(1024, :mb)
+      opts = [delimiter: ",", separator: "."]
+
+      assert FileSize.format(size, opts) == Formatter.format(size, opts)
+    end
+  end
+
   describe "convert/2" do
-    test "get original size when units are the same" do
-      size = FileSize.new(1337, :kb)
+    test "delegate to Convertible" do
+      size = FileSize.new(1, :b)
 
-      assert FileSize.convert(size, :kb) == size
-    end
-
-    test "bytes to bits" do
-      assert FileSize.convert(FileSize.new(1, :b), :bit) ==
-               FileSize.new(8, :bit)
-    end
-
-    test "bits to bytes" do
-      assert FileSize.convert(FileSize.new(8, :bit), :b) ==
-               FileSize.new(1, :b)
-    end
-
-    test "kilobytes to bytes" do
-      assert FileSize.convert(FileSize.new(1, :kb), :b) ==
-               FileSize.new(1000, :b)
-    end
-
-    test "kibibytes to bytes" do
-      assert FileSize.convert(FileSize.new(1, :kib), :b) ==
-               FileSize.new(1024, :b)
-    end
-
-    test "invalid unit" do
-      assert_raise InvalidUnitError, "Invalid unit: :unknown", fn ->
-        FileSize.convert(FileSize.new(1, :b), :unknown)
-      end
+      assert FileSize.convert(size, :bit) == Convertible.convert(size, :bit)
     end
   end
 
   describe "compare/2" do
-    test "first less than second" do
-      assert FileSize.compare(FileSize.new(1, :b), FileSize.new(2, :b)) == -1
-      assert FileSize.compare(FileSize.new(1, :bit), FileSize.new(2, :b)) == -1
+    test "delegate to Calculable" do
+      a = FileSize.new(1, :b)
+      b = FileSize.new(2, :b)
 
-      assert FileSize.compare(FileSize.new(1, :bit), FileSize.new(2, :bit)) ==
-               -1
-
-      assert FileSize.compare(FileSize.new(1, :b), FileSize.new(1, :kb)) == -1
-      assert FileSize.compare(FileSize.new(1, :b), FileSize.new(1, :kib)) == -1
-    end
-
-    test "first equal to second" do
-      assert FileSize.compare(FileSize.new(1, :b), FileSize.new(1, :b)) == 0
-      assert FileSize.compare(FileSize.new(1, :bit), FileSize.new(1, :bit)) == 0
-      assert FileSize.compare(FileSize.new(8, :bit), FileSize.new(1, :b)) == 0
-      assert FileSize.compare(FileSize.new(1000, :b), FileSize.new(1, :kb)) == 0
-    end
-
-    test "first greater than second" do
-      assert FileSize.compare(FileSize.new(2, :b), FileSize.new(1, :b)) == 1
-      assert FileSize.compare(FileSize.new(2, :b), FileSize.new(1, :bit)) == 1
-      assert FileSize.compare(FileSize.new(2, :bit), FileSize.new(1, :bit)) == 1
-      assert FileSize.compare(FileSize.new(1, :kb), FileSize.new(1, :b)) == 1
-      assert FileSize.compare(FileSize.new(1, :kib), FileSize.new(1, :b)) == 1
+      assert FileSize.compare(a, b) == Comparable.compare(a, b)
     end
   end
 
@@ -478,35 +471,40 @@ defmodule FileSizeTest do
   end
 
   describe "add/2" do
-    test "success" do
-      assert FileSize.add(FileSize.new(1, :b), FileSize.new(2, :b)) ==
-               FileSize.new(3, :b)
+    test "delegate to Calculable" do
+      a = FileSize.new(1, :b)
+      b = FileSize.new(2, :b)
 
-      assert FileSize.add(FileSize.new(1, :b), FileSize.new(1, :kib)) ==
-               FileSize.new(1025, :b)
-
-      assert FileSize.add(FileSize.new(1, :b), FileSize.new(1, :bit)) ==
-               FileSize.new(9, :bit)
+      assert FileSize.add(a, b) == Calculable.add(a, b)
     end
   end
 
   describe "add/3" do
-    test "success"
+    test "delegate to Calculable and convert" do
+      a = FileSize.new(1, :b)
+      b = FileSize.new(2, :b)
 
-    test "invalid unit"
+      assert FileSize.add(a, b, :kb) ==
+               FileSize.convert(Calculable.add(a, b), :kb)
+    end
   end
 
   describe "subtract/2" do
-    test "success"
+    test "delegate to Calculable" do
+      a = FileSize.new(2, :b)
+      b = FileSize.new(1, :b)
+
+      assert FileSize.subtract(a, b) == Calculable.subtract(a, b)
+    end
   end
 
   describe "subtract/3" do
-    test "success"
+    test "delegate to Calculable and convert" do
+      a = FileSize.new(2, :b)
+      b = FileSize.new(1, :b)
 
-    test "invalid unit"
-  end
-
-  describe "Kernel.to_string/1" do
-    test "delegate to formatter"
+      assert FileSize.subtract(a, b, :kb) ==
+               FileSize.convert(Calculable.subtract(a, b), :kb)
+    end
   end
 end

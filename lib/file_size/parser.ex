@@ -31,7 +31,7 @@ defmodule FileSize.Parser do
   end
 
   defp do_parse(value_str, unit_str) do
-    with {value, _} <- Float.parse(value_str),
+    with {value, ""} <- Float.parse(value_str),
          {:ok, unit} <- parse_unit(unit_str) do
       {:ok, FileSize.new(value, unit)}
     else

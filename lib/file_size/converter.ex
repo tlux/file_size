@@ -1,4 +1,4 @@
-defmodule FileSize.Calculator do
+defmodule FileSize.Converter do
   @type si_prefix ::
           :kilo | :mega | :giga | :tera | :peta | :exa | :zeta | :yotta
   @type iec_prefix ::
