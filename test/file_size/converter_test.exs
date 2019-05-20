@@ -5,7 +5,7 @@ defmodule FileSize.ConverterTest do
 
   describe "normalize/2" do
     test "no conversion when prefix nil" do
-      assert Convert.normalize(1, nil) == 1
+      assert Converter.normalize(1, nil) == 1
     end
 
     test "from kilo" do
@@ -83,7 +83,7 @@ defmodule FileSize.ConverterTest do
 
   describe "denormalize/2" do
     test "no conversion when prefix nil" do
-      assert Convert.denormalize(1, nil) == 1
+      assert Converter.denormalize(1, nil) == 1
     end
 
     test "to kilo" do

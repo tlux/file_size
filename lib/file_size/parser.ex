@@ -9,10 +9,6 @@ defmodule FileSize.Parser do
 
   def parse(%Byte{} = size), do: {:ok, size}
 
-  def parse(value) when is_integer(value) or is_float(value) do
-    {:ok, FileSize.new(value)}
-  end
-
   def parse(str) when is_binary(str) do
     case String.split(str, " ", parts: 2, trim: true) do
       [value_str, unit_str] -> do_parse(value_str, unit_str)

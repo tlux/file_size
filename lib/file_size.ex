@@ -9,7 +9,14 @@ defmodule FileSize do
   alias FileSize.Parser
   alias FileSize.Utils
 
+  @typedoc """
+  A type that is a union of the bit and byte unit types.
+  """
   @type unit :: Bit.unit() | Byte.unit()
+
+  @typedoc """
+  A type that is a union of the bit and byte types.
+  """
   @type t :: Bit.t() | Byte.t()
 
   @doc """
@@ -38,16 +45,27 @@ defmodule FileSize do
     %Bit{value: value, unit: unit, bits: bits}
   end
 
-  @spec from_bytes(integer, unit) :: t
+  @doc """
+  Builds a new file size from the given number of bytes and converts it into the
+  unit specified by `:as_unit`.
+  """
+  @spec from_bytes(number, unit) :: t
   def from_bytes(bytes, as_unit) do
     bytes |> new(:b) |> convert(as_unit)
   end
 
-  @spec from_bits(integer, unit) :: t
+  @doc """
+  Builds a new file size from the given number of bits and converts it into the
+  unit specified by `:as_unit`.
+  """
+  @spec from_bits(number, unit) :: t
   def from_bits(bits, as_unit) do
     bits |> new(:bit) |> convert(as_unit)
   end
 
+  @doc """
+  Determines the size of the file at the given path.
+  """
   @spec from_file(Path.t(), unit) :: {:ok, t} | {:error, File.posix()}
   def from_file(path, as_unit \\ :b) do
     with {:ok, %{size: value}} <- File.stat(path) do
@@ -55,6 +73,10 @@ defmodule FileSize do
     end
   end
 
+  @doc """
+  Determines the size of the file at the given path. Raises when the file could
+  not be found.
+  """
   @spec from_file!(Path.t(), unit) :: t | no_return
   def from_file!(path, as_unit \\ :b) do
     path
@@ -63,11 +85,19 @@ defmodule FileSize do
     |> from_bytes(as_unit)
   end
 
+  @doc """
+  Tries to convert the given value into a file size and returns a success tuple
+  or error.
+  """
   @spec parse(any) :: {:ok, t} | :error
   def parse(value) do
     Parser.parse(value)
   end
 
+  @doc """
+  Tries to convert the given value into a file size and returns it when
+  successful or raises on error.
+  """
   @spec parse!(any) :: t | no_return
   def parse!(value) do
     Parser.parse!(value)
