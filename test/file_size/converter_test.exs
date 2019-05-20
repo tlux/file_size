@@ -4,6 +4,10 @@ defmodule FileSize.ConverterTest do
   alias FileSize.Converter
 
   describe "normalize/2" do
+    test "no conversion when prefix nil" do
+      assert Convert.normalize(1, nil) == 1
+    end
+
     test "from kilo" do
       assert Converter.normalize(1, :kilo) == 1000
       assert Converter.normalize(2, :kilo) == 2000
@@ -78,6 +82,10 @@ defmodule FileSize.ConverterTest do
   end
 
   describe "denormalize/2" do
+    test "no conversion when prefix nil" do
+      assert Convert.denormalize(1, nil) == 1
+    end
+
     test "to kilo" do
       assert Converter.denormalize(1000, :kilo) == 1
       assert Converter.denormalize(2000, :kilo) == 2
