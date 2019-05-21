@@ -43,6 +43,11 @@ defmodule FileSize.Utils do
     yib: {:byte, :yobi}
   }
 
+  @spec valid_unit?(FileSize.unit()) :: boolean
+  def valid_unit?(unit) do
+    Map.has_key?(@units_with_prefixes, unit)
+  end
+
   @spec fetch_unit_info!(FileSize.unit()) :: {atom, nil | atom}
   def fetch_unit_info!(unit) do
     case Map.fetch(@units_with_prefixes, unit) do
