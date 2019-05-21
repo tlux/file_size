@@ -5,6 +5,8 @@ defmodule FileSize.SigilTest do
 
   import FileSize.Sigil
 
+  doctest FileSize.Sigil
+
   test "success" do
     assert ~F(12 B) == FileSize.new(12, :b)
     assert ~F(12 bit) == FileSize.new(12, :bit)
