@@ -63,12 +63,12 @@ end
 
 defimpl FileSize.Convertible, for: FileSize.Bit do
   alias FileSize.Converter
-  alias FileSize.Utils
+  alias FileSize.Units
 
   def convert(%{unit: unit} = size, unit), do: size
 
   def convert(size, to_unit) do
-    {to_type, to_prefix} = Utils.fetch_unit_info!(to_unit)
+    {to_type, to_prefix} = Units.unit_info!(to_unit)
 
     size.bits
     |> Converter.denormalize(to_prefix)

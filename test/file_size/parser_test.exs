@@ -6,41 +6,41 @@ defmodule FileSize.ParserTest do
 
   @units [
     # Bit
-    {:bit, ["bit", "Bit", "BIT"]},
-    {:kbit, ["kbit", "kBit", "Kbit"]},
-    {:kibit, ["kibit", "Kibit"]},
-    {:mbit, ["mbit", "MBit", "Mbit"]},
-    {:mibit, ["mibit", "Mibit"]},
-    {:gbit, ["gbit", "GBit", "Gbit"]},
-    {:gibit, ["gibit", "Gibit"]},
-    {:tbit, ["tbit", "TBit", "Tbit"]},
-    {:tibit, ["tibit", "Tibit"]},
-    {:pbit, ["pbit", "PBit", "Pbit"]},
-    {:pibit, ["pibit", "Pibit"]},
-    {:ebit, ["ebit", "EBit", "Ebit"]},
-    {:eibit, ["eibit", "Eibit"]},
-    {:zbit, ["zbit", "ZBit", "Zbit"]},
-    {:zibit, ["zibit", "Zibit"]},
-    {:ybit, ["ybit", "YBit", "Ybit"]},
-    {:yibit, ["yibit", "Yibit"]},
+    {:bit, "bit"},
+    {:kbit, "kbit"},
+    {:kibit, "Kibit"},
+    {:mbit, "Mbit"},
+    {:mibit, "Mibit"},
+    {:gbit, "Gbit"},
+    {:gibit, "Gibit"},
+    {:tbit, "Tbit"},
+    {:tibit, "Tibit"},
+    {:pbit, "Pbit"},
+    {:pibit, "Pibit"},
+    {:ebit, "Ebit"},
+    {:eibit, "Eibit"},
+    {:zbit, "Zbit"},
+    {:zibit, "Zibit"},
+    {:ybit, "Ybit"},
+    {:yibit, "Yibit"},
     # Byte
-    {:b, ["b", "B"]},
-    {:kb, ["kb", "kB", "KB"]},
-    {:kib, ["kib", "KiB", "KIB"]},
-    {:mb, ["mb", "MB"]},
-    {:mib, ["MiB", "MIB"]},
-    {:gb, ["gb", "GB"]},
-    {:gib, ["GiB", "GIB"]},
-    {:tb, ["tb", "TB"]},
-    {:tib, ["TiB", "TIB"]},
-    {:pb, ["pb", "PB"]},
-    {:pib, ["PiB", "PIB"]},
-    {:eb, ["eb", "EB"]},
-    {:eib, ["EiB", "EIB"]},
-    {:zb, ["zb", "ZB"]},
-    {:zib, ["ZiB", "ZIB"]},
-    {:yb, ["yb", "YB"]},
-    {:yib, ["YiB", "YIB"]}
+    {:b, "B"},
+    {:kb, "kB"},
+    {:kib, "KiB"},
+    {:mb, "MB"},
+    {:mib, "MiB"},
+    {:gb, "GB"},
+    {:gib, "GiB"},
+    {:tb, "TB"},
+    {:tib, "TiB"},
+    {:pb, "PB"},
+    {:pib, "PiB"},
+    {:eb, "EB"},
+    {:eib, "EiB"},
+    {:zb, "ZB"},
+    {:zib, "ZiB"},
+    {:yb, "YB"},
+    {:yib, "YiB"}
   ]
 
   describe "parse/1" do
@@ -56,15 +56,13 @@ defmodule FileSize.ParserTest do
       assert Parser.parse(size) == {:ok, size}
     end
 
-    Enum.each(@units, fn {unit, unit_strs} ->
+    Enum.each(@units, fn {unit, unit_str} ->
       test "parse string with #{unit} unit" do
-        Enum.each(unquote(unit_strs), fn unit_str ->
-          assert Parser.parse("1337 #{unit_str}") ==
-                   {:ok, FileSize.new(1337, unquote(unit))}
+        assert Parser.parse("1337 #{unquote(unit_str)}") ==
+                 {:ok, FileSize.new(1337, unquote(unit))}
 
-          assert Parser.parse("1337.4 #{unit_str}") ==
-                   {:ok, FileSize.new(1337.4, unquote(unit))}
-        end)
+        assert Parser.parse("1337.4 #{unquote(unit_str)}") ==
+                 {:ok, FileSize.new(1337.4, unquote(unit))}
       end
     end)
 
@@ -106,15 +104,13 @@ defmodule FileSize.ParserTest do
       assert Parser.parse!(size) == size
     end
 
-    Enum.each(@units, fn {unit, unit_strs} ->
+    Enum.each(@units, fn {unit, unit_str} ->
       test "parse string with #{unit} unit" do
-        Enum.each(unquote(unit_strs), fn unit_str ->
-          assert Parser.parse!("1337 #{unit_str}") ==
-                   FileSize.new(1337, unquote(unit))
+        assert Parser.parse!("1337 #{unquote(unit_str)}") ==
+                 FileSize.new(1337, unquote(unit))
 
-          assert Parser.parse!("1337.4 #{unit_str}") ==
-                   FileSize.new(1337.4, unquote(unit))
-        end)
+        assert Parser.parse!("1337.4 #{unquote(unit_str)}") ==
+                 FileSize.new(1337.4, unquote(unit))
       end
     end)
 

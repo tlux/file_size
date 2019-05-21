@@ -12,7 +12,7 @@ defmodule FileSize.SigilTest do
     assert ~F(12 bit) == FileSize.new(12, :bit)
     assert ~F(12 kB) == FileSize.new(12, :kb)
     assert ~F(12 GB) == FileSize.new(12, :gb)
-    assert ~F(4.2 tb) == FileSize.new(4.2, :tb)
+    assert ~F(4.2 TB) == FileSize.new(4.2, :tb)
   end
 
   test "invalid format" do

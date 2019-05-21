@@ -2,7 +2,7 @@ defmodule FileSize.Parser do
   alias FileSize.Bit
   alias FileSize.Byte
   alias FileSize.ParseError
-  alias FileSize.Utils
+  alias FileSize.Units
 
   @spec parse(Bit.t() | Byte.t() | String.t()) ::
           {:ok, FileSize.t()} | {:error, ParseError.t()}
@@ -68,18 +68,8 @@ defmodule FileSize.Parser do
   end
 
   defp parse_unit(unit_str) do
-    unit_str = String.downcase(unit_str)
-
-    try do
-      unit = String.to_existing_atom(unit_str)
-
-      if Utils.valid_unit?(unit) do
-        {:ok, unit}
-      else
-        {:error, :unit}
-      end
-    rescue
-      ArgumentError -> {:error, :unit}
+    with :error <- Units.parse_unit(unit_str) do
+      {:error, :unit}
     end
   end
 end

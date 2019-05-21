@@ -7,7 +7,7 @@ defmodule FileSize do
   alias FileSize.Convertible
   alias FileSize.Formatter
   alias FileSize.Parser
-  alias FileSize.Utils
+  alias FileSize.Units
 
   @typedoc """
   A type that is a union of the bit and byte unit types.
@@ -32,7 +32,7 @@ defmodule FileSize do
   """
   @spec new(number, unit) :: t
   def new(value, unit \\ :b) do
-    {type, prefix} = Utils.fetch_unit_info!(unit)
+    {type, prefix} = Units.unit_info!(unit)
     normalized_value = Converter.normalize(value, prefix)
     do_new(type, value, unit, normalized_value)
   end

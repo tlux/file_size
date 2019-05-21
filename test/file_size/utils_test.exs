@@ -1,0 +1,19 @@
+defmodule FileSize.UtilsTest do
+  use ExUnit.Case
+
+  alias FileSize.Utils
+
+  describe "compare_values/2" do
+    test "first less than second" do
+      assert Utils.compare_values(1, 2) == -1
+    end
+
+    test "first equal to second" do
+      assert Utils.compare_values(1, 1) == 0
+    end
+
+    test "first greater than second" do
+      assert Utils.compare_values(2, 1) == 1
+    end
+  end
+end
