@@ -1,5 +1,9 @@
 # File Size
 
+[![Build Status](https://travis-ci.org/tlux/file_size.svg?branch=master)](https://travis-ci.org/tlux/file_size)
+[![Hex.pm](https://img.shields.io/hexpm/v/file_size.svg)](https://hex.pm/packages/file_size)
+
+
 ## :warning: Still WIP :warning:
 
 **TODO: Add description**
