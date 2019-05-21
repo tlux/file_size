@@ -6,11 +6,11 @@ defmodule FileSize.SigilTest do
   import FileSize.Sigil
 
   test "success" do
-    assert ~f(12 B) == FileSize.new(12, :b)
-    assert ~f(12 bit) == FileSize.new(12, :bit)
-    assert ~f(12 kB) == FileSize.new(12, :kb)
-    assert ~f(12 GB) == FileSize.new(12, :gb)
-    assert ~f(4.2 tb) == FileSize.new(4.2, :tb)
+    assert ~F(12 B) == FileSize.new(12, :b)
+    assert ~F(12 bit) == FileSize.new(12, :bit)
+    assert ~F(12 kB) == FileSize.new(12, :kb)
+    assert ~F(12 GB) == FileSize.new(12, :gb)
+    assert ~F(4.2 tb) == FileSize.new(4.2, :tb)
   end
 
   test "invalid format" do
@@ -20,7 +20,7 @@ defmodule FileSize.SigilTest do
         assert_raise ParseError,
                      "Unable to parse value: #{inspect(value)} (format)",
                      fn ->
-                       ~f(#{value})
+                       sigil_F(value, nil)
                      end
       end
     )
@@ -31,7 +31,7 @@ defmodule FileSize.SigilTest do
       assert_raise ParseError,
                    "Unable to parse value: #{inspect(value)} (value)",
                    fn ->
-                     ~f(#{value})
+                     sigil_F(value, nil)
                    end
     end)
   end
@@ -41,7 +41,7 @@ defmodule FileSize.SigilTest do
       assert_raise ParseError,
                    "Unable to parse value: #{inspect(value)} (unit)",
                    fn ->
-                     ~f(#{value})
+                     sigil_F(value, nil)
                    end
     end)
   end
