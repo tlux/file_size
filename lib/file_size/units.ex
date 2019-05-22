@@ -98,19 +98,13 @@ defmodule FileSize.Units do
     unit |> unit_info!() |> Map.fetch!(:symbol)
   end
 
-  @spec normalize_value(number, UnitInfo.t()) :: number
+  @spec normalize_value(number, UnitInfo.t()) :: integer
   def normalize_value(value, info) do
-    case UnitInfo.get_factor(info) do
-      1 -> value
-      factor -> value * factor
-    end
+    trunc(value * UnitInfo.get_factor(info))
   end
 
   @spec denormalize_value(number, UnitInfo.t()) :: number
   def denormalize_value(value, info) do
-    case UnitInfo.get_factor(info) do
-      1 -> value
-      factor -> value / factor
-    end
+    value / UnitInfo.get_factor(info)
   end
 end

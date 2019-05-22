@@ -43,7 +43,7 @@ defmodule FileSize do
   @spec new(number, unit) :: t | no_return
   def new(value, unit \\ :b) do
     info = Units.unit_info!(unit)
-    normalized_value = Units.normalize_value(value, info)
+    normalized_value = Units.normalize_value(value, info) |> trunc()
 
     info.mod
     |> struct(value: value, unit: unit)

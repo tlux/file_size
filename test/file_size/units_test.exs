@@ -85,9 +85,10 @@ defmodule FileSize.UnitsTest do
         factor = UnitInfo.get_factor(info)
 
         assert Units.normalize_value(1, info) == factor
+        assert Units.normalize_value(2, info) == 2 * factor
 
-        result = Units.normalize_value(2, info)
-        assert result == 2 * factor
+        result = Units.normalize_value(2.2, info)
+        assert result == trunc(2.2 * factor)
         assert is_integer(result)
       end)
     end
@@ -100,12 +101,7 @@ defmodule FileSize.UnitsTest do
         result = Units.denormalize_value(2, info)
 
         assert result == 2 / factor
-
-        if factor == 1 do
-          assert is_integer(result)
-        else
-          assert is_float(result)
-        end
+        assert is_float(result)
       end)
     end
   end
