@@ -100,11 +100,17 @@ defmodule FileSize.Units do
 
   @spec normalize_value(number, UnitInfo.t()) :: number
   def normalize_value(value, info) do
-    value * UnitInfo.get_factor(info)
+    case UnitInfo.get_factor(info) do
+      1 -> value
+      factor -> value * factor
+    end
   end
 
   @spec denormalize_value(number, UnitInfo.t()) :: number
   def denormalize_value(value, info) do
-    value / UnitInfo.get_factor(info)
+    case UnitInfo.get_factor(info) do
+      1 -> value
+      factor -> value / factor
+    end
   end
 end

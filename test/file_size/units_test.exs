@@ -85,7 +85,10 @@ defmodule FileSize.UnitsTest do
         factor = UnitInfo.get_factor(info)
 
         assert Units.normalize_value(1, info) == factor
-        assert Units.normalize_value(2, info) == 2 * factor
+
+        result = Units.normalize_value(2, info)
+        assert result == 2 * factor
+        assert is_integer(result)
       end)
     end
   end
@@ -94,9 +97,15 @@ defmodule FileSize.UnitsTest do
     test "success" do
       Enum.each(Units.unit_infos(), fn info ->
         factor = UnitInfo.get_factor(info)
+        result = Units.denormalize_value(2, info)
 
-        assert Units.denormalize_value(1, info) == 1 / factor
-        assert Units.denormalize_value(2, info) == 2 / factor
+        assert result == 2 / factor
+
+        if factor == 1 do
+          assert is_integer(result)
+        else
+          assert is_float(result)
+        end
       end)
     end
   end
