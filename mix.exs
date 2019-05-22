@@ -21,15 +21,15 @@ defmodule FileSize.MixProject do
             FileSize.Byte,
             FileSize.UnitInfo
           ],
-          Calculation: [
-            FileSize.Calculable,
-            FileSize.Comparable,
-            FileSize.Convertible
-          ],
           "Parsing & Formatting": [
             FileSize.Parser,
             FileSize.Sigil,
             FileSize.Formatter
+          ],
+          Protocols: [
+            FileSize.Calculable,
+            FileSize.Comparable,
+            FileSize.Convertible
           ]
         ]
       ]
