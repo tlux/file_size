@@ -118,10 +118,9 @@ defmodule FileSize do
     Convertible.convert(size, to_unit)
   end
 
-  @spec to_unit_system(t, unit_system) :: t
-  def to_unit_system(size, unit_system) do
-    to_unit = Units.equivalent_unit_for_system!(size.unit, unit_system)
-    convert(size, to_unit)
+  @spec change_unit_system(t, unit_system) :: t
+  def change_unit_system(size, unit_system) do
+    convert(size, Units.equivalent_unit_for_system!(size.unit, unit_system))
   end
 
   # -1: the first file size is smaller than the second one

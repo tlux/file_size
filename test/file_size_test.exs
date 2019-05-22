@@ -444,6 +444,48 @@ defmodule FileSizeTest do
     end
   end
 
+  describe "change_unit_system/2" do
+    test "convert bytes" do
+      size = FileSize.new(1337, :b)
+
+      assert FileSize.change_unit_system(size, :si) == size
+      assert FileSize.change_unit_system(size, :iec) == size
+    end
+
+    test "convert bits" do
+      size = FileSize.new(1337, :bit)
+
+      assert FileSize.change_unit_system(size, :si) == size
+      assert FileSize.change_unit_system(size, :iec) == size
+    end
+
+    test "convert SI to SI" do
+      size = FileSize.new(1337, :kb)
+
+      assert FileSize.change_unit_system(size, :si) == size
+    end
+
+    test "convert IEC to IEC" do
+      size = FileSize.new(1337, :kib)
+
+      assert FileSize.change_unit_system(size, :iec) == size
+    end
+
+    test "convert SI to IEC" do
+      size = FileSize.new(1337, :kb)
+
+      assert FileSize.change_unit_system(size, :iec) ==
+               FileSize.convert(size, :kib)
+    end
+
+    test "convert IEC to SI" do
+      size = FileSize.new(1337, :kib)
+
+      assert FileSize.change_unit_system(size, :si) ==
+               FileSize.convert(size, :kb)
+    end
+  end
+
   describe "compare/2" do
     test "delegate to Calculable" do
       a = FileSize.new(1, :b)

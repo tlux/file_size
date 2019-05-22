@@ -18,14 +18,15 @@ defmodule FileSize.MixProject do
         groups_for_modules: [
           Structs: [
             FileSize.Bit,
-            FileSize.Byte
+            FileSize.Byte,
+            FileSize.UnitInfo
           ],
           Calculation: [
             FileSize.Calculable,
             FileSize.Comparable,
             FileSize.Convertible
           ],
-          Conversion: [
+          "Parsing & Formatting": [
             FileSize.Parser,
             FileSize.Sigil,
             FileSize.Formatter
