@@ -7,7 +7,32 @@ defmodule FileSize.MixProject do
       version: "1.0.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "File Size",
+      source_url: "https://github.com/tlux/file_size",
+      docs: [
+        main: "FileSize",
+        extras: ["README.md"],
+        groups_for_modules: [
+          Structs: [
+            FileSize.Bit,
+            FileSize.Byte
+          ],
+          Calculation: [
+            FileSize.Calculable,
+            FileSize.Comparable,
+            FileSize.Converter,
+            FileSize.Convertible
+          ],
+          Conversion: [
+            FileSize.Parser,
+            FileSize.Sigil,
+            FileSize.Formatter
+          ]
+        ]
+      ]
     ]
   end
 

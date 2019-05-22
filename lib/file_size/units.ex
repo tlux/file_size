@@ -1,6 +1,7 @@
 defmodule FileSize.Units do
   @moduledoc false
 
+  alias FileSize.Converter
   alias FileSize.InvalidUnitError
 
   @type unit_symbol :: String.t()
@@ -48,11 +49,22 @@ defmodule FileSize.Units do
                     {symbol, unit}
                   end)
 
-  @spec unit_info!(FileSize.unit()) :: {atom, nil | atom}
+  @spec unit_info!(FileSize.unit()) ::
+          {:bit | :byte, nil | FileSize.unit_system(),
+           nil | FileSize.unit_prefix()}
   def unit_info!(unit) do
+    with {type, prefix} <- unit_type_and_prefix!(unit) do
+      {type, Converter.unit_system(prefix), prefix}
+    end
+  end
+
+  def unit_type_and_prefix!(unit) do
     case Map.fetch(@units, unit) do
-      {:ok, {info, _symbol}} -> info
-      _ -> raise InvalidUnitError, unit: unit
+      {:ok, {result, _symbol}} ->
+        result
+
+      _ ->
+        raise InvalidUnitError, unit: unit
     end
   end
 

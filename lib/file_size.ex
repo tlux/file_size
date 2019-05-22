@@ -9,10 +9,25 @@ defmodule FileSize do
   alias FileSize.Parser
   alias FileSize.Units
 
+  @type iec_unit :: Bit.iec_unit() | Byte.iec_unit()
+
+  @typedoc """
+  A type that contains a union of the bit and byte unit types.
+  """
+  @type si_unit :: Bit.si_unit() | Byte.si_unit()
+
   @typedoc """
   A type that is a union of the bit and byte unit types.
   """
-  @type unit :: Bit.unit() | Byte.unit()
+  @type unit :: iec_unit | si_unit
+
+  @type unit_system :: :iec | :si
+
+  @type si_unit_prefix ::
+          :kilo | :mega | :giga | :tera | :peta | :exa | :zeta | :yotta
+  @type iec_unit_prefix ::
+          :kibi | :mebi | :gibi | :tebi | :pebi | :exbi | :zebi | :yobi
+  @type unit_prefix :: si_unit_prefix | iec_unit_prefix
 
   @typedoc """
   A type that is a union of the bit and byte types.
@@ -32,17 +47,23 @@ defmodule FileSize do
   """
   @spec new(number, unit) :: t
   def new(value, unit \\ :b) do
-    {type, prefix} = Units.unit_info!(unit)
-    normalized_value = Converter.normalize(value, prefix)
-    do_new(type, value, unit, normalized_value)
+    {type, unit_system, unit_prefix} = Units.unit_info!(unit)
+    normalized_value = Converter.normalize(value, unit_prefix)
+
+    do_new(type, normalized_value,
+      value: value,
+      unit: unit,
+      unit_system: unit_system,
+      unit_prefix: unit_prefix
+    )
   end
 
-  defp do_new(:byte, value, unit, bytes) do
-    %Byte{value: value, unit: unit, bytes: bytes}
+  defp do_new(:byte, bytes, opts) do
+    struct(%Byte{bytes: bytes}, opts)
   end
 
-  defp do_new(:bit, value, unit, bits) do
-    %Bit{value: value, unit: unit, bits: bits}
+  defp do_new(:bit, bits, opts) do
+    struct(%Bit{bits: bits}, opts)
   end
 
   @doc """

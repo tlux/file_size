@@ -1,26 +1,39 @@
 defmodule FileSize.Bit do
-  defstruct [:value, :unit, :bits]
+  alias FileSize.Converter
 
-  @type unit ::
+  defstruct [:value, :unit, :unit_system, :unit_prefix, :bits]
+
+  @type iec_unit ::
           :bit
-          | :kbit
           | :kibit
-          | :mbit
           | :mibit
-          | :gbit
           | :gibit
-          | :tbit
           | :tibit
-          | :pbit
           | :pibit
-          | :ebit
           | :eibit
-          | :zbit
           | :zibit
-          | :ybit
           | :yibit
 
-  @type t :: %__MODULE__{value: number, unit: unit, bits: number}
+  @type si_unit ::
+          :bit
+          | :kbit
+          | :mbit
+          | :gbit
+          | :tbit
+          | :pbit
+          | :ebit
+          | :zbit
+          | :ybit
+
+  @type unit :: si_unit | iec_unit
+
+  @type t :: %__MODULE__{
+          value: number,
+          unit: unit,
+          unit_system: FileSize.unit_system(),
+          unit_prefix: FileSize.unit_prefix(),
+          bits: number
+        }
 end
 
 defimpl FileSize.Calculable, for: FileSize.Bit do
@@ -68,7 +81,7 @@ defimpl FileSize.Convertible, for: FileSize.Bit do
   def convert(%{unit: unit} = size, unit), do: size
 
   def convert(size, to_unit) do
-    {to_type, to_prefix} = Units.unit_info!(to_unit)
+    {to_type, to_prefix} = Units.unit_type_and_prefix!(to_unit)
 
     size.bits
     |> Converter.denormalize(to_prefix)

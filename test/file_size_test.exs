@@ -12,28 +12,54 @@ defmodule FileSizeTest do
 
   describe "new/1" do
     test "use byte as default unit" do
-      assert FileSize.new(1) == %Byte{value: 1, unit: :b, bytes: 1}
+      assert FileSize.new(1) == %Byte{
+               value: 1,
+               unit: :b,
+               bytes: 1,
+               unit_prefix: nil,
+               unit_system: nil
+             }
     end
   end
 
   describe "new/2" do
     test "bit" do
-      assert FileSize.new(1, :bit) == %Bit{value: 1, unit: :bit, bits: 1}
+      assert FileSize.new(1, :bit) == %Bit{
+               value: 1,
+               unit: :bit,
+               bits: 1,
+               unit_prefix: nil,
+               unit_system: nil
+             }
     end
 
     test "kbit" do
-      assert FileSize.new(1, :kbit) == %Bit{value: 1, unit: :kbit, bits: 1000}
+      assert FileSize.new(1, :kbit) == %Bit{
+               value: 1,
+               unit: :kbit,
+               bits: 1000,
+               unit_prefix: :kilo,
+               unit_system: :si
+             }
     end
 
     test "Kibit" do
-      assert FileSize.new(1, :kibit) == %Bit{value: 1, unit: :kibit, bits: 1024}
+      assert FileSize.new(1, :kibit) == %Bit{
+               value: 1,
+               unit: :kibit,
+               bits: 1024,
+               unit_prefix: :kibi,
+               unit_system: :iec
+             }
     end
 
     test "Mbit" do
       assert FileSize.new(1, :mbit) == %Bit{
                value: 1,
                unit: :mbit,
-               bits: Math.pow(1000, 2)
+               bits: Math.pow(1000, 2),
+               unit_prefix: :mega,
+               unit_system: :si
              }
     end
 
@@ -41,7 +67,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :mibit) == %Bit{
                value: 1,
                unit: :mibit,
-               bits: Math.pow(1024, 2)
+               bits: Math.pow(1024, 2),
+               unit_prefix: :mebi,
+               unit_system: :iec
              }
     end
 
@@ -49,7 +77,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :gbit) == %Bit{
                value: 1,
                unit: :gbit,
-               bits: Math.pow(1000, 3)
+               bits: Math.pow(1000, 3),
+               unit_prefix: :giga,
+               unit_system: :si
              }
     end
 
@@ -57,7 +87,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :gibit) == %Bit{
                value: 1,
                unit: :gibit,
-               bits: Math.pow(1024, 3)
+               bits: Math.pow(1024, 3),
+               unit_prefix: :gibi,
+               unit_system: :iec
              }
     end
 
@@ -65,7 +97,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :tbit) == %Bit{
                value: 1,
                unit: :tbit,
-               bits: Math.pow(1000, 4)
+               bits: Math.pow(1000, 4),
+               unit_prefix: :tera,
+               unit_system: :si
              }
     end
 
@@ -73,7 +107,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :tibit) == %Bit{
                value: 1,
                unit: :tibit,
-               bits: Math.pow(1024, 4)
+               bits: Math.pow(1024, 4),
+               unit_prefix: :tebi,
+               unit_system: :iec
              }
     end
 
@@ -81,7 +117,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :pbit) == %Bit{
                value: 1,
                unit: :pbit,
-               bits: Math.pow(1000, 5)
+               bits: Math.pow(1000, 5),
+               unit_prefix: :peta,
+               unit_system: :si
              }
     end
 
@@ -89,7 +127,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :pibit) == %Bit{
                value: 1,
                unit: :pibit,
-               bits: Math.pow(1024, 5)
+               bits: Math.pow(1024, 5),
+               unit_prefix: :pebi,
+               unit_system: :iec
              }
     end
 
@@ -97,7 +137,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :ebit) == %Bit{
                value: 1,
                unit: :ebit,
-               bits: Math.pow(1000, 6)
+               bits: Math.pow(1000, 6),
+               unit_prefix: :exa,
+               unit_system: :si
              }
     end
 
@@ -105,7 +147,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :eibit) == %Bit{
                value: 1,
                unit: :eibit,
-               bits: Math.pow(1024, 6)
+               bits: Math.pow(1024, 6),
+               unit_prefix: :exbi,
+               unit_system: :iec
              }
     end
 
@@ -113,7 +157,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :zbit) == %Bit{
                value: 1,
                unit: :zbit,
-               bits: Math.pow(1000, 7)
+               bits: Math.pow(1000, 7),
+               unit_prefix: :zeta,
+               unit_system: :si
              }
     end
 
@@ -121,7 +167,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :zibit) == %Bit{
                value: 1,
                unit: :zibit,
-               bits: Math.pow(1024, 7)
+               bits: Math.pow(1024, 7),
+               unit_prefix: :zebi,
+               unit_system: :iec
              }
     end
 
@@ -129,7 +177,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :ybit) == %Bit{
                value: 1,
                unit: :ybit,
-               bits: Math.pow(1000, 8)
+               bits: Math.pow(1000, 8),
+               unit_prefix: :yotta,
+               unit_system: :si
              }
     end
 
@@ -137,27 +187,49 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :yibit) == %Bit{
                value: 1,
                unit: :yibit,
-               bits: Math.pow(1024, 8)
+               bits: Math.pow(1024, 8),
+               unit_prefix: :yobi,
+               unit_system: :iec
              }
     end
 
     test "byte" do
-      assert FileSize.new(1, :b) == %Byte{value: 1, unit: :b, bytes: 1}
+      assert FileSize.new(1, :b) == %Byte{
+               value: 1,
+               unit: :b,
+               bytes: 1,
+               unit_prefix: nil,
+               unit_system: nil
+             }
     end
 
     test "kB" do
-      assert FileSize.new(1, :kb) == %Byte{value: 1, unit: :kb, bytes: 1000}
+      assert FileSize.new(1, :kb) == %Byte{
+               value: 1,
+               unit: :kb,
+               bytes: 1000,
+               unit_prefix: :kilo,
+               unit_system: :si
+             }
     end
 
     test "KiB" do
-      assert FileSize.new(1, :kib) == %Byte{value: 1, unit: :kib, bytes: 1024}
+      assert FileSize.new(1, :kib) == %Byte{
+               value: 1,
+               unit: :kib,
+               bytes: 1024,
+               unit_prefix: :kibi,
+               unit_system: :iec
+             }
     end
 
     test "MB" do
       assert FileSize.new(1, :mb) == %Byte{
                value: 1,
                unit: :mb,
-               bytes: Math.pow(1000, 2)
+               bytes: Math.pow(1000, 2),
+               unit_prefix: :mega,
+               unit_system: :si
              }
     end
 
@@ -165,7 +237,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :mib) == %Byte{
                value: 1,
                unit: :mib,
-               bytes: Math.pow(1024, 2)
+               bytes: Math.pow(1024, 2),
+               unit_prefix: :mebi,
+               unit_system: :iec
              }
     end
 
@@ -173,7 +247,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :gb) == %Byte{
                value: 1,
                unit: :gb,
-               bytes: Math.pow(1000, 3)
+               bytes: Math.pow(1000, 3),
+               unit_prefix: :giga,
+               unit_system: :si
              }
     end
 
@@ -181,7 +257,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :gib) == %Byte{
                value: 1,
                unit: :gib,
-               bytes: Math.pow(1024, 3)
+               bytes: Math.pow(1024, 3),
+               unit_prefix: :gibi,
+               unit_system: :iec
              }
     end
 
@@ -189,7 +267,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :tb) == %Byte{
                value: 1,
                unit: :tb,
-               bytes: Math.pow(1000, 4)
+               bytes: Math.pow(1000, 4),
+               unit_prefix: :tera,
+               unit_system: :si
              }
     end
 
@@ -197,7 +277,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :tib) == %Byte{
                value: 1,
                unit: :tib,
-               bytes: Math.pow(1024, 4)
+               bytes: Math.pow(1024, 4),
+               unit_prefix: :tebi,
+               unit_system: :iec
              }
     end
 
@@ -205,7 +287,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :pb) == %Byte{
                value: 1,
                unit: :pb,
-               bytes: Math.pow(1000, 5)
+               bytes: Math.pow(1000, 5),
+               unit_prefix: :peta,
+               unit_system: :si
              }
     end
 
@@ -213,7 +297,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :pib) == %Byte{
                value: 1,
                unit: :pib,
-               bytes: Math.pow(1024, 5)
+               bytes: Math.pow(1024, 5),
+               unit_prefix: :pebi,
+               unit_system: :iec
              }
     end
 
@@ -221,7 +307,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :eb) == %Byte{
                value: 1,
                unit: :eb,
-               bytes: Math.pow(1000, 6)
+               bytes: Math.pow(1000, 6),
+               unit_prefix: :exa,
+               unit_system: :si
              }
     end
 
@@ -229,7 +317,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :eib) == %Byte{
                value: 1,
                unit: :eib,
-               bytes: Math.pow(1024, 6)
+               bytes: Math.pow(1024, 6),
+               unit_prefix: :exbi,
+               unit_system: :iec
              }
     end
 
@@ -237,7 +327,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :zb) == %Byte{
                value: 1,
                unit: :zb,
-               bytes: Math.pow(1000, 7)
+               bytes: Math.pow(1000, 7),
+               unit_prefix: :zeta,
+               unit_system: :si
              }
     end
 
@@ -245,7 +337,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :zib) == %Byte{
                value: 1,
                unit: :zib,
-               bytes: Math.pow(1024, 7)
+               bytes: Math.pow(1024, 7),
+               unit_prefix: :zebi,
+               unit_system: :iec
              }
     end
 
@@ -253,7 +347,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :yb) == %Byte{
                value: 1,
                unit: :yb,
-               bytes: Math.pow(1000, 8)
+               bytes: Math.pow(1000, 8),
+               unit_prefix: :yotta,
+               unit_system: :si
              }
     end
 
@@ -261,7 +357,9 @@ defmodule FileSizeTest do
       assert FileSize.new(1, :yib) == %Byte{
                value: 1,
                unit: :yib,
-               bytes: Math.pow(1024, 8)
+               bytes: Math.pow(1024, 8),
+               unit_prefix: :yobi,
+               unit_system: :iec
              }
     end
 
