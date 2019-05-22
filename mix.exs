@@ -23,7 +23,6 @@ defmodule FileSize.MixProject do
           Calculation: [
             FileSize.Calculable,
             FileSize.Comparable,
-            FileSize.Converter,
             FileSize.Convertible
           ],
           Conversion: [
