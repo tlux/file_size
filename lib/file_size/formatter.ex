@@ -1,29 +1,45 @@
 defmodule FileSize.Formatter do
   alias FileSize.Units
-  alias Number.Delimit, as: NumberFormatter
 
-  @spec config() :: Keyword.t()
-  def config do
-    Keyword.get(FileSize.config(), :formatter, [])
-  end
+  import Number.Delimit, only: [number_to_delimited: 2]
 
   @spec format(FileSize.t(), Keyword.t()) :: String.t()
   def format(size, opts \\ []) do
-    opts = Keyword.merge(config(), opts)
-    value = format_number(size.value, opts)
-    symbol = format_unit(size.unit, opts[:symbols] || %{})
+    {symbols, number_opts} = Keyword.pop(opts, :symbols, %{})
+    value = format_number(size.value, number_opts)
+    symbol = format_unit(size.unit, symbols)
     "#{value} #{symbol}"
   end
 
   defp format_number(value, opts) do
-    number_opts = Keyword.take(opts, [:precision, :delimiter, :separator])
-    NumberFormatter.number_to_delimited(value, number_opts)
+    opts =
+      [precision: 0]
+      |> Keyword.merge(number_opts_from_config())
+      |> Keyword.merge(opts)
+
+    number_to_delimited(value, opts)
   end
 
   defp format_unit(unit, symbols) do
-    case Map.fetch(symbols, unit) do
-      {:ok, symbol} -> symbol
-      :error -> Units.format_unit!(unit)
-    end
+    symbols[unit] || symbol_from_config(unit) || symbol_from_unit_info(unit)
+  end
+
+  defp number_opts_from_config do
+    Keyword.merge(
+      Application.get_env(:number, :delimit, []),
+      Keyword.get(FileSize.config(), :number_format, [])
+    )
+  end
+
+  defp symbol_from_config(unit) do
+    FileSize.config()
+    |> Keyword.get(:symbols, %{})
+    |> Map.get(unit)
+  end
+
+  defp symbol_from_unit_info(unit) do
+    unit
+    |> Units.unit_info!()
+    |> Map.fetch!(:symbol)
   end
 end

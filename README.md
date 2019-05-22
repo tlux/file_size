@@ -16,7 +16,7 @@ by adding `file_size` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:file_size, "~> 0.1.0"}
+    {:file_size, "~> 1.0.0"}
   ]
 end
 ```

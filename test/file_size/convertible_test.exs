@@ -1,8 +1,24 @@
 defmodule FileSize.ConvertibleTest do
   use ExUnit.Case
 
+  alias FileSize.Bit
+  alias FileSize.Byte
   alias FileSize.Convertible
   alias FileSize.InvalidUnitError
+
+  describe "new/2" do
+    test "new Bit" do
+      size = %Bit{value: 1, unit: :kb}
+
+      assert Convertible.new(size, 1000) == %{size | bits: 1000}
+    end
+
+    test "new Byte" do
+      size = %Byte{value: 1, unit: :kb}
+
+      assert Convertible.new(size, 1000) == %{size | bytes: 1000}
+    end
+  end
 
   describe "convert/2" do
     test "get original size when units are the same" do
