@@ -1,4 +1,8 @@
 defmodule FileSize.UnitInfo do
+  @moduledoc """
+  A reflection struct that contains additional information for a defined unit.
+  """
+
   defstruct [:name, :mod, :exp, :system, :symbol]
 
   @bases %{iec: 1024, si: 1000}

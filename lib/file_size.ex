@@ -90,66 +90,31 @@ defmodule FileSize do
     |> from_bytes(as_unit)
   end
 
-  @doc """
-  Tries to convert the given value into a file size and returns a success tuple
-  or error.
-  """
-  @spec parse(any) :: {:ok, t} | :error
-  def parse(value) do
-    Parser.parse(value)
-  end
-
-  @doc """
-  Tries to convert the given value into a file size and returns it when
-  successful or raises on error.
-  """
-  @spec parse!(any) :: t | no_return
-  def parse!(value) do
-    Parser.parse!(value)
-  end
-
-  @spec format(t, Keyword.t()) :: String.t()
-  def format(size, opts \\ []) do
-    Formatter.format(size, opts)
-  end
-
-  @spec convert(t, unit) :: t
-  def convert(size, to_unit) do
-    Convertible.convert(size, to_unit)
-  end
+  defdelegate parse(value), to: Parser
+  defdelegate parse!(value), to: Parser
+  defdelegate format(size, opts \\ []), to: Formatter
+  defdelegate convert(size, to_unit), to: Convertible
 
   @spec change_unit_system(t, unit_system) :: t
   def change_unit_system(size, unit_system) do
     convert(size, Units.equivalent_unit_for_system!(size.unit, unit_system))
   end
 
-  # -1: the first file size is smaller than the second one
-  # 0: both arguments represent the same file size
-  # 1: the first file size is greater than the second one
-  @spec compare(t, t) :: Comparable.comparison_result()
-  def compare(size, other_size) do
-    Comparable.compare(size, other_size)
-  end
+  defdelegate compare(size, other_size), to: Comparable
 
   @spec equals?(t, t) :: boolean
   def equals?(size, other_size) do
     compare(size, other_size) == 0
   end
 
-  @spec add(t, t) :: t
-  def add(size, other_size) do
-    Calculable.add(size, other_size)
-  end
+  defdelegate add(size, other_size), to: Calculable
 
   @spec add(t, t, unit) :: t
   def add(size, other_size, as_unit) do
     size |> add(other_size) |> convert(as_unit)
   end
 
-  @spec subtract(t, t) :: t
-  def subtract(size, other_size) do
-    Calculable.subtract(size, other_size)
-  end
+  defdelegate subtract(size, other_size), to: Calculable
 
   @spec subtract(t, t, unit) :: t
   def subtract(size, other_size, as_unit) do
