@@ -4,8 +4,7 @@ defmodule FileSize.Parser do
   alias FileSize.ParseError
   alias FileSize.Units
 
-  @spec parse(Bit.t() | Byte.t() | String.t()) ::
-          {:ok, FileSize.t()} | {:error, ParseError.t()}
+  @spec parse(any) :: {:ok, FileSize.t()} | {:error, ParseError.t()}
   def parse(value)
 
   def parse(%Bit{} = size), do: {:ok, size}
@@ -26,7 +25,7 @@ defmodule FileSize.Parser do
     {:error, %ParseError{reason: :format, value: value}}
   end
 
-  @spec parse!(Bit.t() | Byte.t() | String.t()) :: FileSize.t() | no_return
+  @spec parse!(any) :: FileSize.t() | no_return
   def parse!(value) do
     case parse(value) do
       {:ok, size} -> size

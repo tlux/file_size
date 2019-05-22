@@ -23,7 +23,7 @@ defmodule FileSize.Formatter do
   defp format_unit(unit, symbols) do
     case Map.fetch(symbols, unit) do
       {:ok, symbol} -> symbol
-      :error -> Units.format_unit(unit)
+      :error -> Units.format_unit!(unit)
     end
   end
 end

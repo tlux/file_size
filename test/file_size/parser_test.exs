@@ -3,45 +3,7 @@ defmodule FileSize.ParserTest do
 
   alias FileSize.ParseError
   alias FileSize.Parser
-
-  @units [
-    # Bit
-    {:bit, "bit"},
-    {:kbit, "kbit"},
-    {:kibit, "Kibit"},
-    {:mbit, "Mbit"},
-    {:mibit, "Mibit"},
-    {:gbit, "Gbit"},
-    {:gibit, "Gibit"},
-    {:tbit, "Tbit"},
-    {:tibit, "Tibit"},
-    {:pbit, "Pbit"},
-    {:pibit, "Pibit"},
-    {:ebit, "Ebit"},
-    {:eibit, "Eibit"},
-    {:zbit, "Zbit"},
-    {:zibit, "Zibit"},
-    {:ybit, "Ybit"},
-    {:yibit, "Yibit"},
-    # Byte
-    {:b, "B"},
-    {:kb, "kB"},
-    {:kib, "KiB"},
-    {:mb, "MB"},
-    {:mib, "MiB"},
-    {:gb, "GB"},
-    {:gib, "GiB"},
-    {:tb, "TB"},
-    {:tib, "TiB"},
-    {:pb, "PB"},
-    {:pib, "PiB"},
-    {:eb, "EB"},
-    {:eib, "EiB"},
-    {:zb, "ZB"},
-    {:zib, "ZiB"},
-    {:yb, "YB"},
-    {:yib, "YiB"}
-  ]
+  alias FileSize.Units
 
   describe "parse/1" do
     test "success with Bit struct" do
@@ -56,15 +18,15 @@ defmodule FileSize.ParserTest do
       assert Parser.parse(size) == {:ok, size}
     end
 
-    Enum.each(@units, fn {unit, unit_str} ->
-      test "parse string with #{unit} unit" do
-        assert Parser.parse("1337 #{unquote(unit_str)}") ==
-                 {:ok, FileSize.new(1337, unquote(unit))}
+    test "success with string" do
+      Enum.each(Units.unit_infos(), fn info ->
+        assert Parser.parse("1337 #{info.symbol}") ==
+                 {:ok, FileSize.new(1337, info.name)}
 
-        assert Parser.parse("1337.4 #{unquote(unit_str)}") ==
-                 {:ok, FileSize.new(1337.4, unquote(unit))}
-      end
-    end)
+        assert Parser.parse("1337.4 #{info.symbol}") ==
+                 {:ok, FileSize.new(1337.4, info.name)}
+      end)
+    end
 
     test "invalid format" do
       Enum.each(
@@ -104,15 +66,15 @@ defmodule FileSize.ParserTest do
       assert Parser.parse!(size) == size
     end
 
-    Enum.each(@units, fn {unit, unit_str} ->
-      test "parse string with #{unit} unit" do
-        assert Parser.parse!("1337 #{unquote(unit_str)}") ==
-                 FileSize.new(1337, unquote(unit))
+    test "success with string" do
+      Enum.each(Units.unit_infos(), fn info ->
+        assert Parser.parse!("1337 #{info.symbol}") ==
+                 FileSize.new(1337, info.name)
 
-        assert Parser.parse!("1337.4 #{unquote(unit_str)}") ==
-                 FileSize.new(1337.4, unquote(unit))
-      end
-    end)
+        assert Parser.parse!("1337.4 #{info.symbol}") ==
+                 FileSize.new(1337.4, info.name)
+      end)
+    end
 
     test "invalid format" do
       Enum.each(

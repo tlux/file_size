@@ -3,7 +3,6 @@ defmodule FileSize do
   alias FileSize.Byte
   alias FileSize.Calculable
   alias FileSize.Comparable
-  alias FileSize.Converter
   alias FileSize.Convertible
   alias FileSize.Formatter
   alias FileSize.Parser
@@ -23,11 +22,7 @@ defmodule FileSize do
 
   @type unit_system :: :iec | :si
 
-  @type si_unit_prefix ::
-          :kilo | :mega | :giga | :tera | :peta | :exa | :zeta | :yotta
-  @type iec_unit_prefix ::
-          :kibi | :mebi | :gibi | :tebi | :pebi | :exbi | :zebi | :yobi
-  @type unit_prefix :: si_unit_prefix | iec_unit_prefix
+  @type unit_symbol :: String.t()
 
   @typedoc """
   A type that is a union of the bit and byte types.
@@ -45,25 +40,14 @@ defmodule FileSize do
   @doc """
   Builds a new file size.
   """
-  @spec new(number, unit) :: t
+  @spec new(number, unit) :: t | no_return
   def new(value, unit \\ :b) do
-    {type, unit_system, unit_prefix} = Units.unit_info!(unit)
-    normalized_value = Converter.normalize(value, unit_prefix)
+    info = Units.unit_info!(unit)
+    normalized_value = Units.normalize_value(value, info)
 
-    do_new(type, normalized_value,
-      value: value,
-      unit: unit,
-      unit_system: unit_system,
-      unit_prefix: unit_prefix
-    )
-  end
-
-  defp do_new(:byte, bytes, opts) do
-    struct(%Byte{bytes: bytes}, opts)
-  end
-
-  defp do_new(:bit, bits, opts) do
-    struct(%Bit{bits: bits}, opts)
+    info.mod
+    |> struct(value: value, unit: unit)
+    |> Convertible.new(normalized_value)
   end
 
   @doc """
@@ -134,6 +118,12 @@ defmodule FileSize do
     Convertible.convert(size, to_unit)
   end
 
+  @spec to_unit_system(t, unit_system) :: t
+  def to_unit_system(size, unit_system) do
+    to_unit = Units.equivalent_unit_for_system!(size.unit, unit_system)
+    convert(size, to_unit)
+  end
+
   # -1: the first file size is smaller than the second one
   # 0: both arguments represent the same file size
   # 1: the first file size is greater than the second one
@@ -141,10 +131,6 @@ defmodule FileSize do
   def compare(size, other_size) do
     Comparable.compare(size, other_size)
   end
-
-  # defp do_compare(bits, bits), do: 0
-  # defp do_compare(a, b) when a < b, do: -1
-  # defp do_compare(a, b) when a > b, do: 1
 
   @spec equals?(t, t) :: boolean
   def equals?(size, other_size) do

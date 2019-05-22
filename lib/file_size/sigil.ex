@@ -11,22 +11,10 @@ defmodule FileSize.Sigil do
   ## Examples
 
       iex> ~F(16 kB)
-      %FileSize.Byte{
-        value: 16,
-        unit: :kb,
-        unit_prefix: :kilo,
-        unit_system: :si,
-        bytes: 16000
-      }
+      %FileSize.Byte{value: 16, unit: :kb, bytes: 16000}
 
       iex> ~F(8 Mibit)
-      %FileSize.Bit{
-        value: 8,
-        unit: :mibit,
-        unit_prefix: :mebi,
-        unit_system: :iec,
-        bits: 8388608
-      }
+      %FileSize.Bit{value: 8, unit: :mibit, bits: 8388608}
   """
   @spec sigil_F(String.t(), charlist) :: FileSize.t()
   def sigil_F(str, _modifiers) do
