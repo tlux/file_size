@@ -6,6 +6,9 @@ defmodule FileSize.Byte do
 
   defstruct [:value, :unit, :bytes]
 
+  @typedoc """
+  A type defining the available IEC units.
+  """
   @type iec_unit ::
           :b
           | :kib
@@ -17,6 +20,9 @@ defmodule FileSize.Byte do
           | :zib
           | :yib
 
+  @typedoc """
+  A type defining the available SI units.
+  """
   @type si_unit ::
           :b
           | :kb
@@ -28,8 +34,14 @@ defmodule FileSize.Byte do
           | :zb
           | :yb
 
+  @typedoc """
+  A union type combining the available IEC and SI units.
+  """
   @type unit :: iec_unit | si_unit
 
+  @typedoc """
+  The byte type.
+  """
   @type t :: %__MODULE__{value: number, unit: unit, bytes: integer}
 end
 
