@@ -12,7 +12,13 @@ defmodule FileSizeTest do
   alias FileSize.Parser
 
   doctest FileSize,
-    except: [from_file: 1, from_file: 2, from_file!: 1, from_file!: 2]
+    except: [
+      :moduledoc,
+      from_file: 1,
+      from_file: 2,
+      from_file!: 1,
+      from_file!: 2
+    ]
 
   describe "new/1" do
     test "use byte as default unit" do

@@ -1,6 +1,100 @@
 defmodule FileSize do
   @moduledoc """
   A file size calculator, parser and formatter.
+
+  ## Usage
+
+  You can build your own file size by creating it with a number and a unit using
+  the `new/2` function. See the "Supported Units" section for a list of possible
+  unit atoms.
+
+      iex> FileSize.new(16, :gb)
+      #FileSize<"16.0 GB">
+
+  ### Sigil
+
+  There is also a sigil defined that you can use to quickly build file sizes
+  from a number and unit symbol. Just import the `FileSize.Sigil` module and you
+  are ready to go. See the "Supported Units" section for a list of possible
+  unit symbols.
+
+      iex> import FileSize.Sigil
+      ...>
+      ...> ~F(16 GB)
+      #FileSize<"16.0 GB">
+
+  ### From File
+
+  With `from_file/1` it is also possible to retrieve the size of an actual file.
+
+      iex> FileSize.from_file("path/to/my/file.txt")
+      {:ok, #FileSize<"127.3 kB">}
+
+  ### Conversions
+
+  You can convert file sizes between different units:
+
+  * `convert/2` - Convert file size from one unit to another.
+  * `change_unit_system/2` - Convert file size from one unit system to another
+    (SI to IEC unit and vice-versa).
+
+  ### Calculations
+
+  You can calculate with file sizes. The particular units don't need to be the
+  same for that.
+
+  * `add/2` - Add two file sizes.
+  * `subtract/2` - Subtracts two file sizes.
+
+  ### Comparison
+
+  For comparison the particular units don't need to be the same.
+
+  * `compare/2` - Compares two file sizes and returns a value indicating whether
+    one file size is greater than or less than the other.
+  * `equals?/2` - Determines whether two file sizes are equal.
+
+  ## Supported Units
+
+  ### Bit-based
+
+  #### SI (Système international d'unités)
+
+  TBD
+
+  #### IEC (International Electrotechnical Commission)
+
+  TBD
+
+  ### Byte-based
+
+  #### SI (Système international d'unités)
+
+  | Atom   | Symbol | Long Name  | Factor |
+  |--------|--------|------------|--------|
+  | `:b`   | B      | Bytes      | 1      |
+  | `:kb`  | kB     | Kilobytes  | 1000   |
+  | `:mb`  | MB     | Megabytes  | 1000^2 |
+  | `:gb`  | GB     | Gigabytes  | 1000^3 |
+  | `:tb`  | TB     | Terabytes  | 1000^4 |
+  | `:pb`  | PB     | Petabytes  | 1000^5 |
+  | `:eb`  | EB     | Exabytes   | 1000^6 |
+  | `:zb`  | ZB     | Zetabytes  | 1000^7 |
+  | `:yb`  | YB     | Yottabytes | 1000^8 |
+
+  #### IEC (International Electrotechnical Commission)
+
+  | Atom   | Symbol | Long Name  | Factor |
+  |--------|--------|------------|--------|
+  | `:b`   | B      | Bytes      | 1      |
+  | `:kib` | KiB    | Kibibytes  | 1024   |
+  | `:mib` | MiB    | Mebibytes  | 1024^2 |
+  | `:gib` | GiB    | Gibibytes  | 1024^3 |
+  | `:tib` | TiB    | Tebibytes  | 1024^4 |
+  | `:pib` | PiB    | Pebibytes  | 1024^5 |
+  | `:eib` | EiB    | Exbibytes  | 1024^6 |
+  | `:zib` | ZiB    | Zebibytes  | 1024^7 |
+  | `:yib` | YiB    | Yobibytes  | 1024^8 |
   """
 
   alias FileSize.Bit
