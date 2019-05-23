@@ -60,41 +60,63 @@ defmodule FileSize do
 
   #### SI (Système international d'unités)
 
-  TBD
+  | Atom     | Symbol | Name       | Factor |
+  |----------|--------|------------|--------|
+  | `:bit`   | bit    | Bits       | 1      |
+  | `:kbit`  | kbit   | Kilobits   | 1000   |
+  | `:mbit`  | Mbit   | Megabits   | 1000^2 |
+  | `:gbit`  | GBit   | Gigabits   | 1000^3 |
+  | `:tbit`  | TBit   | Terabits   | 1000^4 |
+  | `:pbit`  | PBit   | Petabits   | 1000^5 |
+  | `:ebit`  | EBit   | Exabits    | 1000^6 |
+  | `:zbit`  | ZBit   | Zetabits   | 1000^7 |
+  | `:ybit`  | YBit   | Yottabits  | 1000^8 |
 
   #### IEC (International Electrotechnical Commission)
 
-  TBD
+  | Atom     | Symbol | Name       | Factor |
+  |----------|--------|------------|--------|
+  | `:bit`   | Bit    | Bits       | 1      |
+  | `:kibit` | Kibit  | Kibibits   | 1024   |
+  | `:mibit` | Mibit  | Mebibits   | 1024^2 |
+  | `:gibit` | Gibit  | Gibibits   | 1024^3 |
+  | `:tibit` | Tibit  | Tebibits   | 1024^4 |
+  | `:pibit` | Pibit  | Pebibits   | 1024^5 |
+  | `:eibit` | Eibit  | Exbibits   | 1024^6 |
+  | `:zibit` | Zibit  | Zebibits   | 1024^7 |
+  | `:yibit` | Yibit  | Yobibits   | 1024^8 |
 
   ### Byte-based
 
+  The most common unit of digital information. A single Byte represents 8 Bits.
+
   #### SI (Système international d'unités)
 
-  | Atom   | Symbol | Long Name  | Factor |
-  |--------|--------|------------|--------|
-  | `:b`   | B      | Bytes      | 1      |
-  | `:kb`  | kB     | Kilobytes  | 1000   |
-  | `:mb`  | MB     | Megabytes  | 1000^2 |
-  | `:gb`  | GB     | Gigabytes  | 1000^3 |
-  | `:tb`  | TB     | Terabytes  | 1000^4 |
-  | `:pb`  | PB     | Petabytes  | 1000^5 |
-  | `:eb`  | EB     | Exabytes   | 1000^6 |
-  | `:zb`  | ZB     | Zetabytes  | 1000^7 |
-  | `:yb`  | YB     | Yottabytes | 1000^8 |
+  | Atom     | Symbol | Name       | Factor |
+  |----------|--------|------------|--------|
+  | `:b`     | B      | Bytes      | 1      |
+  | `:kb`    | kB     | Kilobytes  | 1000   |
+  | `:mb`    | MB     | Megabytes  | 1000^2 |
+  | `:gb`    | GB     | Gigabytes  | 1000^3 |
+  | `:tb`    | TB     | Terabytes  | 1000^4 |
+  | `:pb`    | PB     | Petabytes  | 1000^5 |
+  | `:eb`    | EB     | Exabytes   | 1000^6 |
+  | `:zb`    | ZB     | Zetabytes  | 1000^7 |
+  | `:yb`    | YB     | Yottabytes | 1000^8 |
 
   #### IEC (International Electrotechnical Commission)
 
-  | Atom   | Symbol | Long Name  | Factor |
-  |--------|--------|------------|--------|
-  | `:b`   | B      | Bytes      | 1      |
-  | `:kib` | KiB    | Kibibytes  | 1024   |
-  | `:mib` | MiB    | Mebibytes  | 1024^2 |
-  | `:gib` | GiB    | Gibibytes  | 1024^3 |
-  | `:tib` | TiB    | Tebibytes  | 1024^4 |
-  | `:pib` | PiB    | Pebibytes  | 1024^5 |
-  | `:eib` | EiB    | Exbibytes  | 1024^6 |
-  | `:zib` | ZiB    | Zebibytes  | 1024^7 |
-  | `:yib` | YiB    | Yobibytes  | 1024^8 |
+  | Atom     | Symbol | Name       | Factor |
+  |----------|--------|------------|--------|
+  | `:b`     | B      | Bytes      | 1      |
+  | `:kib`   | KiB    | Kibibytes  | 1024   |
+  | `:mib`   | MiB    | Mebibytes  | 1024^2 |
+  | `:gib`   | GiB    | Gibibytes  | 1024^3 |
+  | `:tib`   | TiB    | Tebibytes  | 1024^4 |
+  | `:pib`   | PiB    | Pebibytes  | 1024^5 |
+  | `:eib`   | EiB    | Exbibytes  | 1024^6 |
+  | `:zib`   | ZiB    | Zebibytes  | 1024^7 |
+  | `:yib`   | YiB    | Yobibytes  | 1024^8 |
   """
 
   alias FileSize.Bit
