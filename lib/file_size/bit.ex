@@ -1,4 +1,8 @@
 defmodule FileSize.Bit do
+  @moduledoc """
+  A struct that represents a file size in bits as lowest possible value.
+  """
+
   defstruct [:value, :unit, :bits]
 
   @type iec_unit ::

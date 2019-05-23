@@ -1,4 +1,8 @@
 defprotocol FileSize.Convertible do
+  @moduledoc """
+  A protocol that defines functions to convert file sizes to other units.
+  """
+
   @doc """
   Puts the normalized value in the given file size struct, finalizing the struct
   creation.

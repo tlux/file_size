@@ -1,7 +1,5 @@
 defmodule FileSize.UnitInfo do
-  @moduledoc """
-  A reflection struct that contains additional information for a defined unit.
-  """
+  @moduledoc false
 
   defstruct [:name, :mod, :exp, :system, :symbol]
 
@@ -15,10 +13,6 @@ defmodule FileSize.UnitInfo do
           symbol: FileSize.unit_symbol()
         }
 
-  @doc """
-  Gets the factor based on the unit system and (unit prefix) exponent from the
-  given unit info struct.
-  """
   @spec get_factor(t) :: pos_integer
   def get_factor(info)
 

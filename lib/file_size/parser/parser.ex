@@ -1,4 +1,8 @@
 defmodule FileSize.Parser do
+  @moduledoc """
+  A module that provides functions to convert values to file sizes.
+  """
+
   alias FileSize.Bit
   alias FileSize.Byte
   alias FileSize.ParseError

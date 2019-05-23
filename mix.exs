@@ -27,8 +27,7 @@ defmodule FileSize.MixProject do
         groups_for_modules: [
           Structs: [
             FileSize.Bit,
-            FileSize.Byte,
-            FileSize.UnitInfo
+            FileSize.Byte
           ],
           "Parsing & Formatting": [
             FileSize.Parser,

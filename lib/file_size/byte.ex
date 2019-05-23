@@ -1,7 +1,7 @@
 defmodule FileSize.Byte do
   @moduledoc """
   A struct that represents a file size in bytes as lowest possible value, which
-  is a chunk of 8 bits each. 
+  is a chunk of 8 bits each.
   """
 
   defstruct [:value, :unit, :bytes]
