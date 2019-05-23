@@ -6,6 +6,8 @@ defmodule FileSize.ConvertibleTest do
   alias FileSize.Convertible
   alias FileSize.InvalidUnitError
 
+  doctest FileSize.Convertible
+
   describe "new/2" do
     test "new Bit" do
       size = %Bit{value: 1, unit: :kb}

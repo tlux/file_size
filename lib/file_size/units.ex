@@ -69,21 +69,24 @@ defmodule FileSize.Units do
 
   @spec equivalent_unit_for_system!(FileSize.unit(), FileSize.unit_system()) ::
           FileSize.unit() | no_return
-  def equivalent_unit_for_system!(unit, unit_system) do
+  def equivalent_unit_for_system!(unit, unit_system)
+      when unit_system in [:iec, :si] do
     unit
     |> unit_info!()
     |> find_equivalent_unit_for_system(unit_system)
   end
 
+  def equivalent_unit_for_system!(_unit, unit_system) do
+    raise InvalidUnitSystemError, unit_system: unit_system
+  end
+
   defp find_equivalent_unit_for_system(%{system: nil} = info, _), do: info.name
 
   defp find_equivalent_unit_for_system(info, unit_system) do
-    @unit_names_by_systems_and_exps
-    |> Map.fetch({info.mod, unit_system, info.exp})
-    |> case do
-      {:ok, unit} -> unit
-      _ -> raise InvalidUnitSystemError, unit_system: unit_system
-    end
+    Map.fetch!(
+      @unit_names_by_systems_and_exps,
+      {info.mod, unit_system, info.exp}
+    )
   end
 
   @spec parse_unit(FileSize.unit_symbol()) :: {:ok, FileSize.unit()} | :error

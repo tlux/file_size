@@ -98,4 +98,26 @@ defmodule FileSize.FormatterTest do
       assert Formatter.format(FileSize.new(1337.6, :kib)) == "1,338 KiB"
     end
   end
+
+  describe "format_simple/1" do
+    test "format bytes" do
+      assert Formatter.format_simple(FileSize.new(1, :b)) == "1 B"
+      assert Formatter.format_simple(FileSize.new(1, :kb)) == "1.0 kB"
+      assert Formatter.format_simple(FileSize.new(1, :kib)) == "1.0 KiB"
+      assert Formatter.format_simple(FileSize.new(1, :mb)) == "1.0 MB"
+      assert Formatter.format_simple(FileSize.new(1, :mib)) == "1.0 MiB"
+      assert Formatter.format_simple(FileSize.new(1000, :kbit)) == "1.0e3 kbit"
+    end
+
+    test "format bits" do
+      assert Formatter.format_simple(FileSize.new(1, :bit)) == "1 bit"
+      assert Formatter.format_simple(FileSize.new(1, :kbit)) == "1.0 kbit"
+      assert Formatter.format_simple(FileSize.new(1, :kibit)) == "1.0 Kibit"
+      assert Formatter.format_simple(FileSize.new(1, :mbit)) == "1.0 Mbit"
+      assert Formatter.format_simple(FileSize.new(1, :mibit)) == "1.0 Mibit"
+
+      assert Formatter.format_simple(FileSize.new(1000, :kibit)) ==
+               "1.0e3 Kibit"
+    end
+  end
 end

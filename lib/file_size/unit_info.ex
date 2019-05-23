@@ -15,7 +15,11 @@ defmodule FileSize.UnitInfo do
           symbol: FileSize.unit_symbol()
         }
 
-  @spec get_factor(t) :: number
+  @doc """
+  Gets the factor based on the unit system and (unit prefix) exponent from the
+  given unit info struct.
+  """
+  @spec get_factor(t) :: pos_integer
   def get_factor(info)
 
   def get_factor(%{system: nil}), do: 1

@@ -8,7 +8,11 @@ defmodule FileSizeTest do
   alias FileSize.Convertible
   alias FileSize.Formatter
   alias FileSize.InvalidUnitError
+  alias FileSize.InvalidUnitSystemError
   alias FileSize.Parser
+
+  doctest FileSize,
+    except: [from_file: 1, from_file: 2, from_file!: 1, from_file!: 2]
 
   describe "new/1" do
     test "use byte as default unit" do
@@ -298,6 +302,14 @@ defmodule FileSizeTest do
         FileSize.new(1, :unknown)
       end
     end
+
+    test "invalid value" do
+      assert_raise ArgumentError,
+                   ~s[Value must be integer or float (but "invalid" given)],
+                   fn ->
+                     FileSize.new("invalid", :b)
+                   end
+    end
   end
 
   describe "from_bytes/2" do
@@ -333,7 +345,7 @@ defmodule FileSizeTest do
   end
 
   describe "from_file/1" do
-    test "success" do
+    test "success on file" do
       path = "test/fixtures/sample.txt"
       %{size: bytes} = File.stat!(path)
 
@@ -483,6 +495,17 @@ defmodule FileSizeTest do
 
       assert FileSize.change_unit_system(size, :si) ==
                FileSize.convert(size, :kb)
+    end
+
+    test "invalid unit system" do
+      assert_raise InvalidUnitSystemError,
+                   "Invalid unit system: :unknown",
+                   fn ->
+                     assert FileSize.change_unit_system(
+                              FileSize.new(1337, :kb),
+                              :unknown
+                            )
+                   end
     end
   end
 

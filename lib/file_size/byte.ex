@@ -1,4 +1,9 @@
 defmodule FileSize.Byte do
+  @moduledoc """
+  A struct that represents a file size in bytes as lowest possible value, which
+  is a chunk of 8 bits each. 
+  """
+
   defstruct [:value, :unit, :bytes]
 
   @type iec_unit ::
@@ -23,13 +28,9 @@ defmodule FileSize.Byte do
           | :zb
           | :yb
 
-  @type unit :: si_unit | iec_unit
+  @type unit :: iec_unit | si_unit
 
-  @type t :: %__MODULE__{
-          value: number,
-          unit: unit,
-          bytes: number
-        }
+  @type t :: %__MODULE__{value: number, unit: unit, bytes: integer}
 end
 
 defimpl FileSize.Calculable, for: FileSize.Byte do

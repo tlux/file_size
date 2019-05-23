@@ -23,13 +23,9 @@ defmodule FileSize.Bit do
           | :zbit
           | :ybit
 
-  @type unit :: si_unit | iec_unit
+  @type unit :: iec_unit | si_unit
 
-  @type t :: %__MODULE__{
-          value: number,
-          unit: unit,
-          bits: number
-        }
+  @type t :: %__MODULE__{value: number, unit: unit, bits: integer}
 end
 
 defimpl FileSize.Calculable, for: FileSize.Bit do

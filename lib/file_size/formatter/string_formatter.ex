@@ -1,5 +1,7 @@
 defimpl String.Chars, for: [FileSize.Bit, FileSize.Byte] do
+  alias FileSize.Formatter
+
   def to_string(size) do
-    FileSize.format(size)
+    Formatter.format_simple(size)
   end
 end

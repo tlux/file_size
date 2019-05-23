@@ -3,6 +3,8 @@ defmodule FileSize.CalculableTest do
 
   alias FileSize.Calculable
 
+  doctest FileSize.Calculable
+
   describe "add/2" do
     test "add byte and byte" do
       assert Calculable.add(FileSize.new(1, :b), FileSize.new(1, :b)) ==

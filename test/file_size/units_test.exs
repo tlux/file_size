@@ -50,6 +50,12 @@ defmodule FileSize.UnitsTest do
                    fn ->
                      Units.equivalent_unit_for_system!(:kb, :unknown)
                    end
+
+      assert_raise InvalidUnitSystemError,
+                   "Invalid unit system: :unknown",
+                   fn ->
+                     Units.equivalent_unit_for_system!(:b, :unknown)
+                   end
     end
   end
 
