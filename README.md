@@ -25,5 +25,4 @@ end
 
 ## Docs
 
-Documentation is available on HexDocs and can be found at
-[https://hexdocs.pm/file_size](https://hexdocs.pm/file_size).
+Documentation is available on [HexDocs](https://hexdocs.pm/file_size).
