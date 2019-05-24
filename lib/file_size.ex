@@ -200,6 +200,11 @@ defmodule FileSize do
           "Value must be integer or float (but #{inspect(value)} given)"
   end
 
+  @spec from_bytes(integer) :: t
+  def from_bytes(bytes) do
+    bytes |> new(:b) |> scale()
+  end
+
   @doc """
   Builds a new file size from the given number of bytes and converts it to the
   specified unit.
@@ -218,6 +223,11 @@ defmodule FileSize do
   @spec from_bytes(integer, unit) :: t
   def from_bytes(bytes, as_unit) do
     bytes |> new(:b) |> convert(as_unit)
+  end
+
+  @spec from_bits(integer) :: t
+  def from_bits(bits) do
+    bytes |> new(:b) |> scale()
   end
 
   @doc """
@@ -298,6 +308,22 @@ defmodule FileSize do
   @spec change_unit_system(t, unit_system) :: t
   def change_unit_system(size, unit_system) do
     convert(size, Units.equivalent_unit_for_system!(size.unit, unit_system))
+  end
+
+  @doc """
+  Converts the given flie size to the most appropriate unit.
+
+  ## Examples
+
+      iex> FileSize.scale(FileSize.new(2000, :b))
+      #FileSize<"2 kB">
+
+      iex> FileSize.scale(FileSize.new(2_000_000, :kb))
+      #FileSize<"2 GB">
+  """
+  @spec scale(t, unit_system) :: t
+  def scale(size, unit_system \\ nil) do
+    convert(size, Utils.appropriate_unit_for_size(size, unit_system))
   end
 
   defdelegate compare(size, other_size), to: Comparable
