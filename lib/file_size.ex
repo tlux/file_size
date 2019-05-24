@@ -200,6 +200,15 @@ defmodule FileSize do
           "Value must be integer or float (but #{inspect(value)} given)"
   end
 
+  @doc """
+  Builds a new file size from the given number of bits and converts it to the
+  best fitting unit.
+
+  ## Example
+
+      iex> FileSize.from_bytes(2000)
+      #FileSize<"2 kB">
+  """
   @spec from_bytes(integer) :: t
   def from_bytes(bytes) do
     bytes |> new(:b) |> scale()
@@ -229,13 +238,10 @@ defmodule FileSize do
   Builds a new file size from the given number of bits and converts it to the
   best fitting unit.
 
-  ## Examples
+  ## Example
 
-      iex> FileSize.from_bits(16, :b)
-      #FileSize<"2 B">
-
-      iex> FileSize.from_bits(16, :unknown)
-      ** (FileSize.InvalidUnitError) Invalid unit: :unknown
+      iex> FileSize.from_bits(2000)
+      #FileSize<"2 kbit">
   """
   @spec from_bits(integer) :: t
   def from_bits(bits) do
