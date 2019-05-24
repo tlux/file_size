@@ -321,9 +321,9 @@ defmodule FileSize do
       iex> FileSize.scale(FileSize.new(2_000_000, :kb))
       #FileSize<"2 GB">
   """
-  @spec scale(t, unit_system) :: t
+  @spec scale(t, nil | unit_system) :: t
   def scale(size, unit_system \\ nil) do
-    convert(size, Utils.appropriate_unit_for_size(size, unit_system))
+    convert(size, Units.appropriate_unit_for_size(size, unit_system))
   end
 
   defdelegate compare(size, other_size), to: Comparable
