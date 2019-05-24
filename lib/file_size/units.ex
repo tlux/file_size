@@ -52,10 +52,14 @@ defmodule FileSize.Units do
   @units_by_names Map.new(@units, fn unit -> {unit.name, unit} end)
   @units_by_symbols Map.new(@units, fn unit -> {unit.symbol, unit} end)
 
-  @unit_names_by_systems_and_exps Map.new(@units, fn info ->
-                                    {{info.mod, info.system, info.exp},
-                                     info.name}
-                                  end)
+  @unit_names_by_mods_and_systems_and_exps Map.new(@units, fn info ->
+                                             {{info.mod, info.system, info.exp},
+                                              info.name}
+                                           end)
+
+  @units_by_mods_and_systems Map.new(@units, fn info ->
+                               {{info.mod, info.system}, info}
+                             end)
 
   @spec unit_infos() :: [UnitInfo.t()]
   def unit_infos, do: @units
@@ -85,7 +89,7 @@ defmodule FileSize.Units do
 
   defp find_equivalent_unit_for_system(info, unit_system) do
     Map.fetch!(
-      @unit_names_by_systems_and_exps,
+      @unit_names_by_mods_and_systems_and_exps,
       {info.mod, unit_system, info.exp}
     )
   end
@@ -94,26 +98,25 @@ defmodule FileSize.Units do
           FileSize.unit()
   def appropriate_unit_for_size(size, unit_system \\ nil) do
     value = Convertible.normalized_value(size)
-    unit_system = unit_system || detect_unit_system(size)
+    orig_info = unit_info!(size.unit)
 
-    Enum.find_value(@units, size.unit, fn
-      %{system: ^unit_system} = info ->
+    unit_system =
+      unit_system ||
+      orig_info.system ||
+      raise ArgumentError, "Unable to detect unit system from size: #{inspect(size)}"
+
+    case Map.fetch(@units_by_mods_and_systems, {orig_info.mod, unit_system}) do
+      {:ok, info} ->
         value_range = UnitInfo.value_range(info)
-        if Enum.member?(value_range, value), do: info.name
 
-      info ->
-        nil
-    end)
-  end
+        if Enum.member?(value_range, value) do
+          info.name
+        else
+          orig_info.name
+        end
 
-  defp detect_unit_system(size) do
-    case unit_info!(size.unit) do
-      %{system: nil} ->
-        raise ArgumentError,
-              "Unable to detect unit system from size: #{inspect(size)}"
-
-      %{system: unit_system} ->
-        unit_system
+      _ ->
+        orig_info.name
     end
   end
 

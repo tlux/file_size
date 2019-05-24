@@ -225,9 +225,21 @@ defmodule FileSize do
     bytes |> new(:b) |> convert(as_unit)
   end
 
+  @doc """
+  Builds a new file size from the given number of bits and converts it to the
+  best fitting unit.
+
+  ## Examples
+
+      iex> FileSize.from_bits(16, :b)
+      #FileSize<"2 B">
+
+      iex> FileSize.from_bits(16, :unknown)
+      ** (FileSize.InvalidUnitError) Invalid unit: :unknown
+  """
   @spec from_bits(integer) :: t
   def from_bits(bits) do
-    bytes |> new(:b) |> scale()
+    bits |> new(:bit) |> scale()
   end
 
   @doc """
