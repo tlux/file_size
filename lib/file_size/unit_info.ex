@@ -25,9 +25,7 @@ defmodule FileSize.UnitInfo do
   end
 
   defp get_factor_by_system_and_exp(system, exp) do
-    @bases
-    |> Map.fetch!(info.system)
-    |> Math.pow(info.exp)
+    @bases |> Map.fetch!(system) |> Math.pow(exp)
   end
 
   @spec min_value(t) :: non_neg_integer
