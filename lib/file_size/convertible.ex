@@ -11,6 +11,12 @@ defprotocol FileSize.Convertible do
   def new(size, normalized_value)
 
   @doc """
+  Gets the normalized value from the given file size struct.
+  """
+  @spec normalized_value(t) :: integer
+  def normalized_value(size)
+
+  @doc """
   Converts the given file size to a given unit.
 
   ## Examples

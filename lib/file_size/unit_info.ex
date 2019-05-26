@@ -21,8 +21,24 @@ defmodule FileSize.UnitInfo do
   def get_factor(%{exp: 0}), do: 1
 
   def get_factor(info) do
-    @bases
-    |> Map.fetch!(info.system)
-    |> Math.pow(info.exp)
+    get_factor_by_system_and_exp(info.system, info.exp)
+  end
+
+  defp get_factor_by_system_and_exp(system, exp) do
+    @bases |> Map.fetch!(system) |> Math.pow(exp)
+  end
+
+  @spec min_value(t) :: non_neg_integer
+  def min_value(%{exp: 0}), do: 0
+  def min_value(info), do: get_factor(info)
+
+  @spec max_value(t) :: non_neg_integer
+  def max_value(info) do
+    get_factor_by_system_and_exp(info.system, info.exp + 1) - 1
+  end
+
+  @spec value_range(t) :: Range.t()
+  def value_range(info) do
+    min_value(info)..max_value(info)
   end
 end

@@ -91,6 +91,8 @@ defimpl FileSize.Convertible, for: FileSize.Byte do
     %{size | bytes: bytes}
   end
 
+  def normalized_value(size), do: size.bytes
+
   def convert(%{unit: unit} = size, unit), do: size
 
   def convert(size, to_unit) do

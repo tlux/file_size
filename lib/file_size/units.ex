@@ -3,6 +3,7 @@ defmodule FileSize.Units do
 
   alias FileSize.Bit
   alias FileSize.Byte
+  alias FileSize.Convertible
   alias FileSize.InvalidUnitError
   alias FileSize.InvalidUnitSystemError
   alias FileSize.UnitInfo
@@ -51,10 +52,10 @@ defmodule FileSize.Units do
   @units_by_names Map.new(@units, fn unit -> {unit.name, unit} end)
   @units_by_symbols Map.new(@units, fn unit -> {unit.symbol, unit} end)
 
-  @unit_names_by_systems_and_exps Map.new(@units, fn unit ->
-                                    {{unit.mod, unit.system, unit.exp},
-                                     unit.name}
-                                  end)
+  @unit_names_by_mods_and_systems_and_exps Map.new(@units, fn info ->
+                                             {{info.mod, info.system, info.exp},
+                                              info.name}
+                                           end)
 
   @spec unit_infos() :: [UnitInfo.t()]
   def unit_infos, do: @units
@@ -62,7 +63,7 @@ defmodule FileSize.Units do
   @spec unit_info!(FileSize.unit()) :: UnitInfo.t() | no_return
   def unit_info!(unit) do
     case Map.fetch(@units_by_names, unit) do
-      {:ok, unit_info} -> unit_info
+      {:ok, info} -> info
       :error -> raise InvalidUnitError, unit: unit
     end
   end
@@ -84,9 +85,26 @@ defmodule FileSize.Units do
 
   defp find_equivalent_unit_for_system(info, unit_system) do
     Map.fetch!(
-      @unit_names_by_systems_and_exps,
+      @unit_names_by_mods_and_systems_and_exps,
       {info.mod, unit_system, info.exp}
     )
+  end
+
+  @spec appropriate_unit_for_size(FileSize.t(), nil | FileSize.unit_system()) ::
+          FileSize.unit()
+  def appropriate_unit_for_size(size, unit_system \\ nil) do
+    value = Convertible.normalized_value(size)
+    %{mod: mod} = orig_info = unit_info!(size.unit)
+    unit_system = unit_system || orig_info.system || :si
+
+    Enum.find_value(@units, orig_info.name, fn
+      %{mod: ^mod, system: ^unit_system} = info ->
+        value_range = UnitInfo.value_range(info)
+        if Enum.member?(value_range, value), do: info.name
+
+      _ ->
+        nil
+    end)
   end
 
   @spec parse_unit(FileSize.unit_symbol()) :: {:ok, FileSize.unit()} | :error
