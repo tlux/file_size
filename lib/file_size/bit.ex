@@ -101,6 +101,6 @@ defimpl FileSize.Convertible, for: FileSize.Bit do
     |> FileSize.new(to_unit)
   end
 
-  defp convert_between_types(value, Byte), do: value / 8
+  defp convert_between_types(value, Byte), do: Float.floor(value / 8)
   defp convert_between_types(value, _), do: value
 end

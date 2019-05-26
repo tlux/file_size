@@ -106,7 +106,7 @@ defmodule FileSize.Units do
     trunc(value * UnitInfo.get_factor(source_info))
   end
 
-  @spec denormalize_value(number, UnitInfo.t()) :: number
+  @spec denormalize_value(number, UnitInfo.t()) :: float
   def denormalize_value(value, target_info) do
     value / UnitInfo.get_factor(target_info)
   end
