@@ -7,7 +7,7 @@ defmodule FileSize.ComparableTest do
     test "first less than second" do
       assert Comparable.compare(FileSize.new(1, :b), FileSize.new(2, :b)) == -1
 
-      assert Comparable.compare(FileSize.new(1, :bit), FileSize.new(2, :b)) ==
+      assert Comparable.compare(FileSize.new(1, :bit), FileSize.new(1, :b)) ==
                -1
 
       assert Comparable.compare(FileSize.new(1, :bit), FileSize.new(2, :bit)) ==
@@ -16,6 +16,9 @@ defmodule FileSize.ComparableTest do
       assert Comparable.compare(FileSize.new(1, :b), FileSize.new(1, :kb)) == -1
 
       assert Comparable.compare(FileSize.new(1, :b), FileSize.new(1, :kib)) ==
+               -1
+
+      assert Comparable.compare(FileSize.new(2, :b), FileSize.new(17, :bit)) ==
                -1
     end
 
@@ -29,6 +32,9 @@ defmodule FileSize.ComparableTest do
 
       assert Comparable.compare(FileSize.new(1000, :b), FileSize.new(1, :kb)) ==
                0
+
+      assert Comparable.compare(FileSize.new(2, :b), FileSize.new(16, :bit)) ==
+               0
     end
 
     test "first greater than second" do
@@ -40,6 +46,9 @@ defmodule FileSize.ComparableTest do
 
       assert Comparable.compare(FileSize.new(1, :kb), FileSize.new(1, :b)) == 1
       assert Comparable.compare(FileSize.new(1, :kib), FileSize.new(1, :b)) == 1
+
+      assert Comparable.compare(FileSize.new(2, :b), FileSize.new(15, :bit)) ==
+               1
     end
   end
 end

@@ -71,8 +71,14 @@ end
 defimpl FileSize.Comparable, for: FileSize.Byte do
   import FileSize.ComparisonUtils
 
+  alias FileSize.Bit
+
+  def compare(size, %Bit{} = other_size) do
+    size = FileSize.convert(size, :bit)
+    compare_values(size.bits, other_size.bits)
+  end
+
   def compare(size, other_size) do
-    other_size = FileSize.convert(other_size, size.unit)
     compare_values(size.bytes, other_size.bytes)
   end
 end
