@@ -354,7 +354,7 @@ defmodule FileSize do
   @deprecated "Use convert/2 instead"
   @spec change_unit_system(t, unit_system) :: t
   def change_unit_system(size, unit_system) do
-    convert(size, Units.equivalent_unit_for_system!(size.unit, unit_system))
+    convert(size, {:system, unit_system})
   end
 
   @doc """
