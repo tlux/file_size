@@ -14,11 +14,11 @@ defmodule FileSize do
   ### Sigil
 
   There is also a sigil defined that you can use to quickly build file sizes
-  from a number and unit symbol. Just import the `FileSize.Sigil` module and you
-  are ready to go. See the "Supported Units" section for a list of possible
-  unit symbols.
+  from a number and unit symbol. Just use the `FileSize` module and you are
+  ready to go. See the "Supported Units" section for a list of possible unit
+  symbols.
 
-      iex> import FileSize.Sigil
+      iex> use FileSize
       ...>
       ...> ~F(16 GB)
       #FileSize<"16.0 GB">
@@ -154,6 +154,13 @@ defmodule FileSize do
   A type that is a union of the bit and byte types.
   """
   @type t :: Bit.t() | Byte.t()
+
+  @doc false
+  defmacro __using__(_) do
+    quote do
+      import FileSize.Sigil
+    end
+  end
 
   @doc """
   Gets the configuration.
