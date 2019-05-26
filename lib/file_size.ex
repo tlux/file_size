@@ -32,11 +32,8 @@ defmodule FileSize do
 
   ### Conversions
 
-  You can convert file sizes between different units:
-
-  * `convert/2` - Convert file size from one unit to another.
-  * `change_unit_system/2` - Convert file size from one unit system to another
-    (SI to IEC unit and vice-versa).
+  You can convert file sizes between different units or unit systems by using
+  the `convert/2` function.
 
   ### Calculations
 
