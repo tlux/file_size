@@ -59,6 +59,69 @@ defmodule FileSize.UnitsTest do
     end
   end
 
+  describe "appropriate_unit_for_size/1" do
+    test "detect kilobytes" do
+      assert Units.appropriate_unit_for_size(FileSize.new(1000, :b)) == :kb
+      assert Units.appropriate_unit_for_size(FileSize.new(1, :kb)) == :kb
+      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mb)) == :kb
+    end
+
+    test "detect kibibytes" do
+      assert Units.appropriate_unit_for_size(FileSize.new(1, :kib)) == :kib
+      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mib)) == :kib
+    end
+
+    test "detect megabytes" do
+      assert Units.appropriate_unit_for_size(FileSize.new(1000, :kb)) == :mb
+      assert Units.appropriate_unit_for_size(FileSize.new(1, :mb)) == :mb
+      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :gb)) == :mb
+    end
+
+    test "detect mebibytes" do
+      assert Units.appropriate_unit_for_size(FileSize.new(1024, :kib)) == :mib
+      assert Units.appropriate_unit_for_size(FileSize.new(1, :mib)) == :mib
+      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :gib)) == :mib
+    end
+
+    test "detect megabits" do
+      assert Units.appropriate_unit_for_size(FileSize.new(1_000_000, :bit)) ==
+               :mbit
+
+      assert Units.appropriate_unit_for_size(FileSize.new(1000, :kbit)) == :mbit
+      assert Units.appropriate_unit_for_size(FileSize.new(1, :mbit)) == :mbit
+      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :gbit)) == :mbit
+    end
+  end
+
+  describe "appropriate_unit_for_size/2" do
+    test "detect kilobytes" do
+      assert Units.appropriate_unit_for_size(FileSize.new(1000, :b), :si) == :kb
+      assert Units.appropriate_unit_for_size(FileSize.new(1, :kb), :si) == :kb
+      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mb), :si) == :kb
+      assert Units.appropriate_unit_for_size(FileSize.new(1, :kib), :si) == :kb
+
+      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mib), :si) ==
+               :kb
+    end
+
+    test "detect kibibytes" do
+      assert Units.appropriate_unit_for_size(FileSize.new(1024, :b), :iec) ==
+               :kib
+
+      assert Units.appropriate_unit_for_size(FileSize.new(2, :kb), :iec) ==
+               :kib
+
+      assert Units.appropriate_unit_for_size(FileSize.new(1, :kib), :iec) ==
+               :kib
+
+      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mib), :iec) ==
+               :kib
+
+      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mb), :iec) ==
+               :kib
+    end
+  end
+
   describe "parse_unit/1" do
     test "success" do
       Enum.each(Units.unit_infos(), fn %{name: name, symbol: symbol} ->

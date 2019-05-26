@@ -365,12 +365,23 @@ defmodule FileSizeTest do
   end
 
   describe "from_file/2" do
-    test "success" do
+    setup do
       path = "test/fixtures/sample.txt"
       %{size: bytes} = File.stat!(path)
+      {:ok, path: "test/fixtures/sample.txt", bytes: bytes}
+    end
 
+    test "success with unit", %{path: path, bytes: bytes} do
       assert FileSize.from_file(path, :kb) ==
                {:ok, FileSize.from_bytes(bytes, :kb)}
+    end
+
+    test "success with unit system", %{path: path, bytes: bytes} do
+      assert FileSize.from_file(path, {:system, :si}) ==
+               {:ok, FileSize.from_bytes(bytes, {:system, :si})}
+
+      assert FileSize.from_file(path, {:system, :iec}) ==
+               {:ok, FileSize.from_bytes(bytes, {:system, :iec})}
     end
 
     test "file not found" do
@@ -455,63 +466,85 @@ defmodule FileSizeTest do
   end
 
   describe "convert/2" do
-    test "delegate to Convertible" do
+    test "convert to unit" do
       size = FileSize.new(1, :b)
 
       assert FileSize.convert(size, :bit) == Convertible.convert(size, :bit)
     end
-  end
 
-  describe "change_unit_system/2" do
-    test "convert bytes" do
+    test "no-op when converting bytes to unit system" do
       size = FileSize.new(1337, :b)
 
-      assert FileSize.change_unit_system(size, :si) == size
-      assert FileSize.change_unit_system(size, :iec) == size
+      assert FileSize.convert(size, {:system, :si}) == size
+      assert FileSize.convert(size, {:system, :iec}) == size
     end
 
-    test "convert bits" do
+    test "no-op when converting bits to unit system" do
       size = FileSize.new(1337, :bit)
 
-      assert FileSize.change_unit_system(size, :si) == size
-      assert FileSize.change_unit_system(size, :iec) == size
+      assert FileSize.convert(size, {:system, :si}) == size
+      assert FileSize.convert(size, {:system, :iec}) == size
     end
 
-    test "convert SI to SI" do
+    test "convert SI to SI unit system" do
       size = FileSize.new(1337, :kb)
 
-      assert FileSize.change_unit_system(size, :si) == size
+      assert FileSize.convert(size, {:system, :si}) == size
     end
 
-    test "convert IEC to IEC" do
+    test "convert IEC to IEC unit system" do
       size = FileSize.new(1337, :kib)
 
-      assert FileSize.change_unit_system(size, :iec) == size
+      assert FileSize.convert(size, {:system, :iec}) == size
     end
 
-    test "convert SI to IEC" do
+    test "convert SI to IEC unit system" do
       size = FileSize.new(1337, :kb)
 
-      assert FileSize.change_unit_system(size, :iec) ==
+      assert FileSize.convert(size, {:system, :iec}) ==
                FileSize.convert(size, :kib)
     end
 
-    test "convert IEC to SI" do
+    test "convert IEC to SI unit system" do
       size = FileSize.new(1337, :kib)
 
-      assert FileSize.change_unit_system(size, :si) ==
+      assert FileSize.convert(size, {:system, :si}) ==
                FileSize.convert(size, :kb)
+    end
+
+    test "invalid unit" do
+      assert_raise InvalidUnitError,
+                   "Invalid unit: :unknown",
+                   fn ->
+                     assert FileSize.convert(
+                              FileSize.new(1337, :kb),
+                              :unknown
+                            )
+                   end
     end
 
     test "invalid unit system" do
       assert_raise InvalidUnitSystemError,
                    "Invalid unit system: :unknown",
                    fn ->
-                     assert FileSize.change_unit_system(
+                     assert FileSize.convert(
                               FileSize.new(1337, :kb),
-                              :unknown
+                              {:system, :unknown}
                             )
                    end
+    end
+  end
+
+  describe "change_unit_system/2" do
+    test "convert bytes" do
+      si_size = FileSize.new(1337, :kb)
+      iec_size = FileSize.new(1337, :mib)
+
+      assert FileSize.change_unit_system(iec_size, :si) ==
+               FileSize.convert(iec_size, {:system, :si})
+
+      assert FileSize.change_unit_system(si_size, :iec) ==
+               FileSize.convert(si_size, {:system, :iec})
     end
   end
 

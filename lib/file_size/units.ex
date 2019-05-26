@@ -57,10 +57,6 @@ defmodule FileSize.Units do
                                               info.name}
                                            end)
 
-  @units_by_mods_and_systems Map.new(@units, fn info ->
-                               {{info.mod, info.system}, info}
-                             end)
-
   @spec unit_infos() :: [UnitInfo.t()]
   def unit_infos, do: @units
 
@@ -98,26 +94,17 @@ defmodule FileSize.Units do
           FileSize.unit()
   def appropriate_unit_for_size(size, unit_system \\ nil) do
     value = Convertible.normalized_value(size)
-    orig_info = unit_info!(size.unit)
+    %{mod: mod} = orig_info = unit_info!(size.unit)
+    unit_system = unit_system || orig_info.system || :si
 
-    unit_system =
-      unit_system ||
-      orig_info.system ||
-      raise ArgumentError, "Unable to detect unit system from size: #{inspect(size)}"
-
-    case Map.fetch(@units_by_mods_and_systems, {orig_info.mod, unit_system}) do
-      {:ok, info} ->
+    Enum.find_value(@units, orig_info.name, fn
+      %{mod: ^mod, system: ^unit_system} = info ->
         value_range = UnitInfo.value_range(info)
-
-        if Enum.member?(value_range, value) do
-          info.name
-        else
-          orig_info.name
-        end
+        if Enum.member?(value_range, value), do: info.name
 
       _ ->
-        orig_info.name
-    end
+        nil
+    end)
   end
 
   @spec parse_unit(FileSize.unit_symbol()) :: {:ok, FileSize.unit()} | :error
