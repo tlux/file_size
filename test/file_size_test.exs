@@ -618,12 +618,20 @@ defmodule FileSizeTest do
   end
 
   describe "add/3" do
-    test "delegate to Calculable and convert" do
+    test "delegate to Calculable and convert to unit" do
       a = FileSize.new(1, :b)
       b = FileSize.new(2, :b)
 
       assert FileSize.add(a, b, :kb) ==
                FileSize.convert(Calculable.add(a, b), :kb)
+    end
+
+    test "delegate to Calculable and convert to unit system" do
+      a = FileSize.new(1, :kb)
+      b = FileSize.new(2, :kb)
+
+      assert FileSize.add(a, b, {:system, :iec}) ==
+               FileSize.convert(Calculable.add(a, b), :kib)
     end
   end
 
@@ -637,12 +645,20 @@ defmodule FileSizeTest do
   end
 
   describe "subtract/3" do
-    test "delegate to Calculable and convert" do
+    test "delegate to Calculable and convert to unit" do
       a = FileSize.new(2, :b)
       b = FileSize.new(1, :b)
 
       assert FileSize.subtract(a, b, :kb) ==
                FileSize.convert(Calculable.subtract(a, b), :kb)
+    end
+
+    test "delegate to Calculable and convert to unit system" do
+      a = FileSize.new(3, :kb)
+      b = FileSize.new(1, :kb)
+
+      assert FileSize.subtract(a, b, {:system, :iec}) ==
+               FileSize.convert(Calculable.subtract(a, b), :kib)
     end
   end
 end

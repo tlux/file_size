@@ -405,10 +405,13 @@ defmodule FileSize do
 
       iex> FileSize.add(FileSize.new(1, :kb), FileSize.new(2, :kb), :b)
       #FileSize<"3000 B">
+
+      iex> FileSize.add(FileSize.new(1, :kb), FileSize.new(2, :kb), {:system, :iec})
+      #FileSize<"2.9296875 KiB">
   """
-  @spec add(t, t, unit) :: t
-  def add(size, other_size, as_unit) do
-    size |> add(other_size) |> convert(as_unit)
+  @spec add(t, t, unit | {:system, unit_system}) :: t
+  def add(size, other_size, as_unit_or_unit_system) do
+    size |> add(other_size) |> convert(as_unit_or_unit_system)
   end
 
   defdelegate subtract(size, other_size), to: Calculable
@@ -421,9 +424,12 @@ defmodule FileSize do
 
       iex> FileSize.subtract(FileSize.new(2, :b), FileSize.new(6, :bit), :bit)
       #FileSize<"10 bit">
+
+      iex> FileSize.subtract(FileSize.new(3, :kb), FileSize.new(1, :kb), {:system, :iec})
+      #FileSize<"1.953125 KiB">
   """
-  @spec subtract(t, t, unit) :: t
-  def subtract(size, other_size, as_unit) do
-    size |> subtract(other_size) |> convert(as_unit)
+  @spec subtract(t, t, unit | {:system, unit_system}) :: t
+  def subtract(size, other_size, as_unit_or_unit_system) do
+    size |> subtract(other_size) |> convert(as_unit_or_unit_system)
   end
 end
