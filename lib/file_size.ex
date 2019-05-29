@@ -402,6 +402,78 @@ defmodule FileSize do
     compare(size, other_size) == 0
   end
 
+  @doc """
+  Determines whether the first file size is less than the second one.
+
+  ## Examples
+
+      iex> FileSize.lt?(FileSize.new(1, :b), FileSize.new(2, :b))
+      true
+
+      iex> FileSize.lt?(FileSize.new(2, :b), FileSize.new(1, :b))
+      false
+  """
+  @spec lt?(t, t) :: boolean
+  def lt?(size, other_size) do
+    compare(size, other_size) == -1
+  end
+
+  @doc """
+  Determines whether the first file size is less or equal to than the second
+  one.
+
+  ## Examples
+
+      iex> FileSize.lteq?(FileSize.new(1, :b), FileSize.new(2, :b))
+      true
+
+      iex> FileSize.lteq?(FileSize.new(1, :b), FileSize.new(1, :b))
+      true
+
+      iex> FileSize.lteq?(FileSize.new(2, :b), FileSize.new(1, :b))
+      false
+  """
+  @spec lteq?(t, t) :: boolean
+  def lteq?(size, other_size) do
+    compare(size, other_size) <= 0
+  end
+
+  @doc """
+  Determines whether the first file size is greater than the second one.
+
+  ## Examples
+
+      iex> FileSize.gt?(FileSize.new(2, :b), FileSize.new(1, :b))
+      true
+
+      iex> FileSize.gt?(FileSize.new(1, :b), FileSize.new(2, :b))
+      false
+  """
+  @spec gt?(t, t) :: boolean
+  def gt?(size, other_size) do
+    compare(size, other_size) == 1
+  end
+
+  @doc """
+  Determines whether the first file size is less or equal to than the second
+  one.
+
+  ## Examples
+
+      iex> FileSize.gteq?(FileSize.new(2, :b), FileSize.new(1, :b))
+      true
+
+      iex> FileSize.gteq?(FileSize.new(1, :b), FileSize.new(1, :b))
+      true
+
+      iex> FileSize.gteq?(FileSize.new(1, :b), FileSize.new(2, :b))
+      false
+  """
+  @spec gteq?(t, t) :: boolean
+  def gteq?(size, other_size) do
+    compare(size, other_size) >= 0
+  end
+
   defdelegate add(size, other_size), to: Calculable
 
   @doc """

@@ -559,16 +559,16 @@ defmodule FileSizeTest do
 
   describe "equals?/2" do
     test "true when first equal to second" do
-      # assert FileSize.equals?(FileSize.new(1, :b), FileSize.new(1, :b)) == true
-      #
-      # assert FileSize.equals?(FileSize.new(1, :bit), FileSize.new(1, :bit)) ==
-      #          true
-      #
-      # assert FileSize.equals?(FileSize.new(8, :bit), FileSize.new(1, :b)) ==
-      #          true
-      #
-      # assert FileSize.equals?(FileSize.new(1000, :b), FileSize.new(1, :kb)) ==
-      #          true
+      assert FileSize.equals?(FileSize.new(1, :b), FileSize.new(1, :b)) == true
+
+      assert FileSize.equals?(FileSize.new(1, :bit), FileSize.new(1, :bit)) ==
+               true
+
+      assert FileSize.equals?(FileSize.new(8, :bit), FileSize.new(1, :b)) ==
+               true
+
+      assert FileSize.equals?(FileSize.new(1000, :b), FileSize.new(1, :kb)) ==
+               true
 
       assert FileSize.equals?(FileSize.new(2, :b), FileSize.new(16, :bit)) ==
                true
@@ -605,6 +605,98 @@ defmodule FileSizeTest do
 
       assert FileSize.equals?(FileSize.new(2, :b), FileSize.new(17, :bit)) ==
                false
+    end
+  end
+
+  describe "lt?/2" do
+    test "true when first is less than second" do
+      assert FileSize.lt?(FileSize.new(1, :b), FileSize.new(2, :b)) == true
+      assert FileSize.lt?(FileSize.new(1, :bit), FileSize.new(2, :bit)) == true
+      assert FileSize.lt?(FileSize.new(1, :b), FileSize.new(9, :bit)) == true
+      assert FileSize.lt?(FileSize.new(7, :bit), FileSize.new(1, :b)) == true
+    end
+
+    test "false when first is equal to second" do
+      assert FileSize.lt?(FileSize.new(1, :b), FileSize.new(1, :b)) == false
+      assert FileSize.lt?(FileSize.new(1, :bit), FileSize.new(1, :bit)) == false
+      assert FileSize.lt?(FileSize.new(1, :b), FileSize.new(8, :bit)) == false
+      assert FileSize.lt?(FileSize.new(8, :bit), FileSize.new(1, :b)) == false
+    end
+
+    test "false when first is greater than second" do
+      assert FileSize.lt?(FileSize.new(2, :b), FileSize.new(1, :b)) == false
+      assert FileSize.lt?(FileSize.new(2, :bit), FileSize.new(1, :bit)) == false
+      assert FileSize.lt?(FileSize.new(1, :b), FileSize.new(7, :bit)) == false
+      assert FileSize.lt?(FileSize.new(9, :bit), FileSize.new(1, :b)) == false
+    end
+  end
+
+  describe "lteq?/2" do
+    test "true when first is less than second" do
+      assert FileSize.lteq?(FileSize.new(1, :b), FileSize.new(2, :b)) == true
+      assert FileSize.lteq?(FileSize.new(1, :bit), FileSize.new(2, :bit)) == true
+      assert FileSize.lteq?(FileSize.new(1, :b), FileSize.new(9, :bit)) == true
+      assert FileSize.lteq?(FileSize.new(7, :bit), FileSize.new(1, :b)) == true
+    end
+
+    test "true when first is equal to second" do
+      assert FileSize.lteq?(FileSize.new(1, :b), FileSize.new(1, :b)) == true
+      assert FileSize.lteq?(FileSize.new(1, :bit), FileSize.new(1, :bit)) == true
+      assert FileSize.lteq?(FileSize.new(1, :b), FileSize.new(8, :bit)) == true
+      assert FileSize.lteq?(FileSize.new(8, :bit), FileSize.new(1, :b)) == true
+    end
+
+    test "false when first is greater than second" do
+      assert FileSize.lteq?(FileSize.new(2, :b), FileSize.new(1, :b)) == false
+      assert FileSize.lteq?(FileSize.new(2, :bit), FileSize.new(1, :bit)) == false
+      assert FileSize.lteq?(FileSize.new(1, :b), FileSize.new(7, :bit)) == false
+      assert FileSize.lteq?(FileSize.new(9, :bit), FileSize.new(1, :b)) == false
+    end
+  end
+
+  describe "gt?/2" do
+    test "false when first is less than second" do
+      assert FileSize.gt?(FileSize.new(1, :b), FileSize.new(2, :b)) == false
+      assert FileSize.gt?(FileSize.new(1, :bit), FileSize.new(2, :bit)) == false
+      assert FileSize.gt?(FileSize.new(1, :b), FileSize.new(9, :bit)) == false
+      assert FileSize.gt?(FileSize.new(7, :bit), FileSize.new(1, :b)) == false
+    end
+
+    test "false when first is equal to second" do
+      assert FileSize.gt?(FileSize.new(1, :b), FileSize.new(1, :b)) == false
+      assert FileSize.gt?(FileSize.new(1, :bit), FileSize.new(1, :bit)) == false
+      assert FileSize.gt?(FileSize.new(1, :b), FileSize.new(8, :bit)) == false
+      assert FileSize.gt?(FileSize.new(8, :bit), FileSize.new(1, :b)) == false
+    end
+
+    test "true when first is greater than second" do
+      assert FileSize.gt?(FileSize.new(2, :b), FileSize.new(1, :b)) == true
+      assert FileSize.gt?(FileSize.new(2, :bit), FileSize.new(1, :bit)) == true
+      assert FileSize.gt?(FileSize.new(1, :b), FileSize.new(7, :bit)) == true
+      assert FileSize.gt?(FileSize.new(9, :bit), FileSize.new(1, :b)) == true
+    end
+  end
+
+  describe "gteq?/2" do
+    test "false when first is less than second" do
+      assert FileSize.gteq?(FileSize.new(1, :b), FileSize.new(2, :b)) == false
+      assert FileSize.gteq?(FileSize.new(1, :bit), FileSize.new(2, :bit)) == false
+      assert FileSize.gteq?(FileSize.new(1, :b), FileSize.new(9, :bit)) == false
+      assert FileSize.gteq?(FileSize.new(7, :bit), FileSize.new(1, :b)) == false
+    end
+
+    test "true when first is equal to second" do
+      assert FileSize.gteq?(FileSize.new(1, :b), FileSize.new(1, :b)) == true
+      assert FileSize.gteq?(FileSize.new(1, :bit), FileSize.new(1, :bit)) == true
+      assert FileSize.gteq?(FileSize.new(1, :b), FileSize.new(8, :bit)) == true
+      assert FileSize.gteq?(FileSize.new(8, :bit), FileSize.new(1, :b)) == true
+    end
+
+    test "true when first is greater than second" do
+      assert FileSize.gteq?(FileSize.new(2, :b), FileSize.new(1, :b)) == true
+      assert FileSize.gteq?(FileSize.new(2, :bit), FileSize.new(1, :bit)) == true
+      assert FileSize.gteq?(FileSize.new(1, :b), FileSize.new(7, :bit)) == true
+      assert FileSize.gteq?(FileSize.new(9, :bit), FileSize.new(1, :b)) == true
     end
   end
 
