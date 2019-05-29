@@ -376,7 +376,7 @@ defmodule FileSize do
       #FileSize<"2.0 GB">
       
       iex> FileSize.scale(FileSize.new(2_000_000, :kb), :iec)
-      #FileSize<"1.862645149 GiB">
+      #FileSize<"1.862645149230957 GiB">
   """
   @doc since: "1.1.0"
   @spec scale(t, nil | unit_system) :: t
