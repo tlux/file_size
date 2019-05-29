@@ -374,6 +374,9 @@ defmodule FileSize do
 
       iex> FileSize.scale(FileSize.new(2_000_000, :kb))
       #FileSize<"2.0 GB">
+      
+      iex> FileSize.scale(FileSize.new(2_000_000, :kb), :iec)
+      #FileSize<"1.862645149 GiB">
   """
   @doc since: "1.1.0"
   @spec scale(t, nil | unit_system) :: t
@@ -413,6 +416,7 @@ defmodule FileSize do
       iex> FileSize.lt?(FileSize.new(2, :b), FileSize.new(1, :b))
       false
   """
+  @doc since: "1.2.0"
   @spec lt?(t, t) :: boolean
   def lt?(size, other_size) do
     compare(size, other_size) == -1
@@ -433,6 +437,7 @@ defmodule FileSize do
       iex> FileSize.lteq?(FileSize.new(2, :b), FileSize.new(1, :b))
       false
   """
+  @doc since: "1.2.0"
   @spec lteq?(t, t) :: boolean
   def lteq?(size, other_size) do
     compare(size, other_size) <= 0
@@ -449,6 +454,7 @@ defmodule FileSize do
       iex> FileSize.gt?(FileSize.new(1, :b), FileSize.new(2, :b))
       false
   """
+  @doc since: "1.2.0"
   @spec gt?(t, t) :: boolean
   def gt?(size, other_size) do
     compare(size, other_size) == 1
@@ -469,6 +475,7 @@ defmodule FileSize do
       iex> FileSize.gteq?(FileSize.new(1, :b), FileSize.new(2, :b))
       false
   """
+  @doc since: "1.2.0"
   @spec gteq?(t, t) :: boolean
   def gteq?(size, other_size) do
     compare(size, other_size) >= 0
