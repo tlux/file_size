@@ -55,7 +55,8 @@ defimpl FileSize.Calculable, for: FileSize.Bit do
   def add(size, %Byte{} = other_size) do
     other_size = FileSize.convert(other_size, :bit)
 
-    (size.bits + other_size.bits)
+    size.bits
+    |> Kernel.+(other_size.bits)
     |> FileSize.new(:bit)
     |> FileSize.convert(other_size.unit)
   end
