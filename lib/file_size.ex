@@ -45,11 +45,23 @@ defmodule FileSize do
 
   ### Comparison
 
-  For comparison the particular units don't need to be the same.
+  For comparison the units of the particular file sizes don't need to be the
+  same.
 
   * `compare/2` - Compares two file sizes and returns a value indicating whether
     one file size is greater than or less than the other.
   * `equals?/2` - Determines whether two file sizes are equal.
+  * `lt?/2` - Determines whether file size a < b.
+  * `lteq?/2` - Determines whether file size a <= b.
+  * `gt?/2` - Determines whether file size a > b.
+  * `gteq?/2` - Determines whether file size a >= b.
+
+  To sort a collection of file sizes from smallest to greatest, you can use
+  `lteq?/2` as sort function. To sort descending use `gteq?/2`.
+
+      iex> sizes = [~F(16 GB), ~F(100 Mbit), ~F(27.4 MB), ~F(16 Gbit)]
+      ...> Enum.sort(sizes, &FileSize.lteq?/2)
+      [#FileSize<"100.0 Mbit">, #FileSize<"27.4 MB">, #FileSize<"16.0 Gbit">, #FileSize<"16.0 GB">]
 
   ## Supported Units
 
@@ -374,7 +386,7 @@ defmodule FileSize do
 
       iex> FileSize.scale(FileSize.new(2_000_000, :kb))
       #FileSize<"2.0 GB">
-      
+
       iex> FileSize.scale(FileSize.new(2_000_000, :kb), :iec)
       #FileSize<"1.862645149230957 GiB">
   """
