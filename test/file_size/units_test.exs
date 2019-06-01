@@ -6,6 +6,18 @@ defmodule FileSize.UnitsTest do
   alias FileSize.UnitInfo
   alias FileSize.Units
 
+  describe "unit_info/1" do
+    test "success" do
+      Enum.each(Units.unit_infos(), fn info ->
+        assert Units.unit_info(info.name) == {:ok, info}
+      end)
+    end
+
+    test "error" do
+      assert Units.unit_info(:unknown) == :error
+    end
+  end
+
   describe "unit_info!/1" do
     test "success" do
       Enum.each(Units.unit_infos(), fn info ->

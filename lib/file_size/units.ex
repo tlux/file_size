@@ -60,9 +60,14 @@ defmodule FileSize.Units do
   @spec unit_infos() :: [UnitInfo.t()]
   def unit_infos, do: @units
 
+  @spec unit_info!(FileSize.unit()) :: {:ok, UnitInfo.t()} | :error
+  def unit_info(unit) do
+    Map.fetch(@units_by_names, unit)
+  end
+
   @spec unit_info!(FileSize.unit()) :: UnitInfo.t() | no_return
   def unit_info!(unit) do
-    case Map.fetch(@units_by_names, unit) do
+    case unit_info(unit) do
       {:ok, info} -> info
       :error -> raise InvalidUnitError, unit: unit
     end
