@@ -38,6 +38,10 @@ defmodule FileSize.MixProject do
             FileSize.Calculable,
             FileSize.Comparable,
             FileSize.Convertible
+          ],
+          Reflection: [
+            FileSize.Units,
+            FileSize.Units.Info
           ]
         ]
       ]

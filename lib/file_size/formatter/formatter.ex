@@ -17,7 +17,7 @@ defmodule FileSize.Formatter do
   * `:symbols` - Allows using your own unit symbols. Must be a map that contains
     the unit names as keys (as defined by `t:FileSize.unit/0`) and the unit
     symbol strings as values. Missing entries in the map are filled with the
-    internal unit symbols from `FileSize.Units.unit_infos/0`.
+    internal unit symbols from `FileSize.Units.list/0`.
 
   Other options customize the number format and are forwarded to
   `Number.Delimit.number_to_delimited/2`. The default precision for numbers is
