@@ -16,7 +16,7 @@ defmodule FileSize.FormatterTest do
 
   describe "format/1" do
     test "success" do
-      Enum.each(Units.unit_infos(), fn info ->
+      Enum.each(Units.list(), fn info ->
         assert Formatter.format(FileSize.new(1337, info.name)) ==
                  "1,337 #{info.symbol}"
 
@@ -28,7 +28,7 @@ defmodule FileSize.FormatterTest do
 
   describe "format/2" do
     test "format with empty options" do
-      Enum.each(Units.unit_infos(), fn info ->
+      Enum.each(Units.list(), fn info ->
         assert Formatter.format(FileSize.new(1337, info.name), []) ==
                  "1,337 #{info.symbol}"
 

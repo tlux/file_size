@@ -3,31 +3,30 @@ defmodule FileSize.UnitsTest do
 
   alias FileSize.InvalidUnitError
   alias FileSize.InvalidUnitSystemError
-  alias FileSize.UnitInfo
   alias FileSize.Units
 
-  describe "unit_info/1" do
+  describe "fetch/1" do
     test "success" do
-      Enum.each(Units.unit_infos(), fn info ->
-        assert Units.unit_info(info.name) == {:ok, info}
+      Enum.each(Units.list(), fn info ->
+        assert Units.fetch(info.name) == {:ok, info}
       end)
     end
 
     test "error" do
-      assert Units.unit_info(:unknown) == :error
+      assert Units.fetch(:unknown) == :error
     end
   end
 
-  describe "unit_info!/1" do
+  describe "fetch!/1" do
     test "success" do
-      Enum.each(Units.unit_infos(), fn info ->
-        assert Units.unit_info!(info.name) == info
+      Enum.each(Units.list(), fn info ->
+        assert Units.fetch!(info.name) == info
       end)
     end
 
     test "error" do
       assert_raise InvalidUnitError, "Invalid unit: :unknown", fn ->
-        Units.unit_info!(:unknown)
+        Units.fetch!(:unknown)
       end
     end
   end
@@ -136,7 +135,7 @@ defmodule FileSize.UnitsTest do
 
   describe "parse_unit/1" do
     test "success" do
-      Enum.each(Units.unit_infos(), fn %{name: name, symbol: symbol} ->
+      Enum.each(Units.list(), fn %{name: name, symbol: symbol} ->
         assert Units.parse_unit(symbol) == {:ok, name}
       end)
     end
@@ -148,7 +147,7 @@ defmodule FileSize.UnitsTest do
 
   describe "format_unit!/1" do
     test "success" do
-      Enum.each(Units.unit_infos(), fn %{name: name, symbol: symbol} ->
+      Enum.each(Units.list(), fn %{name: name, symbol: symbol} ->
         assert Units.format_unit!(name) == symbol
       end)
     end
@@ -157,33 +156,6 @@ defmodule FileSize.UnitsTest do
       assert_raise InvalidUnitError, "Invalid unit: :unknown", fn ->
         Units.format_unit!(:unknown)
       end
-    end
-  end
-
-  describe "normalize_value/2" do
-    test "success" do
-      Enum.each(Units.unit_infos(), fn info ->
-        factor = UnitInfo.get_factor(info)
-
-        assert Units.normalize_value(1, info) == factor
-        assert Units.normalize_value(2, info) == 2 * factor
-
-        result = Units.normalize_value(2.2, info)
-        assert result == trunc(2.2 * factor)
-        assert is_integer(result)
-      end)
-    end
-  end
-
-  describe "denormalize_value/2" do
-    test "success" do
-      Enum.each(Units.unit_infos(), fn info ->
-        factor = UnitInfo.get_factor(info)
-        result = Units.denormalize_value(2, info)
-
-        assert result == 2 / factor
-        assert is_float(result)
-      end)
     end
   end
 end

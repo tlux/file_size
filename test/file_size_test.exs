@@ -535,19 +535,6 @@ defmodule FileSizeTest do
     end
   end
 
-  describe "change_unit_system/2" do
-    test "convert bytes" do
-      si_size = FileSize.new(1337, :kb)
-      iec_size = FileSize.new(1337, :mib)
-
-      assert FileSize.change_unit_system(iec_size, :si) ==
-               FileSize.convert(iec_size, {:system, :si})
-
-      assert FileSize.change_unit_system(si_size, :iec) ==
-               FileSize.convert(si_size, {:system, :iec})
-    end
-  end
-
   describe "compare/2" do
     test "delegate to Calculable" do
       a = FileSize.new(1, :b)

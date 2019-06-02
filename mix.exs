@@ -4,7 +4,7 @@ defmodule FileSize.MixProject do
   def project do
     [
       app: :file_size,
-      version: "1.3.0",
+      version: "2.0.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       description: description(),

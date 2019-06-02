@@ -136,6 +136,7 @@ defmodule FileSize do
   alias FileSize.Formatter
   alias FileSize.Parser
   alias FileSize.Units
+  alias FileSize.Units.Info, as: UnitInfo
 
   @typedoc """
   A type that defines the IEC bit and byte units.
@@ -199,10 +200,10 @@ defmodule FileSize do
   @spec new(number, unit) :: t | no_return
   def new(value, unit \\ :b) do
     denormalized_value = sanitize_denormalized_value(value)
-    info = Units.unit_info!(unit)
-    normalized_value = Units.normalize_value(value, info)
+    unit_info = Units.fetch!(unit)
+    normalized_value = UnitInfo.normalize_value(unit_info, value)
 
-    info.mod
+    unit_info.mod
     |> struct(value: denormalized_value, unit: unit)
     |> Convertible.new(normalized_value)
   end
@@ -365,15 +366,6 @@ defmodule FileSize do
 
   def convert(size, to_unit) do
     Convertible.convert(size, to_unit)
-  end
-
-  @doc """
-  Converts the given file size to a given unit system.
-  """
-  @deprecated "Use convert/2 instead"
-  @spec change_unit_system(t, unit_system) :: t
-  def change_unit_system(size, unit_system) do
-    convert(size, {:system, unit_system})
   end
 
   @doc """

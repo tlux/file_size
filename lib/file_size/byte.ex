@@ -86,6 +86,7 @@ end
 defimpl FileSize.Convertible, for: FileSize.Byte do
   alias FileSize.Bit
   alias FileSize.Units
+  alias FileSize.Units.Info, as: UnitInfo
 
   def new(size, bytes) do
     %{size | bytes: bytes}
@@ -96,11 +97,11 @@ defimpl FileSize.Convertible, for: FileSize.Byte do
   def convert(%{unit: unit} = size, unit), do: size
 
   def convert(size, to_unit) do
-    info = Units.unit_info!(to_unit)
+    unit_info = Units.fetch!(to_unit)
+    value = UnitInfo.denormalize_value(unit_info, size.bytes)
 
-    size.bytes
-    |> Units.denormalize_value(info)
-    |> convert_between_types(info.mod)
+    value
+    |> convert_between_types(unit_info.mod)
     |> FileSize.new(to_unit)
   end
 

@@ -52,9 +52,9 @@ defmodule FileSize.Formatter do
   """
   @spec format_simple(FileSize.t()) :: String.t()
   def format_simple(size) do
-    info = Units.unit_info!(size.unit)
-    value = sanitize_value(size.value, info.exp)
-    "#{value} #{info.symbol}"
+    unit_info = Units.fetch!(size.unit)
+    value = sanitize_value(size.value, unit_info.exp)
+    "#{value} #{unit_info.symbol}"
   end
 
   defp sanitize_value(value, 0), do: trunc(value)
@@ -88,7 +88,7 @@ defmodule FileSize.Formatter do
 
   defp symbol_from_unit_info(unit) do
     unit
-    |> Units.unit_info!()
+    |> Units.fetch!()
     |> Map.fetch!(:symbol)
   end
 end

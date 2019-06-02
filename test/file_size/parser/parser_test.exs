@@ -19,7 +19,7 @@ defmodule FileSize.ParserTest do
     end
 
     test "success with string" do
-      Enum.each(Units.unit_infos(), fn info ->
+      Enum.each(Units.list(), fn info ->
         assert Parser.parse("1337 #{info.symbol}") ==
                  {:ok, FileSize.new(1337, info.name)}
 
@@ -67,7 +67,7 @@ defmodule FileSize.ParserTest do
     end
 
     test "success with string" do
-      Enum.each(Units.unit_infos(), fn info ->
+      Enum.each(Units.list(), fn info ->
         assert Parser.parse!("1337 #{info.symbol}") ==
                  FileSize.new(1337, info.name)
 
