@@ -137,6 +137,7 @@ defmodule FileSize do
   alias FileSize.Parser
   alias FileSize.Units
   alias FileSize.Units.Info, as: UnitInfo
+  alias FileSize.Units.Utils, as: UnitUtils
 
   @typedoc """
   A type that defines the IEC bit and byte units.
@@ -360,8 +361,10 @@ defmodule FileSize do
   def convert(size, to_unit_or_unit_system)
 
   def convert(size, {:system, to_unit_system}) do
-    to_unit = Units.equivalent_unit_for_system!(size.unit, to_unit_system)
-    Convertible.convert(size, to_unit)
+    Convertible.convert(
+      size,
+      UnitUtils.equivalent_unit_for_system!(size.unit, to_unit_system)
+    )
   end
 
   def convert(size, to_unit) do
@@ -385,7 +388,7 @@ defmodule FileSize do
   @doc since: "1.1.0"
   @spec scale(t, nil | unit_system) :: t
   def scale(size, unit_system \\ nil) do
-    convert(size, Units.appropriate_unit_for_size(size, unit_system))
+    convert(size, UnitUtils.appropriate_unit_for_size(size, unit_system))
   end
 
   defdelegate compare(size, other_size), to: Comparable

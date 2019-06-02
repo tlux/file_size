@@ -6,7 +6,7 @@ defmodule FileSize.Parser do
   alias FileSize.Bit
   alias FileSize.Byte
   alias FileSize.ParseError
-  alias FileSize.Units
+  alias FileSize.Units.Utils, as: UnitUtils
 
   @doc """
   Converts the given value into a `FileSize.Bit` or `FileSize.Byte`. Returns
@@ -79,7 +79,7 @@ defmodule FileSize.Parser do
   end
 
   defp parse_unit(unit_str) do
-    with :error <- Units.parse_unit(unit_str) do
+    with :error <- UnitUtils.parse_unit(unit_str) do
       {:error, :unit}
     end
   end

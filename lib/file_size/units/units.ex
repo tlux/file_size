@@ -1,12 +1,11 @@
 defmodule FileSize.Units do
-  @moduledoc false
+  @moduledoc """
+  A module to retrieve information about known units.
+  """
 
   alias FileSize.Bit
   alias FileSize.Byte
-  alias FileSize.Convertible
   alias FileSize.InvalidUnitError
-  alias FileSize.InvalidUnitSystemError
-  alias FileSize.Units
   alias FileSize.Units.Info
 
   @units [
@@ -52,13 +51,6 @@ defmodule FileSize.Units do
 
   @units_by_names Map.new(@units, fn unit -> {unit.name, unit} end)
 
-  @units_by_symbols Map.new(@units, fn unit -> {unit.symbol, unit} end)
-
-  @unit_names_by_mods_and_systems_and_exps Map.new(@units, fn info ->
-                                             {{info.mod, info.system, info.exp},
-                                              info.name}
-                                           end)
-
   @doc """
   Gets a list of all defined units.
   """
@@ -86,62 +78,5 @@ defmodule FileSize.Units do
       {:ok, info} -> info
       :error -> raise InvalidUnitError, unit: unit
     end
-  end
-
-  @doc false
-  @spec equivalent_unit_for_system!(FileSize.unit(), FileSize.unit_system()) ::
-          FileSize.unit() | no_return
-  def equivalent_unit_for_system!(unit, unit_system)
-      when unit_system in [:iec, :si] do
-    unit
-    |> Units.fetch!()
-    |> find_equivalent_unit_for_system(unit_system)
-  end
-
-  def equivalent_unit_for_system!(_unit, unit_system) do
-    raise InvalidUnitSystemError, unit_system: unit_system
-  end
-
-  defp find_equivalent_unit_for_system(%{system: nil} = info, _), do: info.name
-
-  defp find_equivalent_unit_for_system(info, unit_system) do
-    Map.fetch!(
-      @unit_names_by_mods_and_systems_and_exps,
-      {info.mod, unit_system, info.exp}
-    )
-  end
-
-  @doc false
-  @spec appropriate_unit_for_size(FileSize.t(), nil | FileSize.unit_system()) ::
-          FileSize.unit()
-  def appropriate_unit_for_size(size, unit_system \\ nil) do
-    value = Convertible.normalized_value(size)
-    %{mod: mod} = orig_info = Units.fetch!(size.unit)
-    unit_system = unit_system || orig_info.system || :si
-
-    Enum.find_value(@units, orig_info.name, fn
-      %{mod: ^mod, system: ^unit_system} = info ->
-        value_range = Info.value_range(info)
-        if Enum.member?(value_range, value), do: info.name
-
-      _ ->
-        nil
-    end)
-  end
-
-  @doc false
-  @spec parse_unit(FileSize.unit_symbol()) :: {:ok, FileSize.unit()} | :error
-  def parse_unit(symbol) do
-    with {:ok, info} <- Map.fetch(@units_by_symbols, symbol) do
-      {:ok, info.name}
-    end
-  end
-
-  @doc false
-  @spec format_unit!(FileSize.unit()) :: FileSize.unit_symbol()
-  def format_unit!(unit) do
-    unit
-    |> Units.fetch!()
-    |> Map.fetch!(:symbol)
   end
 end
