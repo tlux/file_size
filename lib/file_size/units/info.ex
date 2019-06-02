@@ -54,19 +54,13 @@ defmodule FileSize.Units.Info do
     min_value(info)..max_value(info)
   end
 
-  @doc """
-  Normalizes the given value to the smallest possible unit for the given
-  specified unit type.
-  """
+  @doc false
   @spec normalize_value(t, number) :: integer
   def normalize_value(info, value) do
     trunc(value * get_factor(info))
   end
 
-  @doc """
-  Denormalizes the given value from the smallest possible unit for the given
-  unit type to the unit that is specified.
-  """
+  @doc false
   @spec denormalize_value(t, number) :: float
   def denormalize_value(info, value) do
     value / get_factor(info)
