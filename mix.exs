@@ -61,8 +61,8 @@ defmodule FileSize.MixProject do
       {:credo, "~> 1.0.5", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.20.2", only: :dev, runtime: false},
       {:excoveralls, "~> 0.11.0", only: :test},
-      {:math, "~> 0.3.0"},
-      {:number, "~> 1.0.0"}
+      {:math, "~> 0.3"},
+      {:number, "~> 1.0"}
     ]
   end
 
