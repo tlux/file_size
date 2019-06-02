@@ -198,24 +198,15 @@ defmodule FileSize do
       iex> FileSize.new(3, :bit)
       #FileSize<"3 bit">
   """
-  @spec new(number, unit) :: t | no_return
-  def new(value, unit \\ :b) do
-    denormalized_value = sanitize_denormalized_value(value)
-    unit_info = Units.fetch!(unit)
-    normalized_value = UnitInfo.normalize_value(unit_info, value)
+  @spec new(number | Decimal.t(), unit | UnitInfo.t()) :: t
+  def new(value, unit \\ :b)
 
-    unit_info.mod
-    |> struct(value: denormalized_value, unit: unit)
-    |> Convertible.new(normalized_value)
+  def new(value, %UnitInfo{mod: mod, name: name}) do
+    mod.new(value, name)
   end
 
-  defp sanitize_denormalized_value(value) when is_integer(value), do: value / 1
-
-  defp sanitize_denormalized_value(value) when is_float(value), do: value
-
-  defp sanitize_denormalized_value(value) do
-    raise ArgumentError,
-          "Value must be integer or float (but #{inspect(value)} given)"
+  def new(value, unit) do
+    new(value, Units.fetch!(unit))
   end
 
   @doc """

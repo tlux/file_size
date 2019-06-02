@@ -4,6 +4,11 @@ defmodule FileSize.Byte do
   is a chunk of 8 bits each.
   """
 
+  @behaviour FileSize.Size
+
+  alias FileSize.Units
+  alias FileSize.Units.Info, as: UnitInfo
+
   defstruct [:value, :unit, :bytes]
 
   @typedoc """
@@ -42,7 +47,26 @@ defmodule FileSize.Byte do
   @typedoc """
   The byte type.
   """
-  @type t :: %__MODULE__{value: number, unit: unit, bytes: integer}
+  @type t :: %__MODULE__{value: Decimal.t(), unit: unit, bytes: integer}
+
+  @impl true
+  def new(value, unit \\ :b)
+
+  def new(value, %UnitInfo{mod: __MODULE__} = unit_info) do
+    bytes = UnitInfo.normalize_value(unit_info, value)
+    value = UnitInfo.denormalize_value(unit_info, bytes)
+    %__MODULE__{value: value, unit: unit_info.name, bytes: bytes}
+  end
+
+  def new(_value, %UnitInfo{name: unit}) do
+    raise ArgumentError,
+          "Unable to use unit #{inspect(unit)} " <>
+            "for type #{inspect(__MODULE__)}"
+  end
+
+  def new(value, unit) do
+    new(value, Units.fetch!(unit))
+  end
 end
 
 defimpl FileSize.Calculable, for: FileSize.Byte do
@@ -88,10 +112,6 @@ defimpl FileSize.Convertible, for: FileSize.Byte do
   alias FileSize.Units
   alias FileSize.Units.Info, as: UnitInfo
 
-  def new(size, bytes) do
-    %{size | bytes: bytes}
-  end
-
   def normalized_value(size), do: size.bytes
 
   def convert(%{unit: unit} = size, unit), do: size
@@ -105,6 +125,6 @@ defimpl FileSize.Convertible, for: FileSize.Byte do
     |> FileSize.new(to_unit)
   end
 
-  defp convert_between_types(value, Bit), do: value * 8
+  defp convert_between_types(value, Bit), do: Decimal.mult(value, 8)
   defp convert_between_types(value, _), do: value
 end

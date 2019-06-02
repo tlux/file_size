@@ -57,8 +57,7 @@ defmodule FileSize.Formatter do
     "#{value} #{unit_info.symbol}"
   end
 
-  defp sanitize_value(value, 0), do: trunc(value)
-  defp sanitize_value(value, _), do: value
+  defp sanitize_value(value, _), do: Decimal.to_string(value)
 
   defp format_number(value, opts) do
     opts =
@@ -66,7 +65,9 @@ defmodule FileSize.Formatter do
       |> Keyword.merge(number_opts_from_config())
       |> Keyword.merge(opts)
 
-    number_to_delimited(value, opts)
+    value
+    |> Decimal.to_float()
+    |> number_to_delimited(opts)
   end
 
   defp format_unit(unit, symbols) do

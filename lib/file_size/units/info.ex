@@ -55,14 +55,30 @@ defmodule FileSize.Units.Info do
   end
 
   @doc false
-  @spec normalize_value(t, number) :: integer
+  @spec normalize_value(t, Decimal.t() | number) :: integer
   def normalize_value(info, value) do
-    trunc(value * get_factor(info))
+    value
+    |> number_to_decimal()
+    |> Decimal.mult(get_factor(info))
+    |> Decimal.round(0, :floor)
+    |> Decimal.to_integer()
   end
 
   @doc false
-  @spec denormalize_value(t, number) :: float
+  @spec denormalize_value(t, Decimal.t() | number) :: Decimal.t()
   def denormalize_value(info, value) do
-    value / get_factor(info)
+    value
+    |> number_to_decimal()
+    |> Decimal.div(get_factor(info))
+  end
+
+  defp number_to_decimal(%Decimal{} = value), do: value
+
+  defp number_to_decimal(value) when is_integer(value) do
+    Decimal.new(value)
+  end
+
+  defp number_to_decimal(value) when is_float(value) do
+    Decimal.from_float(value)
   end
 end

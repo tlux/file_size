@@ -3,6 +3,11 @@ defmodule FileSize.Bit do
   A struct that represents a file size in bits as lowest possible value.
   """
 
+  @behaviour FileSize.Size
+
+  alias FileSize.Units
+  alias FileSize.Units.Info, as: UnitInfo
+
   defstruct [:value, :unit, :bits]
 
   @typedoc """
@@ -41,7 +46,26 @@ defmodule FileSize.Bit do
   @typedoc """
   The bit type.
   """
-  @type t :: %__MODULE__{value: number, unit: unit, bits: integer}
+  @type t :: %__MODULE__{value: Decimal.t(), unit: unit, bits: integer}
+
+  @impl true
+  def new(value, unit \\ :bit)
+
+  def new(value, %UnitInfo{mod: __MODULE__} = unit_info) do
+    bits = UnitInfo.normalize_value(unit_info, value)
+    value = UnitInfo.denormalize_value(unit_info, bits)
+    %__MODULE__{value: value, unit: unit_info.name, bits: bits}
+  end
+
+  def new(_value, %UnitInfo{name: unit}) do
+    raise ArgumentError,
+          "Unable to use unit #{inspect(unit)} " <>
+            "for type #{inspect(__MODULE__)}"
+  end
+
+  def new(value, unit) do
+    new(value, Units.fetch!(unit))
+  end
 end
 
 defimpl FileSize.Calculable, for: FileSize.Bit do
@@ -88,10 +112,6 @@ defimpl FileSize.Convertible, for: FileSize.Bit do
   alias FileSize.Units
   alias FileSize.Units.Info, as: UnitInfo
 
-  def new(size, bits) do
-    %{size | bits: bits}
-  end
-
   def normalized_value(size), do: size.bits
 
   def convert(%{unit: unit} = size, unit), do: size
@@ -105,6 +125,6 @@ defimpl FileSize.Convertible, for: FileSize.Bit do
     |> FileSize.new(to_unit)
   end
 
-  defp convert_between_types(value, Byte), do: Float.floor(value / 8)
+  defp convert_between_types(value, Byte), do: Decimal.div(value, 8)
   defp convert_between_types(value, _), do: value
 end

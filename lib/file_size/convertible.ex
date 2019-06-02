@@ -4,13 +4,6 @@ defprotocol FileSize.Convertible do
   """
 
   @doc """
-  Puts the normalized value in the given file size struct, finalizing the struct
-  creation.
-  """
-  @spec new(t, number) :: FileSize.t()
-  def new(size, normalized_value)
-
-  @doc """
   Gets the normalized value from the given file size struct.
   """
   @spec normalized_value(t) :: integer
