@@ -32,12 +32,16 @@ defmodule FileSize.Units.InfoTest do
       Enum.each(Units.list(), fn info ->
         factor = Info.get_factor(info)
 
-        assert Info.normalize_value(info, 1) == factor
-        assert Info.normalize_value(info, 2) == 2 * factor
+        assert Info.normalize_value(info, 1) ==
+                 Decimal.reduce(Decimal.new(factor))
+
+        assert Info.normalize_value(info, 2) ==
+                 Decimal.reduce(Decimal.new(2 * factor))
 
         result = Info.normalize_value(info, 2.2)
-        assert result == trunc(2.2 * factor)
-        assert is_integer(result)
+
+        assert Decimal.decimal?(result)
+        assert result == Decimal.reduce(Decimal.mult(factor, "2.2"))
       end)
     end
   end
@@ -48,9 +52,32 @@ defmodule FileSize.Units.InfoTest do
         factor = Info.get_factor(info)
         result = Info.denormalize_value(info, 2)
 
-        assert result == 2 / factor
-        assert is_float(result)
+        assert result == Decimal.div(2, factor)
+        assert Decimal.decimal?(result)
       end)
+    end
+  end
+
+  describe "sanitize_value/2" do
+    test "round when exp is 0" do
+      info = %Info{exp: 0}
+      sanitized_value = Decimal.new(2)
+
+      assert Info.sanitize_value(info, 1.54) == sanitized_value
+      assert Info.sanitize_value(info, 2) == sanitized_value
+
+      assert Info.sanitize_value(info, Decimal.from_float(2.2)) ==
+               sanitized_value
+    end
+
+    test "do not round when exp greater than 0" do
+      info = %Info{exp: 1}
+
+      assert Info.sanitize_value(info, 1.54) == Decimal.from_float(1.54)
+      assert Info.sanitize_value(info, 2) == Decimal.new(2)
+
+      assert Info.sanitize_value(info, Decimal.from_float(2.2)) ==
+               Decimal.from_float(2.2)
     end
   end
 end

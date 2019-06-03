@@ -45,11 +45,16 @@ defmodule FileSize.Units.Utils do
     Enum.find_value(Units.list(), orig_info.name, fn
       %{mod: ^mod, system: ^unit_system} = info ->
         value_range = Info.value_range(info)
-        if Enum.member?(value_range, value), do: info.name
+        if decimal_between?(value, value_range), do: info.name
 
       _ ->
         nil
     end)
+  end
+
+  defp decimal_between?(value, min..max) do
+    Decimal.cmp(value, min) in [:eq, :gt] &&
+      Decimal.cmp(value, max) in [:eq, :lt]
   end
 
   @spec parse_unit(FileSize.unit_symbol()) :: {:ok, FileSize.unit()} | :error

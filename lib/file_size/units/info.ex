@@ -3,6 +3,8 @@ defmodule FileSize.Units.Info do
   A struct that contains information for a particular unit.
   """
 
+  alias FileSize.Utils
+
   defstruct [:name, :mod, :exp, :system, :symbol]
 
   @bases %{iec: 1024, si: 1000}
@@ -56,29 +58,34 @@ defmodule FileSize.Units.Info do
 
   @doc false
   @spec normalize_value(t, Decimal.t() | number) :: integer
-  def normalize_value(info, value) do
-    value
-    |> number_to_decimal()
+  def normalize_value(info, denormalized_value) do
+    denormalized_value
+    |> Utils.number_to_decimal()
     |> Decimal.mult(get_factor(info))
-    |> Decimal.round(0, :floor)
-    |> Decimal.to_integer()
+    |> Decimal.reduce()
   end
 
   @doc false
   @spec denormalize_value(t, Decimal.t() | number) :: Decimal.t()
-  def denormalize_value(info, value) do
-    value
-    |> number_to_decimal()
+  def denormalize_value(info, normalized_value) do
+    normalized_value
+    |> Utils.number_to_decimal()
     |> Decimal.div(get_factor(info))
+    |> Decimal.reduce()
   end
 
-  defp number_to_decimal(%Decimal{} = value), do: value
-
-  defp number_to_decimal(value) when is_integer(value) do
-    Decimal.new(value)
+  @doc false
+  @spec sanitize_value(t, Decimal.t() | number) :: Decimal.t()
+  def sanitize_value(%{exp: 0}, value) do
+    value
+    |> Utils.number_to_decimal()
+    |> Decimal.round()
+    |> Decimal.reduce()
   end
 
-  defp number_to_decimal(value) when is_float(value) do
-    Decimal.from_float(value)
+  def sanitize_value(_unit_info, value) do
+    value
+    |> Utils.number_to_decimal()
+    |> Decimal.reduce()
   end
 end

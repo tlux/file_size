@@ -52,12 +52,10 @@ defmodule FileSize.Formatter do
   """
   @spec format_simple(FileSize.t()) :: String.t()
   def format_simple(size) do
+    value = Decimal.to_string(size.value, :normal)
     unit_info = Units.fetch!(size.unit)
-    value = sanitize_value(size.value, unit_info.exp)
     "#{value} #{unit_info.symbol}"
   end
-
-  defp sanitize_value(value, _), do: Decimal.to_string(value)
 
   defp format_number(value, opts) do
     opts =

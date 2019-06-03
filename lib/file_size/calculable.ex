@@ -1,6 +1,6 @@
 defprotocol FileSize.Calculable do
   @moduledoc """
-  A protocol that defines calculations that are possible on file sizes. 
+  A protocol that defines calculations that are possible on file sizes.
   """
 
   @doc """
@@ -9,7 +9,7 @@ defprotocol FileSize.Calculable do
   ## Examples
 
       iex> FileSize.add(FileSize.new(1, :kb), FileSize.new(2, :kb))
-      #FileSize<"3.0 kB">
+      #FileSize<"3 kB">
 
       iex> FileSize.add(FileSize.new(1, :b), FileSize.new(4, :bit))
       #FileSize<"12 bit">
@@ -29,7 +29,7 @@ defprotocol FileSize.Calculable do
   ## Examples
 
       iex> FileSize.subtract(FileSize.new(3, :kb), FileSize.new(1, :kb))
-      #FileSize<"2.0 kB">
+      #FileSize<"2 kB">
 
       iex> FileSize.subtract(FileSize.new(1, :b), FileSize.new(4, :bit))
       #FileSize<"4 bit">

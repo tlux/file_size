@@ -52,8 +52,8 @@ defmodule FileSize.Bit do
   def new(value, unit \\ :bit)
 
   def new(value, %UnitInfo{mod: __MODULE__} = unit_info) do
+    value = UnitInfo.sanitize_value(unit_info, value)
     bits = UnitInfo.normalize_value(unit_info, value)
-    value = UnitInfo.denormalize_value(unit_info, bits)
     %__MODULE__{value: value, unit: unit_info.name, bits: bits}
   end
 

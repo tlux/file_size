@@ -6,7 +6,7 @@ defprotocol FileSize.Convertible do
   @doc """
   Gets the normalized value from the given file size struct.
   """
-  @spec normalized_value(t) :: integer
+  @spec normalized_value(t) :: Decimal.t()
   def normalized_value(size)
 
   @doc """
@@ -18,10 +18,10 @@ defprotocol FileSize.Convertible do
       #FileSize<"2000 B">
 
       iex> FileSize.convert(FileSize.new(2000, :b), :kb)
-      #FileSize<"2.0 kB">
+      #FileSize<"2 kB">
 
       iex> FileSize.convert(FileSize.new(20, :kb), :kbit)
-      #FileSize<"160.0 kbit">
+      #FileSize<"160 kbit">
 
       iex> FileSize.convert(FileSize.new(2000, :b), :unknown)
       ** (FileSize.InvalidUnitError) Invalid unit: :unknown
