@@ -3,6 +3,8 @@ defprotocol FileSize.Convertible do
   A protocol that defines functions to convert file sizes to other units.
   """
 
+  alias FileSize.Units.Info, as: UnitInfo
+
   @doc """
   Gets the normalized value from the given file size struct.
   """
@@ -11,21 +13,7 @@ defprotocol FileSize.Convertible do
 
   @doc """
   Converts the given file size to a given unit.
-
-  ## Examples
-
-      iex> FileSize.convert(FileSize.new(2, :kb), :b)
-      #FileSize<"2000 B">
-
-      iex> FileSize.convert(FileSize.new(2000, :b), :kb)
-      #FileSize<"2 kB">
-
-      iex> FileSize.convert(FileSize.new(20, :kb), :kbit)
-      #FileSize<"160 kbit">
-
-      iex> FileSize.convert(FileSize.new(2000, :b), :unknown)
-      ** (FileSize.InvalidUnitError) Invalid unit: :unknown
   """
-  @spec convert(t, FileSize.unit()) :: FileSize.t()
-  def convert(size, to_unit)
+  @spec convert(t, UnitInfo.t()) :: FileSize.t()
+  def convert(size, unit_info)
 end

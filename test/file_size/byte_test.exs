@@ -20,15 +20,15 @@ defmodule FileSize.ByteTest do
              }
 
       assert Byte.new(1.2, :b) == %Byte{
-               value: Decimal.new(1),
+               value: Decimal.new("1.2"),
                unit: :b,
-               bytes: Decimal.new(1)
+               bytes: Decimal.new("1.2")
              }
 
       assert Byte.new(1.6, :b) == %Byte{
-               value: Decimal.new(2),
+               value: Decimal.new("1.6"),
                unit: :b,
-               bytes: Decimal.new(2)
+               bytes: Decimal.new("1.6")
              }
     end
 

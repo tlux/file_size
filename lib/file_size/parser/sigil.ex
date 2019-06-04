@@ -11,10 +11,10 @@ defmodule FileSize.Sigil do
   ## Examples
 
       iex> ~F(16 kB)
-      #FileSize<"16.0 kB">
+      #FileSize<"16 kB">
 
-      iex> ~F(8 Mibit)
-      #FileSize<"8.0 Mibit">
+      iex> ~F(8.2 Mibit)
+      #FileSize<"8.2 Mibit">
   """
   @spec sigil_F(String.t(), charlist) :: FileSize.t()
   def sigil_F(str, _modifiers) do

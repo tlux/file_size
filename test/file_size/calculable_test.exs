@@ -35,7 +35,7 @@ defmodule FileSize.CalculableTest do
 
     test "subtract byte and bit" do
       assert Calculable.subtract(FileSize.new(1, :b), FileSize.new(1, :bit)) ==
-               FileSize.new(7, :bit)
+               FileSize.new(0.875, :b)
     end
 
     test "subtract bit and bit" do

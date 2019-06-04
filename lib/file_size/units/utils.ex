@@ -8,10 +8,10 @@ defmodule FileSize.Units.Utils do
 
   @units_by_symbols Map.new(Units.list(), fn unit -> {unit.symbol, unit} end)
 
-  @unit_names_by_mods_and_systems_and_exps Map.new(Units.list(), fn info ->
-                                             {{info.mod, info.system, info.exp},
-                                              info.name}
-                                           end)
+  @units_by_mods_and_systems_and_exps Map.new(Units.list(), fn info ->
+                                        {{info.mod, info.system, info.exp},
+                                         info}
+                                      end)
 
   @spec equivalent_unit_for_system!(FileSize.unit(), FileSize.unit_system()) ::
           FileSize.unit() | no_return
@@ -26,11 +26,11 @@ defmodule FileSize.Units.Utils do
     raise InvalidUnitSystemError, unit_system: unit_system
   end
 
-  defp find_equivalent_unit_for_system(%{system: nil} = info, _), do: info.name
+  defp find_equivalent_unit_for_system(%{system: nil} = info, _), do: info
 
   defp find_equivalent_unit_for_system(info, unit_system) do
     Map.fetch!(
-      @unit_names_by_mods_and_systems_and_exps,
+      @units_by_mods_and_systems_and_exps,
       {info.mod, unit_system, info.exp}
     )
   end

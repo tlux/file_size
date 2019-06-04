@@ -8,20 +8,27 @@ defmodule FileSize.Units.UtilsTest do
 
   describe "equivalent_unit_for_system!/2" do
     test "success" do
-      assert Utils.equivalent_unit_for_system!(:b, :iec) == :b
-      assert Utils.equivalent_unit_for_system!(:b, :si) == :b
-      assert Utils.equivalent_unit_for_system!(:bit, :iec) == :bit
-      assert Utils.equivalent_unit_for_system!(:bit, :si) == :bit
+      assert Utils.equivalent_unit_for_system!(:b, :iec) == Units.fetch!(:b)
+      assert Utils.equivalent_unit_for_system!(:b, :si) == Units.fetch!(:b)
+      assert Utils.equivalent_unit_for_system!(:bit, :iec) == Units.fetch!(:bit)
+      assert Utils.equivalent_unit_for_system!(:bit, :si) == Units.fetch!(:bit)
 
-      assert Utils.equivalent_unit_for_system!(:kb, :iec) == :kib
-      assert Utils.equivalent_unit_for_system!(:kib, :si) == :kb
-      assert Utils.equivalent_unit_for_system!(:kb, :si) == :kb
-      assert Utils.equivalent_unit_for_system!(:kib, :iec) == :kib
+      assert Utils.equivalent_unit_for_system!(:kb, :iec) == Units.fetch!(:kib)
+      assert Utils.equivalent_unit_for_system!(:kib, :si) == Units.fetch!(:kb)
+      assert Utils.equivalent_unit_for_system!(:kb, :si) == Units.fetch!(:kb)
+      assert Utils.equivalent_unit_for_system!(:kib, :iec) == Units.fetch!(:kib)
 
-      assert Utils.equivalent_unit_for_system!(:kbit, :iec) == :kibit
-      assert Utils.equivalent_unit_for_system!(:kibit, :si) == :kbit
-      assert Utils.equivalent_unit_for_system!(:kbit, :si) == :kbit
-      assert Utils.equivalent_unit_for_system!(:kibit, :iec) == :kibit
+      assert Utils.equivalent_unit_for_system!(:kbit, :iec) ==
+               Units.fetch!(:kibit)
+
+      assert Utils.equivalent_unit_for_system!(:kibit, :si) ==
+               Units.fetch!(:kbit)
+
+      assert Utils.equivalent_unit_for_system!(:kbit, :si) ==
+               Units.fetch!(:kbit)
+
+      assert Utils.equivalent_unit_for_system!(:kibit, :iec) ==
+               Units.fetch!(:kibit)
     end
 
     test "error on unknown unit" do

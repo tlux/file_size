@@ -2,149 +2,166 @@ defmodule FileSize.ConvertibleTest do
   use ExUnit.Case
 
   alias FileSize.Convertible
-  alias FileSize.InvalidUnitError
+  alias FileSize.Units
 
   doctest FileSize.Convertible
 
   describe "convert/2" do
     test "get original size when units are the same" do
-      size = FileSize.new(1337, :kb)
+      unit_info = Units.fetch!(:kb)
+      size = FileSize.new(1337, unit_info)
 
-      assert Convertible.convert(size, :kb) == size
+      assert Convertible.convert(size, unit_info) == size
     end
 
     test "bytes to bits" do
-      size = Convertible.convert(FileSize.new(1, :b), :bit)
+      unit_info = Units.fetch!(:bit)
+      size = Convertible.convert(FileSize.new(1, :b), unit_info)
 
-      assert size == FileSize.new(8, :bit)
+      assert size == FileSize.new(8, unit_info)
     end
 
     test "bits to bytes" do
-      size = Convertible.convert(FileSize.new(8, :bit), :b)
+      unit_info = Units.fetch!(:b)
+      size = Convertible.convert(FileSize.new(8, :bit), unit_info)
 
-      assert size == FileSize.new(1, :b)
+      assert size == FileSize.new(1, unit_info)
     end
 
     test "bits to bytes with rounding" do
-      assert Convertible.convert(FileSize.new(9, :bit), :b) ==
-               FileSize.new(1, :b)
+      unit_info = Units.fetch!(:b)
 
-      assert Convertible.convert(FileSize.new(15, :bit), :b) ==
-               FileSize.new(2, :b)
+      assert Convertible.convert(FileSize.new(9, :bit), unit_info) ==
+               FileSize.new(1.125, unit_info)
+
+      assert Convertible.convert(FileSize.new(15, :bit), unit_info) ==
+               FileSize.new(1.875, unit_info)
     end
 
     test "bytes to kilobytes" do
-      size = Convertible.convert(FileSize.new(1000, :b), :kb)
+      unit_info = Units.fetch!(:kb)
+      size = Convertible.convert(FileSize.new(1000, :b), unit_info)
 
-      assert size == FileSize.new(1, :kb)
+      assert size == FileSize.new(1, unit_info)
     end
 
     test "bytes to kibibytes" do
-      size = Convertible.convert(FileSize.new(1024, :b), :kib)
+      unit_info = Units.fetch!(:kib)
+      size = Convertible.convert(FileSize.new(1024, :b), unit_info)
 
-      assert size == FileSize.new(1, :kib)
+      assert size == FileSize.new(1, unit_info)
     end
 
     test "kilobytes to bytes" do
-      size = Convertible.convert(FileSize.new(1, :kb), :b)
+      unit_info = Units.fetch!(:b)
+      size = Convertible.convert(FileSize.new(1, :kb), unit_info)
 
-      assert size == FileSize.new(1000, :b)
+      assert size == FileSize.new(1000, unit_info)
     end
 
     test "kibibytes to bytes" do
-      size = Convertible.convert(FileSize.new(1, :kib), :b)
+      unit_info = Units.fetch!(:b)
+      size = Convertible.convert(FileSize.new(1, :kib), unit_info)
 
-      assert size == FileSize.new(1024, :b)
+      assert size == FileSize.new(1024, unit_info)
     end
 
     test "bits to kilobits" do
-      size = Convertible.convert(FileSize.new(1000, :bit), :kbit)
+      unit_info = Units.fetch!(:kbit)
+      size = Convertible.convert(FileSize.new(1000, :bit), unit_info)
 
-      assert size == FileSize.new(1, :kbit)
+      assert size == FileSize.new(1, unit_info)
     end
 
     test "bits to kibibits" do
-      size = Convertible.convert(FileSize.new(1024, :bit), :kibit)
+      unit_info = Units.fetch!(:kibit)
+      size = Convertible.convert(FileSize.new(1024, :bit), unit_info)
 
-      assert size == FileSize.new(1, :kibit)
+      assert size == FileSize.new(1, unit_info)
     end
 
     test "kilobits to bits" do
-      size = Convertible.convert(FileSize.new(1, :kbit), :bit)
+      unit_info = Units.fetch!(:bit)
+      size = Convertible.convert(FileSize.new(1, :kbit), unit_info)
 
-      assert size == FileSize.new(1000, :bit)
+      assert size == FileSize.new(1000, unit_info)
     end
 
     test "kibibits to bits" do
-      size = Convertible.convert(FileSize.new(1, :kibit), :bit)
+      unit_info = Units.fetch!(:bit)
+      size = Convertible.convert(FileSize.new(1, :kibit), unit_info)
 
-      assert size == FileSize.new(1024, :bit)
+      assert size == FileSize.new(1024, unit_info)
     end
 
     test "megabytes to bytes" do
-      size = Convertible.convert(FileSize.new(1, :mb), :b)
+      unit_info = Units.fetch!(:b)
+      size = Convertible.convert(FileSize.new(1, :mb), unit_info)
 
-      assert size == FileSize.new(1_000_000, :b)
+      assert size == FileSize.new(1_000_000, unit_info)
     end
 
     test "mebibytes to bytes" do
-      size = Convertible.convert(FileSize.new(1, :mib), :b)
+      unit_info = Units.fetch!(:b)
+      size = Convertible.convert(FileSize.new(1, :mib), unit_info)
 
-      assert size == FileSize.new(1_048_576, :b)
+      assert size == FileSize.new(1_048_576, unit_info)
     end
 
     test "megabytes to kilobytes" do
-      size = Convertible.convert(FileSize.new(1, :mb), :kb)
+      unit_info = Units.fetch!(:kb)
+      size = Convertible.convert(FileSize.new(1, :mb), unit_info)
 
-      assert size == FileSize.new(1000, :kb)
+      assert size == FileSize.new(1000, unit_info)
     end
 
     test "megabytes to kibibytes" do
-      size = Convertible.convert(FileSize.new(1, :mb), :kib)
+      unit_info = Units.fetch!(:kib)
+      size = Convertible.convert(FileSize.new(1, :mb), unit_info)
 
-      assert size == FileSize.new(976.5625, :kib)
+      assert size == FileSize.new(976.5625, unit_info)
     end
 
     test "mebibytes to kilobytes" do
-      size = Convertible.convert(FileSize.new(1, :mib), :kb)
+      unit_info = Units.fetch!(:kb)
+      size = Convertible.convert(FileSize.new(1, :mib), unit_info)
 
-      assert size == FileSize.new(1048.576, :kb)
+      assert size == FileSize.new(1048.576, unit_info)
     end
 
     test "megabits to bits" do
-      size = Convertible.convert(FileSize.new(1, :mbit), :bit)
+      unit_info = Units.fetch!(:bit)
+      size = Convertible.convert(FileSize.new(1, :mbit), unit_info)
 
-      assert size == FileSize.new(1_000_000, :bit)
+      assert size == FileSize.new(1_000_000, unit_info)
     end
 
     test "mebibits to bits" do
-      size = Convertible.convert(FileSize.new(1, :mibit), :bit)
+      unit_info = Units.fetch!(:bit)
+      size = Convertible.convert(FileSize.new(1, :mibit), unit_info)
 
-      assert size == FileSize.new(1_048_576, :bit)
+      assert size == FileSize.new(1_048_576, unit_info)
     end
 
     test "megabits to kilobits" do
-      size = Convertible.convert(FileSize.new(1, :mbit), :kbit)
+      unit_info = Units.fetch!(:kbit)
+      size = Convertible.convert(FileSize.new(1, :mbit), unit_info)
 
-      assert size == FileSize.new(1000, :kbit)
+      assert size == FileSize.new(1000, unit_info)
     end
 
     test "megabits to kibibits" do
-      size = Convertible.convert(FileSize.new(1, :mbit), :kibit)
+      unit_info = Units.fetch!(:kibit)
+      size = Convertible.convert(FileSize.new(1, :mbit), unit_info)
 
-      assert size == FileSize.new(976.5625, :kibit)
+      assert size == FileSize.new(976.5625, unit_info)
     end
 
     test "mebibits to kilobits" do
-      size = Convertible.convert(FileSize.new(1, :mibit), :kbit)
+      unit_info = Units.fetch!(:kbit)
+      size = Convertible.convert(FileSize.new(1, :mibit), unit_info)
 
-      assert size == FileSize.new(1048.576, :kbit)
-    end
-
-    test "invalid unit" do
-      assert_raise InvalidUnitError, "Invalid unit: :unknown", fn ->
-        Convertible.convert(FileSize.new(1, :b), :unknown)
-      end
+      assert size == FileSize.new(1048.576, unit_info)
     end
   end
 end

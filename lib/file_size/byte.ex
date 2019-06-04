@@ -6,7 +6,7 @@ defmodule FileSize.Byte do
 
   @behaviour FileSize.Size
 
-  alias FileSize.Units
+  alias FileSize.Size
   alias FileSize.Units.Info, as: UnitInfo
 
   defstruct [:value, :unit, :bytes]
@@ -47,25 +47,11 @@ defmodule FileSize.Byte do
   @typedoc """
   The byte type.
   """
-  @type t :: %__MODULE__{value: Decimal.t(), unit: unit, bytes: integer}
+  @type t :: %__MODULE__{value: Decimal.t(), unit: unit, bytes: Decimal.t()}
 
   @impl true
-  def new(value, unit \\ :b)
-
-  def new(value, %UnitInfo{mod: __MODULE__} = unit_info) do
-    value = UnitInfo.sanitize_value(unit_info, value)
-    bytes = UnitInfo.normalize_value(unit_info, value)
-    %__MODULE__{value: value, unit: unit_info.name, bytes: bytes}
-  end
-
-  def new(_value, %UnitInfo{name: unit}) do
-    raise ArgumentError,
-          "Unable to use unit #{inspect(unit)} " <>
-            "for type #{inspect(__MODULE__)}"
-  end
-
-  def new(value, unit) do
-    new(value, Units.fetch!(unit))
+  def new(value, unit_or_unit_info \\ :b) do
+    Size.new(__MODULE__, :bytes, value, unit_or_unit_info)
   end
 end
 
@@ -74,21 +60,29 @@ defimpl FileSize.Calculable, for: FileSize.Byte do
   alias FileSize.Byte
 
   def add(size, %Bit{} = other_size) do
-    size = FileSize.convert(size, :bit)
-    FileSize.from_bits(size.bits + other_size.bits, other_size.unit)
+    size
+    |> FileSize.convert(:bit)
+    |> FileSize.add(other_size)
+    |> FileSize.convert(other_size.unit)
   end
 
   def add(size, %Byte{} = other_size) do
-    FileSize.from_bytes(size.bytes + other_size.bytes, size.unit)
+    size.bytes
+    |> Decimal.add(other_size.bytes)
+    |> FileSize.from_bytes(size.unit)
   end
 
   def subtract(size, %Bit{} = other_size) do
-    size = FileSize.convert(size, :bit)
-    FileSize.from_bits(size.bits - other_size.bits, other_size.unit)
+    size
+    |> FileSize.convert(:bit)
+    |> FileSize.subtract(other_size)
+    |> FileSize.convert(size.unit)
   end
 
   def subtract(size, %Byte{} = other_size) do
-    FileSize.from_bytes(size.bytes - other_size.bytes, size.unit)
+    size.bytes
+    |> Decimal.sub(other_size.bytes)
+    |> FileSize.from_bytes(other_size.unit)
   end
 end
 
@@ -109,20 +103,18 @@ end
 
 defimpl FileSize.Convertible, for: FileSize.Byte do
   alias FileSize.Bit
-  alias FileSize.Units
   alias FileSize.Units.Info, as: UnitInfo
 
   def normalized_value(size), do: size.bytes
 
-  def convert(%{unit: unit} = size, unit), do: size
+  def convert(%{unit: unit} = size, %{name: unit}), do: size
 
-  def convert(size, to_unit) do
-    unit_info = Units.fetch!(to_unit)
+  def convert(size, unit_info) do
     value = UnitInfo.denormalize_value(unit_info, size.bytes)
 
     value
     |> convert_between_types(unit_info.mod)
-    |> FileSize.new(to_unit)
+    |> FileSize.new(unit_info)
   end
 
   defp convert_between_types(value, Bit), do: Decimal.mult(value, 8)

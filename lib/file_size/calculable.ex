@@ -32,7 +32,7 @@ defprotocol FileSize.Calculable do
       #FileSize<"2 kB">
 
       iex> FileSize.subtract(FileSize.new(1, :b), FileSize.new(4, :bit))
-      #FileSize<"4 bit">
+      #FileSize<"0.5 B">
   """
   @spec subtract(t, FileSize.t()) :: FileSize.t()
   def subtract(size, other_size)

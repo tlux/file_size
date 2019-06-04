@@ -7,7 +7,7 @@ defmodule FileSize.Units.Info do
 
   defstruct [:name, :mod, :exp, :system, :symbol]
 
-  @bases %{iec: 1024, si: 1000}
+  @coefs %{iec: 1024, si: 1000}
 
   @type t :: %{
           name: FileSize.unit(),
@@ -30,34 +30,35 @@ defmodule FileSize.Units.Info do
   end
 
   defp get_factor_by_system_and_exp(system, exp) do
-    @bases |> Map.fetch!(system) |> Math.pow(exp)
+    @coefs |> Map.fetch!(system) |> Math.pow(exp)
   end
 
   @doc """
   Gets the min value of the given unit.
   """
   @spec min_value(t) :: non_neg_integer
+  def min_value(unit_info)
   def min_value(%{exp: 0}), do: 0
-  def min_value(info), do: get_factor(info)
+  def min_value(unit_info), do: get_factor(unit_info)
 
   @doc """
   Gets the max value of the given unit.
   """
   @spec max_value(t) :: non_neg_integer
-  def max_value(info) do
-    get_factor_by_system_and_exp(info.system, info.exp + 1) - 1
+  def max_value(unit_info) do
+    get_factor_by_system_and_exp(unit_info.system, unit_info.exp + 1) - 1
   end
 
   @doc """
   Gets a range of min and max values for the given unit.
   """
   @spec value_range(t) :: Range.t()
-  def value_range(info) do
-    min_value(info)..max_value(info)
+  def value_range(unit_info) do
+    min_value(unit_info)..max_value(unit_info)
   end
 
   @doc false
-  @spec normalize_value(t, Decimal.t() | number) :: integer
+  @spec normalize_value(t, Decimal.t() | number) :: Decimal.t()
   def normalize_value(info, denormalized_value) do
     denormalized_value
     |> Utils.number_to_decimal()
@@ -67,25 +68,10 @@ defmodule FileSize.Units.Info do
 
   @doc false
   @spec denormalize_value(t, Decimal.t() | number) :: Decimal.t()
-  def denormalize_value(info, normalized_value) do
+  def denormalize_value(unit_info, normalized_value) do
     normalized_value
     |> Utils.number_to_decimal()
-    |> Decimal.div(get_factor(info))
-    |> Decimal.reduce()
-  end
-
-  @doc false
-  @spec sanitize_value(t, Decimal.t() | number) :: Decimal.t()
-  def sanitize_value(%{exp: 0}, value) do
-    value
-    |> Utils.number_to_decimal()
-    |> Decimal.round()
-    |> Decimal.reduce()
-  end
-
-  def sanitize_value(_unit_info, value) do
-    value
-    |> Utils.number_to_decimal()
+    |> Decimal.div(get_factor(unit_info))
     |> Decimal.reduce()
   end
 end

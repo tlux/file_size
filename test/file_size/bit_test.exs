@@ -20,15 +20,15 @@ defmodule FileSize.BitTest do
              }
 
       assert Bit.new(1.2, :bit) == %Bit{
-               value: Decimal.new(1),
+               value: Decimal.new("1.2"),
                unit: :bit,
-               bits: Decimal.new(1)
+               bits: Decimal.new("1.2")
              }
 
       assert Bit.new(1.6, :bit) == %Bit{
-               value: Decimal.new(2),
+               value: Decimal.new("1.6"),
                unit: :bit,
-               bits: Decimal.new(2)
+               bits: Decimal.new("1.6")
              }
     end
 

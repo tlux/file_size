@@ -311,9 +311,15 @@ defmodule FileSizeTest do
 
     test "invalid value" do
       assert_raise ArgumentError,
-                   ~s[Value must be integer or float (but "invalid" given)],
+                   ~s[Value must be number, Decimal or string (got "invalid")],
                    fn ->
                      FileSize.new("invalid", :b)
+                   end
+
+      assert_raise ArgumentError,
+                   ~s[Value must be number, Decimal or string (got :invalid)],
+                   fn ->
+                     FileSize.new(:invalid, :b)
                    end
     end
   end

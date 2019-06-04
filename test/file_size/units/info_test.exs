@@ -57,27 +57,4 @@ defmodule FileSize.Units.InfoTest do
       end)
     end
   end
-
-  describe "sanitize_value/2" do
-    test "round when exp is 0" do
-      info = %Info{exp: 0}
-      sanitized_value = Decimal.new(2)
-
-      assert Info.sanitize_value(info, 1.54) == sanitized_value
-      assert Info.sanitize_value(info, 2) == sanitized_value
-
-      assert Info.sanitize_value(info, Decimal.from_float(2.2)) ==
-               sanitized_value
-    end
-
-    test "do not round when exp greater than 0" do
-      info = %Info{exp: 1}
-
-      assert Info.sanitize_value(info, 1.54) == Decimal.from_float(1.54)
-      assert Info.sanitize_value(info, 2) == Decimal.new(2)
-
-      assert Info.sanitize_value(info, Decimal.from_float(2.2)) ==
-               Decimal.from_float(2.2)
-    end
-  end
 end
