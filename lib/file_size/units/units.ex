@@ -105,13 +105,14 @@ defmodule FileSize.Units do
   def equivalent_unit_for_system!(unit_or_info, unit_system)
 
   def equivalent_unit_for_system!(%Info{} = info, unit_system) do
+    validate_unit_system!(unit_system)
     find_equivalent_unit_for_system(info, unit_system)
   end
 
   def equivalent_unit_for_system!(unit, unit_system) do
     unit
     |> fetch!()
-    |> find_equivalent_unit_for_system(unit_system)
+    |> equivalent_unit_for_system!(unit_system)
   end
 
   defp find_equivalent_unit_for_system(%{system: nil} = info, _), do: info
@@ -124,8 +125,6 @@ defmodule FileSize.Units do
   end
 
   defp find_equivalent_unit_for_system(info, unit_system) do
-    validate_unit_system!(unit_system)
-
     Map.fetch!(
       @units_by_mods_and_systems_and_exps,
       {info.mod, unit_system, info.exp}

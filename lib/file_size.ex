@@ -389,7 +389,7 @@ defmodule FileSize do
   @doc since: "1.1.0"
   @spec scale(t, nil | unit_system) :: t
   def scale(size, unit_system \\ nil) do
-    convert(size, Units.appropriate_unit_for_size(size, unit_system))
+    convert(size, Units.appropriate_unit_for_size!(size, unit_system))
   end
 
   defdelegate compare(size, other_size), to: Comparable

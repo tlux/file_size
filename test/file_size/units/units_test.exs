@@ -227,5 +227,16 @@ defmodule FileSize.UnitsTest do
       assert Units.appropriate_unit_for_size!(FileSize.new(0.1, :mb), :iec) ==
                Units.fetch!(:kib)
     end
+
+    test "raise on invalid unit" do
+      assert_raise InvalidUnitSystemError,
+                   "Invalid unit system: :unknown",
+                   fn ->
+                     Units.appropriate_unit_for_size!(
+                       FileSize.new(2000, :b),
+                       :unknown
+                     )
+                   end
+    end
   end
 end
