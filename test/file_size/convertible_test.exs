@@ -6,6 +6,20 @@ defmodule FileSize.ConvertibleTest do
 
   doctest FileSize.Convertible
 
+  describe "normalized_value/1" do
+    test "from Bit" do
+      size = FileSize.new(1337, :kbit)
+
+      assert Convertible.normalized_value(size) == size.bits
+    end
+
+    test "from Byte" do
+      size = FileSize.new(1337, :kb)
+
+      assert Convertible.normalized_value(size) == size.bytes
+    end
+  end
+
   describe "convert/2" do
     test "get original size when units are the same" do
       unit_info = Units.fetch!(:kb)
