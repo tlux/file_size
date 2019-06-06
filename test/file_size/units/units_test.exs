@@ -136,95 +136,95 @@ defmodule FileSize.UnitsTest do
     end
   end
 
-  describe "appropriate_unit_for_size/1" do
+  describe "appropriate_unit_for_size!/1" do
     test "detect kilobytes" do
-      assert Units.appropriate_unit_for_size(FileSize.new(1000, :b)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1000, :b)) ==
                Units.fetch!(:kb)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(1, :kb)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1, :kb)) ==
                Units.fetch!(:kb)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mb)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(0.1, :mb)) ==
                Units.fetch!(:kb)
     end
 
     test "detect kibibytes" do
-      assert Units.appropriate_unit_for_size(FileSize.new(1, :kib)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1, :kib)) ==
                Units.fetch!(:kib)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mib)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(0.1, :mib)) ==
                Units.fetch!(:kib)
     end
 
     test "detect megabytes" do
-      assert Units.appropriate_unit_for_size(FileSize.new(1000, :kb)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1000, :kb)) ==
                Units.fetch!(:mb)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(1, :mb)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1, :mb)) ==
                Units.fetch!(:mb)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :gb)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(0.1, :gb)) ==
                Units.fetch!(:mb)
     end
 
     test "detect mebibytes" do
-      assert Units.appropriate_unit_for_size(FileSize.new(1024, :kib)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1024, :kib)) ==
                Units.fetch!(:mib)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(1, :mib)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1, :mib)) ==
                Units.fetch!(:mib)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :gib)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(0.1, :gib)) ==
                Units.fetch!(:mib)
     end
 
     test "detect megabits" do
-      assert Units.appropriate_unit_for_size(FileSize.new(1_000_000, :bit)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1_000_000, :bit)) ==
                Units.fetch!(:mbit)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(1000, :kbit)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1000, :kbit)) ==
                Units.fetch!(:mbit)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(1, :mbit)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1, :mbit)) ==
                Units.fetch!(:mbit)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :gbit)) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(0.1, :gbit)) ==
                Units.fetch!(:mbit)
     end
   end
 
-  describe "appropriate_unit_for_size/2" do
+  describe "appropriate_unit_for_size!/2" do
     test "detect kilobytes" do
-      assert Units.appropriate_unit_for_size(FileSize.new(1000, :b), :si) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1000, :b), :si) ==
                Units.fetch!(:kb)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(1, :kb), :si) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1, :kb), :si) ==
                Units.fetch!(:kb)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mb), :si) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(0.1, :mb), :si) ==
                Units.fetch!(:kb)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(1, :kib), :si) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1, :kib), :si) ==
                Units.fetch!(:kb)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mib), :si) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(0.1, :mib), :si) ==
                Units.fetch!(:kb)
     end
 
     test "detect kibibytes" do
-      assert Units.appropriate_unit_for_size(FileSize.new(1024, :b), :iec) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1024, :b), :iec) ==
                Units.fetch!(:kib)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(2, :kb), :iec) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(2, :kb), :iec) ==
                Units.fetch!(:kib)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(1, :kib), :iec) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(1, :kib), :iec) ==
                Units.fetch!(:kib)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mib), :iec) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(0.1, :mib), :iec) ==
                Units.fetch!(:kib)
 
-      assert Units.appropriate_unit_for_size(FileSize.new(0.1, :mb), :iec) ==
+      assert Units.appropriate_unit_for_size!(FileSize.new(0.1, :mb), :iec) ==
                Units.fetch!(:kib)
     end
   end

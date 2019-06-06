@@ -114,11 +114,6 @@ defmodule FileSize.Units do
     |> find_equivalent_unit_for_system(unit_system)
   end
 
-  defp find_equivalent_unit_for_system(_info, unit_system)
-       when unit_system not in @unit_systems do
-    raise InvalidUnitSystemError, unit_system: unit_system
-  end
-
   defp find_equivalent_unit_for_system(%{system: nil} = info, _), do: info
 
   defp find_equivalent_unit_for_system(
@@ -129,6 +124,8 @@ defmodule FileSize.Units do
   end
 
   defp find_equivalent_unit_for_system(info, unit_system) do
+    validate_unit_system!(unit_system)
+
     Map.fetch!(
       @units_by_mods_and_systems_and_exps,
       {info.mod, unit_system, info.exp}
@@ -136,12 +133,13 @@ defmodule FileSize.Units do
   end
 
   @doc false
-  @spec appropriate_unit_for_size(FileSize.t(), nil | FileSize.unit_system()) ::
-          Info.t()
-  def appropriate_unit_for_size(size, unit_system \\ nil) do
+  @spec appropriate_unit_for_size!(FileSize.t(), nil | FileSize.unit_system()) ::
+          Info.t() | no_return
+  def appropriate_unit_for_size!(size, unit_system \\ nil) do
     value = Convertible.normalized_value(size)
     %{mod: mod} = orig_info = fetch!(size.unit)
     unit_system = unit_system || orig_info.system || :si
+    validate_unit_system!(unit_system)
 
     Enum.find_value(@units, orig_info, fn
       %{mod: ^mod, system: ^unit_system} = info ->
@@ -155,5 +153,13 @@ defmodule FileSize.Units do
   defp decimal_between?(value, min..max) do
     Decimal.cmp(value, min) in [:eq, :gt] &&
       Decimal.cmp(value, max) in [:eq, :lt]
+  end
+
+  defp validate_unit_system!(unit_system) when unit_system in @unit_systems do
+    :ok
+  end
+
+  defp validate_unit_system!(unit_system) do
+    raise InvalidUnitSystemError, unit_system: unit_system
   end
 end
