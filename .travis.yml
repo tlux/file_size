@@ -1,6 +1,8 @@
 language: elixir
 
-script: mix test --cover
+script:
+  - mix credo --strict
+  - mix test --cover
 
 matrix:
   include:

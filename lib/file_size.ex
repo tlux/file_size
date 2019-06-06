@@ -469,7 +469,9 @@ defmodule FileSize do
   end
 
   @doc """
-  Converts the given file size to the most appropriate unit.
+  Converts the given file size to the most appropriate unit. When no unit system
+  is specified, the unit system of the source file size is used. If no unit
+  system could be inferred from the size, the SI unit system is used.
 
   ## Examples
 
