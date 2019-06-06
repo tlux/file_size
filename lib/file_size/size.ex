@@ -9,10 +9,10 @@ defmodule FileSize.Size do
 
   @callback new(
               value :: number | Decimal.t(),
-              unit :: FileSize.unit() | UnitInfo.t()
+              unit :: FileSize.unit()
             ) :: FileSize.t() | no_return
 
-  @spec new(module, atom, number | Decimal.t(), FileSize.unit() | UnitInfo.t()) ::
+  @spec new(module, atom, number | Decimal.t(), FileSize.unit()) ::
           FileSize.t() | no_return
   def new(mod, normalized_key, value, %{mod: mod} = unit_info) do
     value = sanitize_value(value)

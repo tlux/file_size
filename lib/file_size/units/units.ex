@@ -74,9 +74,9 @@ defmodule FileSize.Units do
   """
   @doc since: "2.0.0"
   @spec fetch(FileSize.unit()) :: {:ok, Info.t()} | :error
-  def fetch(unit) do
-    Map.fetch(@units_by_names, unit)
-  end
+  def fetch(unit_or_unit_info)
+  def fetch(%Info{} = unit), do: {:ok, unit}
+  def fetch(unit), do: Map.fetch(@units_by_names, unit)
 
   @doc """
   Gets unit info for the unit specified by the given name. Raises when the unit
@@ -98,10 +98,8 @@ defmodule FileSize.Units do
   end
 
   @doc false
-  @spec equivalent_unit_for_system!(
-          FileSize.unit() | Info.t(),
-          FileSize.unit_system()
-        ) :: Info.t() | no_return
+  @spec equivalent_unit_for_system!(FileSize.unit(), FileSize.unit_system()) ::
+          Info.t() | no_return
   def equivalent_unit_for_system!(unit_or_info, unit_system)
 
   def equivalent_unit_for_system!(%Info{} = info, unit_system) do

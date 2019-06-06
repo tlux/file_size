@@ -16,16 +16,16 @@ defmodule FileSize.ConvertibleTest do
 
     test "bytes to bits" do
       unit_info = Units.fetch!(:bit)
-      size = Convertible.convert(FileSize.new(1, :b), unit_info)
 
-      assert size == FileSize.new(8, unit_info)
+      assert Convertible.convert(FileSize.new(1, :b), unit_info) ==
+               FileSize.new(8, unit_info)
     end
 
     test "bits to bytes" do
       unit_info = Units.fetch!(:b)
-      size = Convertible.convert(FileSize.new(8, :bit), unit_info)
 
-      assert size == FileSize.new(1, unit_info)
+      assert Convertible.convert(FileSize.new(8, :bit), unit_info) ==
+               FileSize.new(1, unit_info)
     end
 
     test "bits to bytes with rounding" do

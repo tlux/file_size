@@ -338,19 +338,21 @@ defmodule FileSizeTest do
   describe "from_bytes/2" do
     test "as bytes" do
       assert FileSize.from_bytes(1337, :b) == FileSize.new(1337, :b)
+      assert FileSize.from_bytes(1337, convert: :b) == FileSize.new(1337, :b)
     end
 
     test "as kB" do
       assert FileSize.from_bytes(1337, :kb) == FileSize.new(1.337, :kb)
+      assert FileSize.from_bytes(1337, convert: :kb) == FileSize.new(1.337, :kb)
     end
 
     test "scaled in SI system" do
-      assert FileSize.from_bytes(1337, {:system, :si}) ==
+      assert FileSize.from_bytes(1337, scale: :si) ==
                FileSize.new(1.337, :kb)
     end
 
     test "scaled in IEC system" do
-      assert FileSize.from_bytes(1337, {:system, :iec}) ==
+      assert FileSize.from_bytes(1337, scale: :iec) ==
                FileSize.new(1.3056640625, :kib)
     end
 
@@ -377,12 +379,12 @@ defmodule FileSizeTest do
     end
 
     test "scaled in SI system" do
-      assert FileSize.from_bits(1337, {:system, :si}) ==
+      assert FileSize.from_bits(1337, scale: :si) ==
                FileSize.new(1.337, :kbit)
     end
 
     test "scaled in IEC system" do
-      assert FileSize.from_bits(1337, {:system, :iec}) ==
+      assert FileSize.from_bits(1337, scale: :iec) ==
                FileSize.new(1.3056640625, :kibit)
     end
 
@@ -415,16 +417,18 @@ defmodule FileSizeTest do
     end
 
     test "success with unit", %{path: path, bytes: bytes} do
-      assert FileSize.from_file(path, :kb) ==
-               {:ok, FileSize.from_bytes(bytes, :kb)}
+      result = {:ok, FileSize.from_bytes(bytes, :kb)}
+
+      assert FileSize.from_file(path, :kb) == result
+      assert FileSize.from_file(path, convert: :kb) == result
     end
 
     test "success with unit system", %{path: path, bytes: bytes} do
-      assert FileSize.from_file(path, {:system, :si}) ==
-               {:ok, FileSize.from_bytes(bytes, {:system, :si})}
+      assert FileSize.from_file(path, scale: :si) ==
+               {:ok, FileSize.from_bytes(bytes, scale: :si)}
 
-      assert FileSize.from_file(path, {:system, :iec}) ==
-               {:ok, FileSize.from_bytes(bytes, {:system, :iec})}
+      assert FileSize.from_file(path, scale: :iec) ==
+               {:ok, FileSize.from_bytes(bytes, scale: :iec)}
     end
 
     test "file not found" do
@@ -436,11 +440,25 @@ defmodule FileSizeTest do
       assert_raise InvalidUnitError, "Invalid unit: :unknown", fn ->
         FileSize.from_file("test/fixtures/sample.txt", :unknown)
       end
+
+      assert_raise InvalidUnitError, "Invalid unit: :unknown", fn ->
+        FileSize.from_file("test/fixtures/sample.txt", convert: :unknown)
+      end
+    end
+
+    test "invalid unit system" do
+      assert_raise InvalidUnitSystemError,
+                   "Invalid unit system: :unknown",
+                   fn ->
+                     FileSize.from_file("test/fixtures/sample.txt",
+                       scale: :unknown
+                     )
+                   end
     end
   end
 
   describe "from_file!/1" do
-    test "success" do
+    test "success with unit" do
       path = "test/fixtures/sample.txt"
       %{size: bytes} = File.stat!(path)
 
@@ -510,49 +528,56 @@ defmodule FileSizeTest do
 
   describe "convert/2" do
     test "convert to unit" do
-      size = FileSize.new(1, :b)
+      size = FileSize.new(10, :kb)
 
-      assert FileSize.convert(size, :bit) ==
-               Convertible.convert(size, Units.fetch!(:bit))
+      Enum.each([:bit, :kbit, :kibit, :b, :kib], fn unit ->
+        unit_info = Units.fetch!(unit)
+        result = Convertible.convert(size, unit_info)
+
+        assert FileSize.convert(size, unit) == result
+        assert FileSize.convert(size, unit_info) == result
+        assert FileSize.convert(size, unit: unit) == result
+        assert FileSize.convert(size, unit: unit_info) == result
+      end)
     end
 
     test "no-op when converting bytes to unit system" do
       size = FileSize.new(1337, :b)
 
-      assert FileSize.convert(size, {:system, :si}) == size
-      assert FileSize.convert(size, {:system, :iec}) == size
+      assert FileSize.convert(size, system: :si) == size
+      assert FileSize.convert(size, system: :iec) == size
     end
 
     test "no-op when converting bits to unit system" do
       size = FileSize.new(1337, :bit)
 
-      assert FileSize.convert(size, {:system, :si}) == size
-      assert FileSize.convert(size, {:system, :iec}) == size
+      assert FileSize.convert(size, system: :si) == size
+      assert FileSize.convert(size, system: :iec) == size
     end
 
     test "convert SI to SI unit system" do
       size = FileSize.new(1337, :kb)
 
-      assert FileSize.convert(size, {:system, :si}) == size
+      assert FileSize.convert(size, system: :si) == size
     end
 
     test "convert IEC to IEC unit system" do
       size = FileSize.new(1337, :kib)
 
-      assert FileSize.convert(size, {:system, :iec}) == size
+      assert FileSize.convert(size, system: :iec) == size
     end
 
     test "convert SI to IEC unit system" do
       size = FileSize.new(1337, :kb)
 
-      assert FileSize.convert(size, {:system, :iec}) ==
+      assert FileSize.convert(size, system: :iec) ==
                FileSize.convert(size, :kib)
     end
 
     test "convert IEC to SI unit system" do
       size = FileSize.new(1337, :kib)
 
-      assert FileSize.convert(size, {:system, :si}) ==
+      assert FileSize.convert(size, system: :si) ==
                FileSize.convert(size, :kb)
     end
 
@@ -565,6 +590,15 @@ defmodule FileSizeTest do
                               :unknown
                             )
                    end
+
+      assert_raise InvalidUnitError,
+                   "Invalid unit: :unknown",
+                   fn ->
+                     assert FileSize.convert(
+                              FileSize.new(1337, :kb),
+                              unit: :unknown
+                            )
+                   end
     end
 
     test "invalid unit system" do
@@ -573,7 +607,7 @@ defmodule FileSizeTest do
                    fn ->
                      assert FileSize.convert(
                               FileSize.new(1337, :kb),
-                              {:system, :unknown}
+                              system: :unknown
                             )
                    end
     end
@@ -762,16 +796,17 @@ defmodule FileSizeTest do
     test "delegate to Calculable and convert to unit" do
       a = FileSize.new(1, :b)
       b = FileSize.new(2, :b)
+      result = FileSize.convert(Calculable.add(a, b), :kb)
 
-      assert FileSize.add(a, b, :kb) ==
-               FileSize.convert(Calculable.add(a, b), :kb)
+      assert FileSize.add(a, b, :kb) == result
+      assert FileSize.add(a, b, unit: :kb) == result
     end
 
     test "delegate to Calculable and convert to unit system" do
       a = FileSize.new(1, :kb)
       b = FileSize.new(2, :kb)
 
-      assert FileSize.add(a, b, {:system, :iec}) ==
+      assert FileSize.add(a, b, system: :iec) ==
                FileSize.convert(Calculable.add(a, b), :kib)
     end
   end
@@ -789,16 +824,17 @@ defmodule FileSizeTest do
     test "delegate to Calculable and convert to unit" do
       a = FileSize.new(2, :b)
       b = FileSize.new(1, :b)
+      result = FileSize.convert(Calculable.subtract(a, b), :kb)
 
-      assert FileSize.subtract(a, b, :kb) ==
-               FileSize.convert(Calculable.subtract(a, b), :kb)
+      assert FileSize.subtract(a, b, :kb) == result
+      assert FileSize.subtract(a, b, unit: :kb) == result
     end
 
     test "delegate to Calculable and convert to unit system" do
       a = FileSize.new(3, :kb)
       b = FileSize.new(1, :kb)
 
-      assert FileSize.subtract(a, b, {:system, :iec}) ==
+      assert FileSize.subtract(a, b, system: :iec) ==
                FileSize.convert(Calculable.subtract(a, b), :kib)
     end
   end

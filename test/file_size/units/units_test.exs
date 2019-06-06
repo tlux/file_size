@@ -8,6 +8,7 @@ defmodule FileSize.UnitsTest do
   describe "fetch/1" do
     test "success" do
       Enum.each(Units.list(), fn info ->
+        assert Units.fetch(info) == {:ok, info}
         assert Units.fetch(info.name) == {:ok, info}
       end)
     end
@@ -20,6 +21,7 @@ defmodule FileSize.UnitsTest do
   describe "fetch!/1" do
     test "success" do
       Enum.each(Units.list(), fn info ->
+        assert Units.fetch!(info) == info
         assert Units.fetch!(info.name) == info
       end)
     end
