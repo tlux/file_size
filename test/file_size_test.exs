@@ -10,6 +10,7 @@ defmodule FileSizeTest do
   alias FileSize.InvalidUnitError
   alias FileSize.InvalidUnitSystemError
   alias FileSize.Parser
+  alias FileSize.Units
 
   doctest FileSize,
     except: [
@@ -23,9 +24,9 @@ defmodule FileSizeTest do
   describe "new/1" do
     test "use byte as default unit" do
       assert FileSize.new(1) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :b,
-               bytes: 1
+               bytes: Decimal.new(1)
              }
     end
   end
@@ -33,273 +34,273 @@ defmodule FileSizeTest do
   describe "new/2" do
     test "bit" do
       assert FileSize.new(1, :bit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :bit,
-               bits: 1
+               bits: Decimal.new(1)
              }
     end
 
     test "kbit" do
       assert FileSize.new(1, :kbit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :kbit,
-               bits: 1000
+               bits: get_normalized_value(1000, 1)
              }
     end
 
     test "Kibit" do
       assert FileSize.new(1, :kibit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :kibit,
-               bits: 1024
+               bits: get_normalized_value(1024, 1)
              }
     end
 
     test "Mbit" do
       assert FileSize.new(1, :mbit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :mbit,
-               bits: Math.pow(1000, 2)
+               bits: get_normalized_value(1000, 2)
              }
     end
 
     test "Mibit" do
       assert FileSize.new(1, :mibit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :mibit,
-               bits: Math.pow(1024, 2)
+               bits: get_normalized_value(1024, 2)
              }
     end
 
     test "Gbit" do
       assert FileSize.new(1, :gbit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :gbit,
-               bits: Math.pow(1000, 3)
+               bits: get_normalized_value(1000, 3)
              }
     end
 
     test "Gibit" do
       assert FileSize.new(1, :gibit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :gibit,
-               bits: Math.pow(1024, 3)
+               bits: get_normalized_value(1024, 3)
              }
     end
 
     test "Tbit" do
       assert FileSize.new(1, :tbit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :tbit,
-               bits: Math.pow(1000, 4)
+               bits: get_normalized_value(1000, 4)
              }
     end
 
     test "Tibit" do
       assert FileSize.new(1, :tibit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :tibit,
-               bits: Math.pow(1024, 4)
+               bits: get_normalized_value(1024, 4)
              }
     end
 
     test "Pbit" do
       assert FileSize.new(1, :pbit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :pbit,
-               bits: Math.pow(1000, 5)
+               bits: get_normalized_value(1000, 5)
              }
     end
 
     test "Pibit" do
       assert FileSize.new(1, :pibit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :pibit,
-               bits: Math.pow(1024, 5)
+               bits: get_normalized_value(1024, 5)
              }
     end
 
     test "Ebit" do
       assert FileSize.new(1, :ebit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :ebit,
-               bits: Math.pow(1000, 6)
+               bits: get_normalized_value(1000, 6)
              }
     end
 
     test "Eibit" do
       assert FileSize.new(1, :eibit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :eibit,
-               bits: Math.pow(1024, 6)
+               bits: get_normalized_value(1024, 6)
              }
     end
 
     test "Zbit" do
       assert FileSize.new(1, :zbit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :zbit,
-               bits: Math.pow(1000, 7)
+               bits: get_normalized_value(1000, 7)
              }
     end
 
     test "Zibit" do
       assert FileSize.new(1, :zibit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :zibit,
-               bits: Math.pow(1024, 7)
+               bits: get_normalized_value(1024, 7)
              }
     end
 
     test "Ybit" do
       assert FileSize.new(1, :ybit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :ybit,
-               bits: Math.pow(1000, 8)
+               bits: get_normalized_value(1000, 8)
              }
     end
 
     test "Yibit" do
       assert FileSize.new(1, :yibit) == %Bit{
-               value: 1,
+               value: Decimal.new(1),
                unit: :yibit,
-               bits: Math.pow(1024, 8)
+               bits: get_normalized_value(1024, 8)
              }
     end
 
     test "byte" do
       assert FileSize.new(1, :b) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :b,
-               bytes: 1
+               bytes: Decimal.new(1)
              }
     end
 
     test "kB" do
       assert FileSize.new(1, :kb) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :kb,
-               bytes: 1000
+               bytes: get_normalized_value(1000, 1)
              }
     end
 
     test "KiB" do
       assert FileSize.new(1, :kib) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :kib,
-               bytes: 1024
+               bytes: get_normalized_value(1024, 1)
              }
     end
 
     test "MB" do
       assert FileSize.new(1, :mb) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :mb,
-               bytes: Math.pow(1000, 2)
+               bytes: get_normalized_value(1000, 2)
              }
     end
 
     test "MiB" do
       assert FileSize.new(1, :mib) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :mib,
-               bytes: Math.pow(1024, 2)
+               bytes: get_normalized_value(1024, 2)
              }
     end
 
     test "GB" do
       assert FileSize.new(1, :gb) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :gb,
-               bytes: Math.pow(1000, 3)
+               bytes: get_normalized_value(1000, 3)
              }
     end
 
     test "GiB" do
       assert FileSize.new(1, :gib) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :gib,
-               bytes: Math.pow(1024, 3)
+               bytes: get_normalized_value(1024, 3)
              }
     end
 
     test "TB" do
       assert FileSize.new(1, :tb) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :tb,
-               bytes: Math.pow(1000, 4)
+               bytes: get_normalized_value(1000, 4)
              }
     end
 
     test "TiB" do
       assert FileSize.new(1, :tib) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :tib,
-               bytes: Math.pow(1024, 4)
+               bytes: get_normalized_value(1024, 4)
              }
     end
 
     test "PB" do
       assert FileSize.new(1, :pb) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :pb,
-               bytes: Math.pow(1000, 5)
+               bytes: get_normalized_value(1000, 5)
              }
     end
 
     test "PiB" do
       assert FileSize.new(1, :pib) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :pib,
-               bytes: Math.pow(1024, 5)
+               bytes: get_normalized_value(1024, 5)
              }
     end
 
     test "EB" do
       assert FileSize.new(1, :eb) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :eb,
-               bytes: Math.pow(1000, 6)
+               bytes: get_normalized_value(1000, 6)
              }
     end
 
     test "EiB" do
       assert FileSize.new(1, :eib) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :eib,
-               bytes: Math.pow(1024, 6)
+               bytes: get_normalized_value(1024, 6)
              }
     end
 
     test "ZB" do
       assert FileSize.new(1, :zb) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :zb,
-               bytes: Math.pow(1000, 7)
+               bytes: get_normalized_value(1000, 7)
              }
     end
 
     test "ZiB" do
       assert FileSize.new(1, :zib) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :zib,
-               bytes: Math.pow(1024, 7)
+               bytes: get_normalized_value(1024, 7)
              }
     end
 
     test "YB" do
       assert FileSize.new(1, :yb) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :yb,
-               bytes: Math.pow(1000, 8)
+               bytes: get_normalized_value(1000, 8)
              }
     end
 
     test "YiB" do
       assert FileSize.new(1, :yib) == %Byte{
-               value: 1,
+               value: Decimal.new(1),
                unit: :yib,
-               bytes: Math.pow(1024, 8)
+               bytes: get_normalized_value(1024, 8)
              }
     end
 
@@ -322,6 +323,16 @@ defmodule FileSizeTest do
                      FileSize.new(:invalid, :b)
                    end
     end
+
+    defp get_normalized_value(base, exp) do
+      base |> Math.pow(exp) |> Decimal.new() |> Decimal.reduce()
+    end
+  end
+
+  describe "from_bytes/1" do
+    test "as bytes" do
+      assert FileSize.from_bytes(1337) == FileSize.new(1337, :b)
+    end
   end
 
   describe "from_bytes/2" do
@@ -333,10 +344,26 @@ defmodule FileSizeTest do
       assert FileSize.from_bytes(1337, :kb) == FileSize.new(1.337, :kb)
     end
 
+    test "scaled in SI system" do
+      assert FileSize.from_bytes(1337, {:system, :si}) ==
+               FileSize.new(1.337, :kb)
+    end
+
+    test "scaled in IEC system" do
+      assert FileSize.from_bytes(1337, {:system, :iec}) ==
+               FileSize.new(1.3056640625, :kib)
+    end
+
     test "invalid unit" do
       assert_raise InvalidUnitError, "Invalid unit: :unknown", fn ->
         FileSize.from_bytes(1337, :unknown)
       end
+    end
+  end
+
+  describe "from_bits/1" do
+    test "as bits" do
+      assert FileSize.from_bits(1337) == FileSize.new(1337, :bit)
     end
   end
 
@@ -347,6 +374,16 @@ defmodule FileSizeTest do
 
     test "as kbits" do
       assert FileSize.from_bits(1337, :kbit) == FileSize.new(1.337, :kbit)
+    end
+
+    test "scaled in SI system" do
+      assert FileSize.from_bits(1337, {:system, :si}) ==
+               FileSize.new(1.337, :kbit)
+    end
+
+    test "scaled in IEC system" do
+      assert FileSize.from_bits(1337, {:system, :iec}) ==
+               FileSize.new(1.3056640625, :kibit)
     end
 
     test "invalid unit" do
@@ -475,7 +512,8 @@ defmodule FileSizeTest do
     test "convert to unit" do
       size = FileSize.new(1, :b)
 
-      assert FileSize.convert(size, :bit) == Convertible.convert(size, :bit)
+      assert FileSize.convert(size, :bit) ==
+               Convertible.convert(size, Units.fetch!(:bit))
     end
 
     test "no-op when converting bytes to unit system" do

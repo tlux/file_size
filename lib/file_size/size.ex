@@ -1,7 +1,5 @@
 defmodule FileSize.Size do
-  @moduledoc """
-  A behavior that defines how a to build a new file size.
-  """
+  @moduledoc false
 
   alias FileSize.Units
   alias FileSize.Units.Info, as: UnitInfo

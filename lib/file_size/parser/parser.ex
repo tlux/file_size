@@ -6,7 +6,7 @@ defmodule FileSize.Parser do
   alias FileSize.Bit
   alias FileSize.Byte
   alias FileSize.ParseError
-  alias FileSize.Units.Utils, as: UnitUtils
+  alias FileSize.Units
 
   @doc """
   Converts the given value into a `FileSize.Bit` or `FileSize.Byte`. Returns
@@ -20,9 +20,9 @@ defmodule FileSize.Parser do
   def parse(%Byte{} = size), do: {:ok, size}
 
   def parse(str) when is_binary(str) do
-    with {:ok, value_type, value_str, unit_str} <- extract_parts(str),
+    with {:ok, value_type, value_str, unit_symbol} <- extract_parts(str),
          {:ok, value} <- parse_value(value_type, value_str),
-         {:ok, unit} <- parse_unit(unit_str) do
+         {:ok, unit} <- parse_unit(unit_symbol) do
       {:ok, FileSize.new(value, unit)}
     else
       {:error, reason} -> {:error, %ParseError{reason: reason, value: str}}
@@ -78,8 +78,8 @@ defmodule FileSize.Parser do
     end
   end
 
-  defp parse_unit(unit_str) do
-    with :error <- UnitUtils.parse_unit(unit_str) do
+  defp parse_unit(unit_symbol) do
+    with :error <- Units.from_symbol(unit_symbol) do
       {:error, :unit}
     end
   end

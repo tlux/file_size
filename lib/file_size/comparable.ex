@@ -16,6 +16,6 @@ defprotocol FileSize.Comparable do
   is less than, greater than or equal to the second one. For possible return
   values, see `t:comparison_result/0`.
   """
-  @spec compare(t, FileSize.t()) :: comparison_result
+  @spec compare(t, t) :: comparison_result
   def compare(size, other_size)
 end

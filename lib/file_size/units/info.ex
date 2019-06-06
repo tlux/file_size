@@ -9,7 +9,7 @@ defmodule FileSize.Units.Info do
 
   @coefs %{iec: 1024, si: 1000}
 
-  @type t :: %{
+  @type t :: %__MODULE__{
           name: FileSize.unit(),
           mod: module,
           exp: non_neg_integer,

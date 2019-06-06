@@ -137,7 +137,11 @@ defmodule FileSize do
   alias FileSize.Parser
   alias FileSize.Units
   alias FileSize.Units.Info, as: UnitInfo
-  alias FileSize.Units.Utils, as: UnitUtils
+
+  @typedoc """
+  A type containing unit conversion options.
+  """
+  @type convert_to :: unit | UnitInfo.t() | {:system, unit_system}
 
   @typedoc """
   A type that defines the IEC bit and byte units.
@@ -150,9 +154,9 @@ defmodule FileSize do
   @type si_unit :: Bit.si_unit() | Byte.si_unit()
 
   @typedoc """
-  A type that defines the value used to create a new file size.
+  A type that is a union of the bit and byte types.
   """
-  @type value :: number | Decimal.t() | String.t()
+  @type t :: Bit.t() | Byte.t()
 
   @typedoc """
   A type that is a union of the bit and byte unit types.
@@ -160,21 +164,19 @@ defmodule FileSize do
   @type unit :: iec_unit | si_unit
 
   @typedoc """
-  A type that contains the available unit systems.
-  """
-  @type unit_system :: :iec | :si
-
-  @type convert_to :: unit | UnitInfo.t() | {:system, unit_system}
-
-  @typedoc """
   A type that represents a unit symbol.
   """
   @type unit_symbol :: String.t()
 
   @typedoc """
-  A type that is a union of the bit and byte types.
+  A type that contains the available unit systems.
   """
-  @type t :: Bit.t() | Byte.t()
+  @type unit_system :: :iec | :si
+
+  @typedoc """
+  A type that defines the value used to create a new file size.
+  """
+  @type value :: number | Decimal.t() | String.t()
 
   @doc false
   defmacro __using__(_) do
@@ -208,7 +210,7 @@ defmodule FileSize do
   @spec new(value, unit | UnitInfo.t()) :: t | no_return
   def new(value, unit_or_unit_info \\ :b)
 
-  def new(value, %{mod: mod} = unit_info) do
+  def new(value, %UnitInfo{mod: mod} = unit_info) do
     mod.new(value, unit_info)
   end
 
@@ -222,7 +224,7 @@ defmodule FileSize do
   ## Example
 
       iex> FileSize.from_bytes(2000)
-      #FileSize<"2 kB">
+      #FileSize<"2000 B">
 
       iex> FileSize.from_bytes(2000, {:system, :iec})
       #FileSize<"1.953125 KiB">
@@ -237,7 +239,7 @@ defmodule FileSize do
       ** (FileSize.InvalidUnitError) Invalid unit: :unknown
   """
   @spec from_bytes(value, convert_to) :: t
-  def from_bytes(bytes, unit_or_unit_info_or_unit_system \\ {:system, :si})
+  def from_bytes(bytes, unit_or_unit_info_or_unit_system \\ :b)
 
   def from_bytes(bytes, {:system, unit_system}) do
     bytes |> new(:b) |> scale(unit_system)
@@ -253,7 +255,7 @@ defmodule FileSize do
   ## Example
 
       iex> FileSize.from_bits(2000)
-      #FileSize<"2 kbit">
+      #FileSize<"2000 bit">
 
       iex> FileSize.from_bits(2000, {:system, :iec})
       #FileSize<"1.953125 Kibit">
@@ -265,7 +267,7 @@ defmodule FileSize do
       ** (FileSize.InvalidUnitError) Invalid unit: :unknown
   """
   @spec from_bits(value, convert_to) :: t
-  def from_bits(bits, unit_or_unit_info_or_unit_system \\ {:system, :si})
+  def from_bits(bits, unit_or_unit_info_or_unit_system \\ :bit)
 
   def from_bits(bits, {:system, unit_system}) do
     bits |> new(:bit) |> scale(unit_system)
@@ -363,7 +365,7 @@ defmodule FileSize do
   end
 
   def convert(size, {:system, unit_system}) do
-    convert(size, UnitUtils.equivalent_unit_for_system!(size.unit, unit_system))
+    convert(size, Units.equivalent_unit_for_system!(size.unit, unit_system))
   end
 
   def convert(size, unit) do
@@ -387,7 +389,7 @@ defmodule FileSize do
   @doc since: "1.1.0"
   @spec scale(t, nil | unit_system) :: t
   def scale(size, unit_system \\ nil) do
-    convert(size, UnitUtils.appropriate_unit_for_size(size, unit_system))
+    convert(size, Units.appropriate_unit_for_size(size, unit_system))
   end
 
   defdelegate compare(size, other_size), to: Comparable

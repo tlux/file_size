@@ -3,6 +3,20 @@ defmodule FileSize.UtilsTest do
 
   alias FileSize.Utils
 
+  describe "compare_decimals/2" do
+    test "first less than second" do
+      assert Utils.compare_decimals(Decimal.new(1), Decimal.new(2)) == -1
+    end
+
+    test "first equal to second" do
+      assert Utils.compare_decimals(Decimal.new(1), Decimal.new(1)) == 0
+    end
+
+    test "first greater than second" do
+      assert Utils.compare_decimals(Decimal.new(2), Decimal.new(1)) == 1
+    end
+  end
+
   describe "number_to_decimal/1" do
     test "keep Decimal" do
       value = Decimal.new("1.23")

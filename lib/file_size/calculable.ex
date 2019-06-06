@@ -20,7 +20,7 @@ defprotocol FileSize.Calculable do
       iex> FileSize.add(FileSize.new(4, :mb), FileSize.new(200, :kb))
       #FileSize<"4.2 MB">
   """
-  @spec add(t, FileSize.t()) :: FileSize.t()
+  @spec add(t, t) :: t
   def add(size, other_size)
 
   @doc """
@@ -34,6 +34,6 @@ defprotocol FileSize.Calculable do
       iex> FileSize.subtract(FileSize.new(1, :b), FileSize.new(4, :bit))
       #FileSize<"0.5 B">
   """
-  @spec subtract(t, FileSize.t()) :: FileSize.t()
+  @spec subtract(t, t) :: t
   def subtract(size, other_size)
 end

@@ -1,6 +1,16 @@
 defmodule FileSize.Utils do
   @moduledoc false
 
+  alias FileSize.Comparable
+
+  @spec compare_decimals(Decimal.t(), Decimal.t()) ::
+          Comparable.comparison_result()
+  def compare_decimals(value, other_value) do
+    value
+    |> Decimal.compare(other_value)
+    |> Decimal.to_integer()
+  end
+
   @spec number_to_decimal(FileSize.value()) :: Decimal.t() | no_return
   def number_to_decimal(%Decimal{} = value), do: value
 
