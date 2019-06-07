@@ -838,4 +838,14 @@ defmodule FileSizeTest do
                FileSize.convert(Calculable.subtract(a, b), :kib)
     end
   end
+
+  describe "to_integer/1" do
+    test "for Bit" do
+      assert FileSize.to_integer(FileSize.new(2, :kbit)) == 2000
+    end
+
+    test "for Byte" do
+      assert FileSize.to_integer(FileSize.new(2, :kb)) == 2000
+    end
+  end
 end

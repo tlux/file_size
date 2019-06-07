@@ -651,4 +651,15 @@ defmodule FileSize do
     |> subtract(other_size)
     |> convert(unit_or_unit_info_or_opts)
   end
+
+  @doc """
+  Gets the normalized size from the given file size as integer.
+  """
+  @doc since: "2.0.0"
+  @spec to_integer(t) :: integer
+  def to_integer(size) do
+    size
+    |> Convertible.normalized_value()
+    |> Decimal.to_integer()
+  end
 end
