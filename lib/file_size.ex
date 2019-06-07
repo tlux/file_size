@@ -236,7 +236,7 @@ defmodule FileSize do
   * `:scale` - Scales and converts the file size to an appropriate unit in the
     specified `t:unit_system/0`.
 
-  ## Example
+  ## Examples
 
       iex> FileSize.from_bytes(2000, scale: :iec)
       #FileSize<"1.953125 KiB">
@@ -298,7 +298,7 @@ defmodule FileSize do
   * `:scale` - Scales and converts the file size to an appropriate unit in the
     specified `t:unit_system/0`.
 
-  ## Example
+  ## Examples
 
       iex> FileSize.from_bits(2000, scale: :iec)
       #FileSize<"1.953125 Kibit">
@@ -603,7 +603,7 @@ defmodule FileSize do
   * `:unit` - Converts the file size to the given `t:unit/0`.
   * `:system` - Converts the file size to the given `t:unit_system/0`.
 
-  ## Example
+  ## Examples
 
       iex> FileSize.add(FileSize.new(1, :kb), FileSize.new(2, :kb), :b)
       #FileSize<"3000 B">
@@ -634,7 +634,7 @@ defmodule FileSize do
   * `:unit` - Converts the file size to the given `t:unit/0`.
   * `:system` - Converts the file size to the given `t:unit_system/0`.
 
-  ## Example
+  ## Examples
 
       iex> FileSize.subtract(FileSize.new(2, :b), FileSize.new(6, :bit), :bit)
       #FileSize<"10 bit">
@@ -654,6 +654,11 @@ defmodule FileSize do
 
   @doc """
   Gets the normalized size from the given file size as integer.
+
+  ## Example
+
+      iex> FileSize.to_integer(FileSize.new(2, :kbit))
+      2000
   """
   @doc since: "2.0.0"
   @spec to_integer(t) :: integer
