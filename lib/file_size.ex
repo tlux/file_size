@@ -14,11 +14,11 @@ defmodule FileSize do
   ### Sigil
 
   There is also a sigil defined that you can use to quickly build file sizes
-  from a number and unit symbol. Just use the `FileSize` module and you are
+  from a number and unit symbol. Import the `FileSize.Sigil` module and you are
   ready to go. See the "Supported Units" section for a list of possible unit
   symbols.
 
-      iex> use FileSize
+      iex> import FileSize.Sigil
       ...>
       ...> ~F(16 GB)
       #FileSize<"16.0 GB">
