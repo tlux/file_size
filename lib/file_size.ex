@@ -52,15 +52,15 @@ defmodule FileSize do
     one file size is greater than or less than the other.
   * `equals?/2` - Determines whether two file sizes are equal.
   * `lt?/2` - Determines whether file size a < b.
-  * `lteq?/2` - Determines whether file size a <= b.
+  * `lte?/2` - Determines whether file size a <= b.
   * `gt?/2` - Determines whether file size a > b.
-  * `gteq?/2` - Determines whether file size a >= b.
+  * `gte?/2` - Determines whether file size a >= b.
 
   To sort a collection of file sizes from smallest to greatest, you can use
-  `lteq?/2` as sort function. To sort descending use `gteq?/2`.
+  `lte?/2` as sort function. To sort descending use `gte?/2`.
 
       iex> sizes = [~F(16 GB), ~F(100 Mbit), ~F(27.4 MB), ~F(16 Gbit)]
-      ...> Enum.sort(sizes, &FileSize.lteq?/2)
+      ...> Enum.sort(sizes, &FileSize.lte?/2)
       [#FileSize<"100.0 Mbit">, #FileSize<"27.4 MB">, #FileSize<"16.0 Gbit">, #FileSize<"16.0 GB">]
 
   ## Supported Units
@@ -537,19 +537,30 @@ defmodule FileSize do
 
   ## Examples
 
-      iex> FileSize.lteq?(FileSize.new(1, :b), FileSize.new(2, :b))
+      iex> FileSize.lte?(FileSize.new(1, :b), FileSize.new(2, :b))
       true
 
-      iex> FileSize.lteq?(FileSize.new(1, :b), FileSize.new(1, :b))
+      iex> FileSize.lte?(FileSize.new(1, :b), FileSize.new(1, :b))
       true
 
-      iex> FileSize.lteq?(FileSize.new(2, :b), FileSize.new(1, :b))
+      iex> FileSize.lte?(FileSize.new(2, :b), FileSize.new(1, :b))
       false
   """
+  @doc since: "2.0.0"
+  @spec lte?(t, t) :: boolean
+  def lte?(size, other_size) do
+    compare(size, other_size) <= 0
+  end
+
+  @doc """
+  Determines whether the first file size is less or equal to than the second
+  one.
+  """
   @doc since: "1.2.0"
+  @deprecated "Use lte?/2 instead"
   @spec lteq?(t, t) :: boolean
   def lteq?(size, other_size) do
-    compare(size, other_size) <= 0
+    lte?(size, other_size)
   end
 
   @doc """
@@ -575,19 +586,30 @@ defmodule FileSize do
 
   ## Examples
 
-      iex> FileSize.gteq?(FileSize.new(2, :b), FileSize.new(1, :b))
+      iex> FileSize.gte?(FileSize.new(2, :b), FileSize.new(1, :b))
       true
 
-      iex> FileSize.gteq?(FileSize.new(1, :b), FileSize.new(1, :b))
+      iex> FileSize.gte?(FileSize.new(1, :b), FileSize.new(1, :b))
       true
 
-      iex> FileSize.gteq?(FileSize.new(1, :b), FileSize.new(2, :b))
+      iex> FileSize.gte?(FileSize.new(1, :b), FileSize.new(2, :b))
       false
   """
+  @doc since: "2.0.0"
+  @spec gte?(t, t) :: boolean
+  def gte?(size, other_size) do
+    compare(size, other_size) >= 0
+  end
+
+  @doc """
+  Determines whether the first file size is less or equal to than the second
+  one.
+  """
   @doc since: "1.2.0"
+  @deprecated "Use gte?/2 instead"
   @spec gteq?(t, t) :: boolean
   def gteq?(size, other_size) do
-    compare(size, other_size) >= 0
+    gte?(size, other_size)
   end
 
   defdelegate add(size, other_size), to: Calculable
