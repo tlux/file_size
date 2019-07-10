@@ -689,4 +689,21 @@ defmodule FileSize do
     |> Convertible.normalized_value()
     |> Decimal.to_integer()
   end
+
+  @doc """
+  Gets the value from the file size as float.
+
+  ## Examples
+
+      iex> FileSize.value_to_float(FileSize.new(2, :kbit))
+      2.0
+
+      iex> FileSize.value_to_float(FileSize.new(2.3, :kbit))
+      2.3
+  """
+  @doc since: "2.1.0"
+  @spec value_to_float(t) :: float
+  def value_to_float(size) do
+    Decimal.to_float(size.value)
+  end
 end

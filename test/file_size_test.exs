@@ -912,4 +912,16 @@ defmodule FileSizeTest do
       assert FileSize.to_integer(FileSize.new(2, :kb)) == 2000
     end
   end
+
+  describe "value_to_float/1" do
+    test "get value as float" do
+      assert FileSize.value_to_float(FileSize.new(16, :gb)) == 16.0
+      assert FileSize.value_to_float(FileSize.new(16.0, :gb)) == 16.0
+      assert FileSize.value_to_float(FileSize.new(Decimal.new(16), :gb)) == 16.0
+
+      assert FileSize.value_to_float(
+               FileSize.new(Decimal.from_float(16.0), :gb)
+             ) == 16.0
+    end
+  end
 end
