@@ -5,6 +5,11 @@ defmodule FileSize.ParseError do
 
   defexception [:reason, :value]
 
+  @type t :: %__MODULE__{
+          reason: atom,
+          value: any
+        }
+
   @impl true
   def message(exception) do
     "Unable to parse value: #{inspect(exception.value)} (#{exception.reason})"
