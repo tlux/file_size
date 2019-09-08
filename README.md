@@ -1,6 +1,7 @@
 # File Size
 
 [![Build Status](https://travis-ci.org/tlux/file_size.svg?branch=master)](https://travis-ci.org/tlux/file_size)
+[![Coverage Status](https://coveralls.io/repos/github/tlux/file_size/badge.svg?branch=master)](https://coveralls.io/github/tlux/file_size?branch=master)
 [![Hex.pm](https://img.shields.io/hexpm/v/file_size.svg)](https://hex.pm/packages/file_size)
 
 A file size calculator, parser and formatter.
