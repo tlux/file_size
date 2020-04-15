@@ -172,7 +172,7 @@ defmodule FileSize do
   @typedoc """
   A type that defines the value used to create a new file size.
   """
-  @type value :: number | Decimal.t() | String.t()
+  @type value :: number
 
   @doc false
   defmacro __using__(_) do
@@ -511,7 +511,7 @@ defmodule FileSize do
   """
   @spec equals?(t, t) :: boolean
   def equals?(size, other_size) do
-    compare(size, other_size) == 0
+    compare(size, other_size) == :eq
   end
 
   @doc """
@@ -528,7 +528,7 @@ defmodule FileSize do
   @doc since: "1.2.0"
   @spec lt?(t, t) :: boolean
   def lt?(size, other_size) do
-    compare(size, other_size) == -1
+    compare(size, other_size) == :lt
   end
 
   @doc """
@@ -549,18 +549,7 @@ defmodule FileSize do
   @doc since: "2.0.0"
   @spec lte?(t, t) :: boolean
   def lte?(size, other_size) do
-    compare(size, other_size) <= 0
-  end
-
-  @doc """
-  Determines whether the first file size is less or equal to than the second
-  one.
-  """
-  @doc since: "1.2.0"
-  @deprecated "Use lte?/2 instead"
-  @spec lteq?(t, t) :: boolean
-  def lteq?(size, other_size) do
-    lte?(size, other_size)
+    compare(size, other_size) in [:lt, :eq]
   end
 
   @doc """
@@ -577,7 +566,7 @@ defmodule FileSize do
   @doc since: "1.2.0"
   @spec gt?(t, t) :: boolean
   def gt?(size, other_size) do
-    compare(size, other_size) == 1
+    compare(size, other_size) == :gt
   end
 
   @doc """
@@ -598,18 +587,7 @@ defmodule FileSize do
   @doc since: "2.0.0"
   @spec gte?(t, t) :: boolean
   def gte?(size, other_size) do
-    compare(size, other_size) >= 0
-  end
-
-  @doc """
-  Determines whether the first file size is less or equal to than the second
-  one.
-  """
-  @doc since: "1.2.0"
-  @deprecated "Use gte?/2 instead"
-  @spec gteq?(t, t) :: boolean
-  def gteq?(size, other_size) do
-    gte?(size, other_size)
+    compare(size, other_size) in [:eq, :gt]
   end
 
   defdelegate add(size, other_size), to: Calculable
@@ -687,7 +665,7 @@ defmodule FileSize do
   def to_integer(size) do
     size
     |> Convertible.normalized_value()
-    |> Decimal.to_integer()
+    |> trunc()
   end
 
   @doc """
@@ -704,6 +682,6 @@ defmodule FileSize do
   @doc since: "2.1.0"
   @spec value_to_float(t) :: float
   def value_to_float(size) do
-    Decimal.to_float(size.value)
+    size.value / 1
   end
 end

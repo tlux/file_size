@@ -8,7 +8,7 @@ defprotocol FileSize.Convertible do
   @doc """
   Gets the normalized value from the given file size struct.
   """
-  @spec normalized_value(t) :: Decimal.t()
+  @spec normalized_value(t) :: number
   def normalized_value(size)
 
   @doc """
