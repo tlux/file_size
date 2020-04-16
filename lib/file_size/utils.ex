@@ -30,7 +30,7 @@ defmodule FileSize.Utils do
     end
   end
 
-  @spec sanitize_num(number) :: number
+  @spec sanitize_num(number | Decimal.t()) :: number
   def sanitize_num(value) when is_float(value) and value == floor(value) do
     trunc(value)
   end
