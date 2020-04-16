@@ -34,9 +34,17 @@ defmodule FileSize.Units do
   """
   @doc since: "2.0.0"
   @spec fetch(FileSize.unit()) :: {:ok, Info.t()} | :error
-  def fetch(unit_or_unit_info)
+  def fetch(symbol_unit_or_unit_info)
+
   def fetch(%Info{} = unit), do: {:ok, unit}
-  def fetch(unit), do: Map.fetch(@units_by_names, unit)
+
+  def fetch(unit) when is_atom(unit) do
+    Map.fetch(@units_by_names, unit)
+  end
+
+  def fetch(symbol) when is_binary(symbol), do: from_symbol(symbol)
+
+  def fetch(_), do: :error
 
   @doc """
   Gets unit info for the unit specified by the given name. Raises when the unit
@@ -60,15 +68,15 @@ defmodule FileSize.Units do
   @doc false
   @spec equivalent_unit_for_system!(FileSize.unit(), FileSize.unit_system()) ::
           Info.t() | no_return
-  def equivalent_unit_for_system!(unit_or_info, unit_system)
+  def equivalent_unit_for_system!(symbol_or_unit_or_unit_info, unit_system)
 
   def equivalent_unit_for_system!(%Info{} = info, unit_system) do
     validate_unit_system!(unit_system)
     find_equivalent_unit_for_system(info, unit_system)
   end
 
-  def equivalent_unit_for_system!(unit, unit_system) do
-    unit
+  def equivalent_unit_for_system!(symbol_or_unit, unit_system) do
+    symbol_or_unit
     |> fetch!()
     |> equivalent_unit_for_system!(unit_system)
   end
@@ -100,16 +108,11 @@ defmodule FileSize.Units do
 
     Enum.find_value(@units, orig_info, fn
       %{mod: ^mod, system: ^unit_system} = info ->
-        if decimal_between?(value, info.min_value, info.max_value), do: info
+        if value >= info.min_value && value <= info.max_value, do: info
 
       _ ->
         nil
     end)
-  end
-
-  defp decimal_between?(value, min, max) do
-    Decimal.cmp(value, min) in [:eq, :gt] &&
-      Decimal.cmp(value, max) in [:eq, :lt]
   end
 
   defp validate_unit_system!(unit_system) when unit_system in @unit_systems do

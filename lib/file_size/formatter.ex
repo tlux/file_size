@@ -6,8 +6,6 @@ defmodule FileSize.Formatter do
 
   alias FileSize.Units
 
-  import Number.Delimit, only: [number_to_delimited: 2]
-
   @doc """
   Formats a file size in a human-readable format, allowing customization of the
   formatting.
@@ -52,9 +50,8 @@ defmodule FileSize.Formatter do
   """
   @spec format_simple(FileSize.t()) :: String.t()
   def format_simple(size) do
-    value = Decimal.to_string(size.value, :normal)
     unit_info = Units.fetch!(size.unit)
-    "#{value} #{unit_info.symbol}"
+    "#{size.value} #{unit_info.symbol}"
   end
 
   defp format_number(value, opts) do
@@ -63,9 +60,7 @@ defmodule FileSize.Formatter do
       |> Keyword.merge(number_opts_from_config())
       |> Keyword.merge(opts)
 
-    value
-    |> Decimal.to_float()
-    |> number_to_delimited(opts)
+    Number.Delimit.number_to_delimited(value, opts)
   end
 
   defp format_unit(unit, symbols) do

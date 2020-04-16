@@ -25,7 +25,9 @@ defmodule FileSize.Units.InfoTest do
   describe "denormalize_value/2" do
     test "success" do
       Enum.each(Units.list(), fn info ->
+        assert Info.denormalize_value(info, 1) == 1 / info.coeff
         assert Info.denormalize_value(info, 2) == 2 / info.coeff
+        assert Info.denormalize_value(info, 2.2) == 2.2 / info.coeff
       end)
     end
   end

@@ -56,7 +56,7 @@ defmodule FileSize.Byte do
     end
 
     def add(size, %Byte{} = other_size) do
-      FileSize.from_bytes(size.bytes + other_size.bytes)
+      FileSize.from_bytes(size.bytes + other_size.bytes, size.unit)
     end
 
     def subtract(size, %Bit{} = other_size) do
@@ -67,7 +67,7 @@ defmodule FileSize.Byte do
     end
 
     def subtract(size, %Byte{} = other_size) do
-      FileSize.from_bytes(size.bytes - other_size.bytes)
+      FileSize.from_bytes(size.bytes - other_size.bytes, size.unit)
     end
   end
 

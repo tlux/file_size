@@ -3,6 +3,8 @@ defmodule FileSize.Units.Info do
   A struct that contains information for a particular unit.
   """
 
+  alias FileSize.Utils
+
   defstruct [
     :name,
     :mod,
@@ -70,18 +72,12 @@ defmodule FileSize.Units.Info do
   @doc false
   @spec normalize_value(t, number) :: number
   def normalize_value(info, denormalized_value) do
-    value = denormalized_value * get_coeff(info)
-
-    if is_float(value) && value == Float.floor(value) do
-      trunc(value)
-    else
-      value
-    end
+    Utils.sanitize_num(denormalized_value * get_coeff(info))
   end
 
   @doc false
-  @spec denormalize_value(t, Decimal.t() | number) :: float
+  @spec denormalize_value(t, number) :: float
   def denormalize_value(info, normalized_value) do
-    normalized_value / get_coeff(info)
+    Utils.sanitize_num(normalized_value / get_coeff(info))
   end
 end

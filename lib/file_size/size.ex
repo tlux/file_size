@@ -4,13 +4,12 @@ defmodule FileSize.Size do
   alias __MODULE__
   alias FileSize.Units
   alias FileSize.Units.Info, as: UnitInfo
+  alias FileSize.Utils
 
-  @callback new(value :: number | Decimal.t()) :: FileSize.t() | no_return
+  @callback new(value :: number) :: FileSize.t() | no_return
 
-  @callback new(
-              value :: number | Decimal.t(),
-              unit :: FileSize.unit()
-            ) :: FileSize.t() | no_return
+  @callback new(value :: number, unit :: FileSize.unit()) ::
+              FileSize.t() | no_return
 
   defmacro __using__(opts) do
     quote do
@@ -33,9 +32,9 @@ defmodule FileSize.Size do
     end
   end
 
-  @spec new(module, atom, number | Decimal.t(), FileSize.unit()) ::
-          FileSize.t() | no_return
+  @spec new(module, atom, number, FileSize.unit()) :: FileSize.t() | no_return
   def new(mod, normalized_key, value, %{mod: mod} = unit_info) do
+    value = Utils.cast_num!(value)
     normalized_value = UnitInfo.normalize_value(unit_info, value)
 
     mod

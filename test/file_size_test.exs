@@ -300,13 +300,15 @@ defmodule FileSizeTest do
 
     test "invalid value" do
       assert_raise ArgumentError,
-                   ~s[Value must be number, Decimal or string (got "invalid")],
+                   "Unable to cast value " <>
+                     ~s[(expected a number or binary, got "invalid")],
                    fn ->
                      FileSize.new("invalid", :b)
                    end
 
       assert_raise ArgumentError,
-                   ~s[Value must be number, Decimal or string (got :invalid)],
+                   "Unable to cast value " <>
+                     ~s[(expected a number or binary, got :invalid)],
                    fn ->
                      FileSize.new(:invalid, :b)
                    end
@@ -840,12 +842,7 @@ defmodule FileSizeTest do
   describe "value_to_float/1" do
     test "get value as float" do
       assert FileSize.value_to_float(FileSize.new(16, :gb)) == 16.0
-      assert FileSize.value_to_float(FileSize.new(16.0, :gb)) == 16.0
-      assert FileSize.value_to_float(FileSize.new(Decimal.new(16), :gb)) == 16.0
-
-      assert FileSize.value_to_float(
-               FileSize.new(Decimal.from_float(16.0), :gb)
-             ) == 16.0
+      assert FileSize.value_to_float(FileSize.new(16.2, :gb)) == 16.2
     end
   end
 end

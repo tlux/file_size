@@ -15,9 +15,7 @@ defmodule FileSize.Parser do
   @spec parse(any) :: {:ok, FileSize.t()} | {:error, ParseError.t()}
   def parse(value)
 
-  def parse(%Bit{} = size), do: {:ok, size}
-
-  def parse(%Byte{} = size), do: {:ok, size}
+  def parse(%struct{} = size) when struct in [Bit, Byte], do: {:ok, size}
 
   def parse(str) when is_binary(str) do
     with {:ok, value_type, value_str, unit_symbol} <- extract_parts(str),
