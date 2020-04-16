@@ -31,11 +31,6 @@ defmodule FileSize.MixProject do
             FileSize.Bit,
             FileSize.Byte
           ],
-          "Parsing & Formatting": [
-            FileSize.Parser,
-            FileSize.Sigil,
-            FileSize.Formatter
-          ],
           Protocols: [
             FileSize.Calculable,
             FileSize.Comparable,

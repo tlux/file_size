@@ -516,6 +516,14 @@ defmodule FileSizeTest do
     end
   end
 
+  describe "to_string/1" do
+    test "delegate to Formatter" do
+      size = FileSize.new(1024, :mb)
+
+      assert FileSize.to_string(size) == Formatter.format_simple(size)
+    end
+  end
+
   describe "convert/2" do
     test "convert to unit" do
       size = FileSize.new(10, :kb)

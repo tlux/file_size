@@ -1,40 +1,8 @@
 defmodule FileSize.Formatter do
-  @moduledoc """
-  A module that provides functions to convert file sizes to human-readable
-  strings.
-  """
+  @moduledoc false
 
   alias FileSize.Units
 
-  @doc """
-  Formats a file size in a human-readable format, allowing customization of the
-  formatting.
-
-  ## Options
-
-  * `:symbols` - Allows using your own unit symbols. Must be a map that contains
-    the unit names as keys (as defined by `t:FileSize.unit/0`) and the unit
-    symbol strings as values. Missing entries in the map are filled with the
-    internal unit symbols from `FileSize.Units.list/0`.
-
-  Other options customize the number format and are forwarded to
-  `Number.Delimit.number_to_delimited/2`. The default precision for numbers is
-  0.
-
-  ## Global Configuration
-
-  You can also define your custom symbols globally.
-
-      config :file_size, :symbols, %{b: "Byte", kb: "KB"}
-
-  The same is possible for number formatting.
-
-      config :file_size, :number_format, precision: 2, delimiter: ",", separator: "."
-
-  Or globally for the number library.
-
-      config :number, delimit: [precision: 2, delimiter: ",", separator: "."]
-  """
   @spec format(FileSize.t(), Keyword.t()) :: String.t()
   def format(size, opts \\ []) do
     {symbols, number_opts} = Keyword.pop(opts, :symbols, %{})
@@ -43,11 +11,6 @@ defmodule FileSize.Formatter do
     "#{value} #{symbol}"
   end
 
-  @doc """
-  Formats the given size ignoring all user configuration. The result of this
-  function can be passed back to `FileSize.parse/1` and is also used by the
-  implementations of the `Inspect` and `String.Chars` protocols.
-  """
   @spec format_simple(FileSize.t()) :: String.t()
   def format_simple(size) do
     unit_info = Units.fetch!(size.unit)

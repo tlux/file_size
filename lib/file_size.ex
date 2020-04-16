@@ -11,6 +11,9 @@ defmodule FileSize do
       iex> FileSize.new(16, :gb)
       #FileSize<"16.0 GB">
 
+      iex> FileSize.new(16, "GB")
+      #FileSize<"16.0 GB">
+
   ### Sigil
 
   There is also a sigil defined that you can use to quickly build file sizes
@@ -133,8 +136,6 @@ defmodule FileSize do
   alias FileSize.Calculable
   alias FileSize.Comparable
   alias FileSize.Convertible
-  alias FileSize.Formatter
-  alias FileSize.Parser
   alias FileSize.Units
   alias FileSize.Units.Info, as: UnitInfo
 
@@ -172,7 +173,7 @@ defmodule FileSize do
   @typedoc """
   A type that defines the value used to create a new file size.
   """
-  @type value :: number
+  @type value :: number | String.t() | Decimal.t()
 
   @doc false
   defmacro __using__(_) do
@@ -225,6 +226,7 @@ defmodule FileSize do
       iex> FileSize.from_bytes(2000)
       #FileSize<"2000 B">
   """
+  @spec from_bytes(value) :: t
   def from_bytes(bytes), do: FileSize.new(bytes, :b)
 
   @doc """
@@ -287,6 +289,7 @@ defmodule FileSize do
       iex> FileSize.from_bits(2000)
       #FileSize<"2000 bit">
   """
+  @spec from_bits(value) :: t
   def from_bits(bits), do: FileSize.new(bits, :bit)
 
   @doc """
@@ -418,9 +421,72 @@ defmodule FileSize do
     |> from_bytes(symbol_or_unit_or_unit_info_or_opts)
   end
 
-  defdelegate parse(value), to: Parser
-  defdelegate parse!(value), to: Parser
-  defdelegate format(size, opts \\ []), to: Formatter
+  @doc """
+  Converts the given value into a value of type `t:FileSize.t/0`. Returns a
+  tuple containing the status and value or error.
+  """
+  @spec parse(any) :: {:ok, t} | {:error, FileSize.ParseError.t()}
+  defdelegate parse(value), to: FileSize.Parser
+
+  @doc """
+  Converts the given value into a value of type `t:FileSize.t/0`. Returns the
+  value on success or raises `FileSize.ParseError` on error.
+  """
+  @spec parse!(any) :: t | no_return
+  defdelegate parse!(value), to: FileSize.Parser
+
+  @doc """
+  Formats a file size in a human-readable format, allowing customization of the
+  formatting.
+
+  ## Options
+
+  * `:symbols` - Allows using your own unit symbols. Must be a map that contains
+    the unit names as keys (as defined by `t:FileSize.unit/0`) and the unit
+    symbol strings as values. Missing entries in the map are filled with the
+    internal unit symbols from `FileSize.Units.list/0`.
+
+  Other options customize the number format and are forwarded to
+  `Number.Delimit.number_to_delimited/2`. The default precision for numbers is
+  0.
+
+  ## Global Configuration
+
+  You can also define your custom symbols globally.
+
+      config :file_size, :symbols, %{b: "Byte", kb: "KB"}
+
+  The same is possible for number formatting.
+
+      config :file_size, :number_format, precision: 2, delimiter: ",", separator: "."
+
+  Or globally for the number library.
+
+      config :number, delimit: [precision: 2, delimiter: ",", separator: "."]
+
+  ## Examples
+
+      iex> FileSize.format(FileSize.new(32, :kb))
+      "32 kB"
+
+      iex> FileSize.format(FileSize.new(2048.2, :mb))
+      "2,048 MB"
+  """
+  @spec format(t, Keyword.t()) :: String.t()
+  defdelegate format(size, opts \\ []), to: FileSize.Formatter
+
+  @doc """
+  Formats the given size ignoring all user configuration. The result of this
+  function can be passed back to `FileSize.parse/1` and is also used by the
+  implementations of the `Inspect` and `String.Chars` protocols.
+
+  ## Example
+
+      iex> FileSize.to_string(FileSize.new(32.2, :kb))
+      "32.2 kB"
+  """
+  @spec to_string(t) :: String.t()
+  defdelegate to_string(size), to: FileSize.Formatter, as: :format_simple
 
   @doc """
   Converts the given file size to a given unit or unit system.
