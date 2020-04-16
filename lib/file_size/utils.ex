@@ -11,9 +11,11 @@ defmodule FileSize.Utils do
 
   def cast_num(value) when is_number(value), do: {:ok, sanitize_num(value)}
 
-  def cast_num(_), do: :error
+  if Code.ensure_loaded?(Decimal) do
+    def cast_num(%Decimal{} = value), do: {:ok, sanitize_num(value)}
+  end
 
-  # TODO: Add Decimal support
+  def cast_num(_), do: :error
 
   @spec cast_num!(number | String.t()) :: number | no_return
   def cast_num!(value) do
@@ -34,6 +36,14 @@ defmodule FileSize.Utils do
   end
 
   def sanitize_num(value) when is_number(value), do: value
+
+  if Code.ensure_loaded?(Decimal) do
+    def sanitize_num(%Decimal{} = value) do
+      value
+      |> Decimal.to_float()
+      |> sanitize_num()
+    end
+  end
 
   @spec compare(number, number) :: :lt | :eq | :gt
   def compare(value, other_value) do
