@@ -1,7 +1,7 @@
 defmodule FileSize.Utils do
   @moduledoc false
 
-  @spec cast_num(number | String.t()) :: {:ok, number} | :error
+  @spec cast_num(number | String.t() | Decimal.t()) :: {:ok, number} | :error
   def cast_num(value) when is_binary(value) do
     case Float.parse(value) do
       {value, ""} -> cast_num(value)
@@ -17,7 +17,7 @@ defmodule FileSize.Utils do
 
   def cast_num(_), do: :error
 
-  @spec cast_num!(number | String.t()) :: number | no_return
+  @spec cast_num!(number | String.t() | Decimal.t()) :: number | no_return
   def cast_num!(value) do
     case cast_num(value) do
       {:ok, value} ->
