@@ -565,6 +565,22 @@ defmodule FileSize do
     convert(size, Units.appropriate_unit_for_size!(size, unit_system))
   end
 
+  @doc """
+  Compares two file sizes and returns an atom indicating whether the first value
+  is less than, greater than or equal to the second one.
+
+  ## Example
+
+      iex> FileSize.compare(FileSize.new(2, :b), FileSize.new(16, :bit))
+      :eq
+
+      iex> FileSize.compare(FileSize.new(1, :b), FileSize.new(16, :bit))
+      :lt
+
+      iex> FileSize.compare(FileSize.new(3, :b), FileSize.new(16, :bit))
+      :gt
+  """
+  @spec compare(t, t) :: :lt | :eq | :gt
   defdelegate compare(size, other_size), to: Comparable
 
   @doc """
