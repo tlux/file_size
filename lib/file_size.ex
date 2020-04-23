@@ -580,7 +580,7 @@ defmodule FileSize do
       iex> FileSize.compare(FileSize.new(3, :b), FileSize.new(16, :bit))
       :gt
   """
-  @spec compare(t | String.t, t | String.t) :: :lt | :eq | :gt
+  @spec compare(t | String.t(), t | String.t()) :: :lt | :eq | :gt
   def compare(size, other_size) do
     size = parse!(size)
     other_size = parse!(other_size)
