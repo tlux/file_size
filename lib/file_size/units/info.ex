@@ -27,7 +27,7 @@ defmodule FileSize.Units.Info do
           max_value: non_neg_integer
         }
 
-  @coefficients Application.fetch_env!(:file_size, :unit_systems)
+  @coefficients %{si: 1000, iec: 1024}
 
   @doc false
   @spec new(Keyword.t() | %{optional(atom) => any}) :: t

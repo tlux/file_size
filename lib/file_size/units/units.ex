@@ -8,11 +8,204 @@ defmodule FileSize.Units do
   alias FileSize.InvalidUnitSystemError
   alias FileSize.Units.Info
 
-  @unit_systems :file_size
-                |> Application.fetch_env!(:unit_systems)
-                |> Map.keys()
+  @unit_systems [:si, :iec]
 
-  @units :file_size |> Application.fetch_env!(:units) |> Enum.map(&Info.new/1)
+  @units [
+    # Bit
+    Info.new(name: :bit, mod: FileSize.Bit, exp: 0, system: nil, symbol: "bit"),
+    Info.new(
+      name: :kbit,
+      mod: FileSize.Bit,
+      exp: 1,
+      system: :si,
+      symbol: "kbit"
+    ),
+    Info.new(
+      name: :kibit,
+      mod: FileSize.Bit,
+      exp: 1,
+      system: :iec,
+      symbol: "Kibit"
+    ),
+    Info.new(
+      name: :mbit,
+      mod: FileSize.Bit,
+      exp: 2,
+      system: :si,
+      symbol: "Mbit"
+    ),
+    Info.new(
+      name: :mibit,
+      mod: FileSize.Bit,
+      exp: 2,
+      system: :iec,
+      symbol: "Mibit"
+    ),
+    Info.new(
+      name: :gbit,
+      mod: FileSize.Bit,
+      exp: 3,
+      system: :si,
+      symbol: "Gbit"
+    ),
+    Info.new(
+      name: :gibit,
+      mod: FileSize.Bit,
+      exp: 3,
+      system: :iec,
+      symbol: "Gibit"
+    ),
+    Info.new(
+      name: :tbit,
+      mod: FileSize.Bit,
+      exp: 4,
+      system: :si,
+      symbol: "Tbit"
+    ),
+    Info.new(
+      name: :tibit,
+      mod: FileSize.Bit,
+      exp: 4,
+      system: :iec,
+      symbol: "Tibit"
+    ),
+    Info.new(
+      name: :pbit,
+      mod: FileSize.Bit,
+      exp: 5,
+      system: :si,
+      symbol: "Pbit"
+    ),
+    Info.new(
+      name: :pibit,
+      mod: FileSize.Bit,
+      exp: 5,
+      system: :iec,
+      symbol: "Pibit"
+    ),
+    Info.new(
+      name: :ebit,
+      mod: FileSize.Bit,
+      exp: 6,
+      system: :si,
+      symbol: "Ebit"
+    ),
+    Info.new(
+      name: :eibit,
+      mod: FileSize.Bit,
+      exp: 6,
+      system: :iec,
+      symbol: "Eibit"
+    ),
+    Info.new(
+      name: :ebit,
+      mod: FileSize.Bit,
+      exp: 6,
+      system: :si,
+      symbol: "Ebit"
+    ),
+    Info.new(
+      name: :eibit,
+      mod: FileSize.Bit,
+      exp: 6,
+      system: :iec,
+      symbol: "Eibit"
+    ),
+    Info.new(
+      name: :zbit,
+      mod: FileSize.Bit,
+      exp: 7,
+      system: :si,
+      symbol: "Zbit"
+    ),
+    Info.new(
+      name: :zibit,
+      mod: FileSize.Bit,
+      exp: 7,
+      system: :iec,
+      symbol: "Zibit"
+    ),
+    Info.new(
+      name: :ybit,
+      mod: FileSize.Bit,
+      exp: 8,
+      system: :si,
+      symbol: "Ybit"
+    ),
+    Info.new(
+      name: :yibit,
+      mod: FileSize.Bit,
+      exp: 8,
+      system: :iec,
+      symbol: "Yibit"
+    ),
+    # Byte
+    Info.new(name: :b, mod: FileSize.Byte, exp: 0, system: nil, symbol: "B"),
+    Info.new(name: :kb, mod: FileSize.Byte, exp: 1, system: :si, symbol: "kB"),
+    Info.new(
+      name: :kib,
+      mod: FileSize.Byte,
+      exp: 1,
+      system: :iec,
+      symbol: "KiB"
+    ),
+    Info.new(name: :mb, mod: FileSize.Byte, exp: 2, system: :si, symbol: "MB"),
+    Info.new(
+      name: :mib,
+      mod: FileSize.Byte,
+      exp: 2,
+      system: :iec,
+      symbol: "MiB"
+    ),
+    Info.new(name: :gb, mod: FileSize.Byte, exp: 3, system: :si, symbol: "GB"),
+    Info.new(
+      name: :gib,
+      mod: FileSize.Byte,
+      exp: 3,
+      system: :iec,
+      symbol: "GiB"
+    ),
+    Info.new(name: :tb, mod: FileSize.Byte, exp: 4, system: :si, symbol: "TB"),
+    Info.new(
+      name: :tib,
+      mod: FileSize.Byte,
+      exp: 4,
+      system: :iec,
+      symbol: "TiB"
+    ),
+    Info.new(name: :pb, mod: FileSize.Byte, exp: 5, system: :si, symbol: "PB"),
+    Info.new(
+      name: :pib,
+      mod: FileSize.Byte,
+      exp: 5,
+      system: :iec,
+      symbol: "PiB"
+    ),
+    Info.new(name: :eb, mod: FileSize.Byte, exp: 6, system: :si, symbol: "EB"),
+    Info.new(
+      name: :eib,
+      mod: FileSize.Byte,
+      exp: 6,
+      system: :iec,
+      symbol: "EiB"
+    ),
+    Info.new(name: :zb, mod: FileSize.Byte, exp: 7, system: :si, symbol: "ZB"),
+    Info.new(
+      name: :zib,
+      mod: FileSize.Byte,
+      exp: 7,
+      system: :iec,
+      symbol: "ZiB"
+    ),
+    Info.new(name: :yb, mod: FileSize.Byte, exp: 8, system: :si, symbol: "YB"),
+    Info.new(
+      name: :yib,
+      mod: FileSize.Byte,
+      exp: 8,
+      system: :iec,
+      symbol: "YiB"
+    )
+  ]
 
   @units_by_names Map.new(@units, fn unit -> {unit.name, unit} end)
   @units_by_symbols Map.new(@units, fn unit -> {unit.symbol, unit} end)
