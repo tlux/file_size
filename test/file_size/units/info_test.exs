@@ -4,6 +4,44 @@ defmodule FileSize.Units.InfoTest do
   alias FileSize.Units
   alias FileSize.Units.Info
 
+  describe "new/1" do
+    test "build info" do
+      assert Info.new(
+               exp: 3,
+               mod: FileSize.Byte,
+               name: :gb,
+               symbol: "GB",
+               system: :si
+             ) == %Info{
+               coeff: 1_000_000_000,
+               exp: 3,
+               max_value: 999_999_999_999,
+               min_value: 1_000_000_000,
+               mod: FileSize.Byte,
+               name: :gb,
+               symbol: "GB",
+               system: :si
+             }
+
+      assert Info.new(
+               exp: 2,
+               mod: FileSize.Bit,
+               name: :mibit,
+               symbol: "Mibit",
+               system: :iec
+             ) == %Info{
+               coeff: 1_048_576,
+               exp: 2,
+               max_value: 1_073_741_823,
+               min_value: 1_048_576,
+               mod: FileSize.Bit,
+               name: :mibit,
+               symbol: "Mibit",
+               system: :iec
+             }
+    end
+  end
+
   describe "normalize_value/2" do
     test "success" do
       Enum.each(Units.list(), fn info ->
