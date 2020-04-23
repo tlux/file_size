@@ -5,50 +5,57 @@ defmodule FileSize.ComparableTest do
 
   describe "compare/2" do
     test "first less than second" do
-      assert Comparable.compare(FileSize.new(1, :b), FileSize.new(2, :b)) == -1
+      assert Comparable.compare(FileSize.new(1, :b), FileSize.new(2, :b)) == :lt
 
       assert Comparable.compare(FileSize.new(1, :bit), FileSize.new(1, :b)) ==
-               -1
+               :lt
 
       assert Comparable.compare(FileSize.new(1, :bit), FileSize.new(2, :bit)) ==
-               -1
+               :lt
 
-      assert Comparable.compare(FileSize.new(1, :b), FileSize.new(1, :kb)) == -1
+      assert Comparable.compare(FileSize.new(1, :b), FileSize.new(1, :kb)) ==
+               :lt
 
       assert Comparable.compare(FileSize.new(1, :b), FileSize.new(1, :kib)) ==
-               -1
+               :lt
 
       assert Comparable.compare(FileSize.new(2, :b), FileSize.new(17, :bit)) ==
-               -1
+               :lt
     end
 
     test "first equal to second" do
-      assert Comparable.compare(FileSize.new(1, :b), FileSize.new(1, :b)) == 0
+      assert Comparable.compare(FileSize.new(1, :b), FileSize.new(1, :b)) == :eq
 
       assert Comparable.compare(FileSize.new(1, :bit), FileSize.new(1, :bit)) ==
-               0
+               :eq
 
-      assert Comparable.compare(FileSize.new(8, :bit), FileSize.new(1, :b)) == 0
+      assert Comparable.compare(FileSize.new(8, :bit), FileSize.new(1, :b)) ==
+               :eq
 
       assert Comparable.compare(FileSize.new(1000, :b), FileSize.new(1, :kb)) ==
-               0
+               :eq
 
       assert Comparable.compare(FileSize.new(2, :b), FileSize.new(16, :bit)) ==
-               0
+               :eq
     end
 
     test "first greater than second" do
-      assert Comparable.compare(FileSize.new(2, :b), FileSize.new(1, :b)) == 1
-      assert Comparable.compare(FileSize.new(2, :b), FileSize.new(1, :bit)) == 1
+      assert Comparable.compare(FileSize.new(2, :b), FileSize.new(1, :b)) == :gt
+
+      assert Comparable.compare(FileSize.new(2, :b), FileSize.new(1, :bit)) ==
+               :gt
 
       assert Comparable.compare(FileSize.new(2, :bit), FileSize.new(1, :bit)) ==
-               1
+               :gt
 
-      assert Comparable.compare(FileSize.new(1, :kb), FileSize.new(1, :b)) == 1
-      assert Comparable.compare(FileSize.new(1, :kib), FileSize.new(1, :b)) == 1
+      assert Comparable.compare(FileSize.new(1, :kb), FileSize.new(1, :b)) ==
+               :gt
+
+      assert Comparable.compare(FileSize.new(1, :kib), FileSize.new(1, :b)) ==
+               :gt
 
       assert Comparable.compare(FileSize.new(2, :b), FileSize.new(15, :bit)) ==
-               1
+               :gt
     end
   end
 end

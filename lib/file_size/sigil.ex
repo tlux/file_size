@@ -3,8 +3,6 @@ defmodule FileSize.Sigil do
   Provides a sigil that you can use as shortcut to define file sizes easily.
   """
 
-  alias FileSize.Parser
-
   @doc """
   A sigil function that you can use as shortcut to define file sizes easily.
 
@@ -18,6 +16,6 @@ defmodule FileSize.Sigil do
   """
   @spec sigil_F(String.t(), charlist) :: FileSize.t()
   def sigil_F(str, _modifiers) do
-    Parser.parse!(str)
+    FileSize.Parser.parse!(str)
   end
 end

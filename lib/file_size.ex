@@ -11,6 +11,9 @@ defmodule FileSize do
       iex> FileSize.new(16, :gb)
       #FileSize<"16.0 GB">
 
+      iex> FileSize.new(16, "GB")
+      #FileSize<"16.0 GB">
+
   ### Sigil
 
   There is also a sigil defined that you can use to quickly build file sizes
@@ -133,8 +136,6 @@ defmodule FileSize do
   alias FileSize.Calculable
   alias FileSize.Comparable
   alias FileSize.Convertible
-  alias FileSize.Formatter
-  alias FileSize.Parser
   alias FileSize.Units
   alias FileSize.Units.Info, as: UnitInfo
 
@@ -157,7 +158,7 @@ defmodule FileSize do
   A type that is a union of the bit and byte unit types and
   `t:FileSize.Units.Info.t/0`.
   """
-  @type unit :: iec_unit | si_unit | UnitInfo.t()
+  @type unit :: iec_unit | si_unit | UnitInfo.t() | unit_symbol
 
   @typedoc """
   A type that represents a unit symbol.
@@ -172,7 +173,7 @@ defmodule FileSize do
   @typedoc """
   A type that defines the value used to create a new file size.
   """
-  @type value :: number | Decimal.t() | String.t()
+  @type value :: number | String.t() | Decimal.t()
 
   @doc false
   defmacro __using__(_) do
@@ -202,16 +203,19 @@ defmodule FileSize do
 
       iex> FileSize.new(3, :bit)
       #FileSize<"3 bit">
+
+      iex> FileSize.new("214", "KiB")
+      #FileSize<"214 KiB">
   """
   @spec new(value, unit) :: t | no_return
-  def new(value, unit_or_unit_info \\ :b)
+  def new(value, symbol_or_unit_or_unit_info \\ :b)
 
   def new(value, %UnitInfo{mod: mod} = unit_info) do
     mod.new(value, unit_info)
   end
 
-  def new(value, unit) do
-    new(value, Units.fetch!(unit))
+  def new(value, symbol_or_unit) do
+    new(value, Units.fetch!(symbol_or_unit))
   end
 
   @doc """
@@ -222,6 +226,7 @@ defmodule FileSize do
       iex> FileSize.from_bytes(2000)
       #FileSize<"2000 B">
   """
+  @spec from_bytes(value) :: t
   def from_bytes(bytes), do: FileSize.new(bytes, :b)
 
   @doc """
@@ -254,7 +259,7 @@ defmodule FileSize do
       ** (FileSize.InvalidUnitError) Invalid unit: :unknown
   """
   @spec from_bytes(value, unit | Keyword.t()) :: t
-  def from_bytes(bytes, unit_or_unit_info_or_opts)
+  def from_bytes(bytes, symbol_or_unit_or_unit_info_or_opts)
 
   def from_bytes(bytes, opts) when is_list(opts) do
     do_from_bytes(bytes, opts)
@@ -284,6 +289,7 @@ defmodule FileSize do
       iex> FileSize.from_bits(2000)
       #FileSize<"2000 bit">
   """
+  @spec from_bits(value) :: t
   def from_bits(bits), do: FileSize.new(bits, :bit)
 
   @doc """
@@ -316,7 +322,7 @@ defmodule FileSize do
       ** (FileSize.InvalidUnitError) Invalid unit: :unknown
   """
   @spec from_bits(value, unit | Keyword.t()) :: t
-  def from_bits(bits, unit_or_unit_info_or_opts)
+  def from_bits(bits, symbol_or_unit_or_unit_info_or_opts)
 
   def from_bits(bits, opts) when is_list(opts) do
     do_from_bits(bits, opts)
@@ -368,9 +374,9 @@ defmodule FileSize do
   """
   @spec from_file(Path.t(), unit | Keyword.t()) ::
           {:ok, t} | {:error, File.posix()}
-  def from_file(path, unit_or_unit_info_or_opts \\ :b) do
+  def from_file(path, symbol_or_unit_or_unit_info_or_opts \\ :b) do
     with {:ok, %{size: value}} <- File.stat(path) do
-      {:ok, from_bytes(value, unit_or_unit_info_or_opts)}
+      {:ok, from_bytes(value, symbol_or_unit_or_unit_info_or_opts)}
     end
   end
 
@@ -397,6 +403,9 @@ defmodule FileSize do
       iex> FileSize.from_file!("path/to/my/file.txt", unit: :mb)
       #FileSize<"0.13 MB">
 
+      iex> FileSize.from_file!("path/to/my/file.txt", unit: "KiB")
+      #FileSize<"133.7 KiB">
+
       iex> FileSize.from_file!("path/to/my/file.txt", system: :iec)
       #FileSize<"133.7 KiB">
 
@@ -405,16 +414,79 @@ defmodule FileSize do
   """
   @spec from_file!(Path.t(), unit | Keyword.t()) ::
           t | no_return
-  def from_file!(path, unit_or_unit_info_or_opts \\ :b) do
+  def from_file!(path, symbol_or_unit_or_unit_info_or_opts \\ :b) do
     path
     |> File.stat!()
     |> Map.fetch!(:size)
-    |> from_bytes(unit_or_unit_info_or_opts)
+    |> from_bytes(symbol_or_unit_or_unit_info_or_opts)
   end
 
-  defdelegate parse(value), to: Parser
-  defdelegate parse!(value), to: Parser
-  defdelegate format(size, opts \\ []), to: Formatter
+  @doc """
+  Converts the given value into a value of type `t:FileSize.t/0`. Returns a
+  tuple containing the status and value or error.
+  """
+  @spec parse(any) :: {:ok, t} | {:error, FileSize.ParseError.t()}
+  defdelegate parse(value), to: FileSize.Parser
+
+  @doc """
+  Converts the given value into a value of type `t:FileSize.t/0`. Returns the
+  value on success or raises `FileSize.ParseError` on error.
+  """
+  @spec parse!(any) :: t | no_return
+  defdelegate parse!(value), to: FileSize.Parser
+
+  @doc """
+  Formats a file size in a human-readable format, allowing customization of the
+  formatting.
+
+  ## Options
+
+  * `:symbols` - Allows using your own unit symbols. Must be a map that contains
+    the unit names as keys (as defined by `t:FileSize.unit/0`) and the unit
+    symbol strings as values. Missing entries in the map are filled with the
+    internal unit symbols from `FileSize.Units.list/0`.
+
+  Other options customize the number format and are forwarded to
+  `Number.Delimit.number_to_delimited/2`. The default precision for numbers is
+  0.
+
+  ## Global Configuration
+
+  You can also define your custom symbols globally.
+
+      config :file_size, :symbols, %{b: "Byte", kb: "KB"}
+
+  The same is possible for number formatting.
+
+      config :file_size, :number_format, precision: 2, delimiter: ",", separator: "."
+
+  Or globally for the number library.
+
+      config :number, delimit: [precision: 2, delimiter: ",", separator: "."]
+
+  ## Examples
+
+      iex> FileSize.format(FileSize.new(32, :kb))
+      "32 kB"
+
+      iex> FileSize.format(FileSize.new(2048.2, :mb))
+      "2,048 MB"
+  """
+  @spec format(t, Keyword.t()) :: String.t()
+  defdelegate format(size, opts \\ []), to: FileSize.Formatter
+
+  @doc """
+  Formats the given size ignoring all user configuration. The result of this
+  function can be passed back to `FileSize.parse/1` and is also used by the
+  implementations of the `Inspect` and `String.Chars` protocols.
+
+  ## Example
+
+      iex> FileSize.to_string(FileSize.new(32.2, :kb))
+      "32.2 kB"
+  """
+  @spec to_string(t) :: String.t()
+  defdelegate to_string(size), to: FileSize.Formatter, as: :format_simple
 
   @doc """
   Converts the given file size to a given unit or unit system.
@@ -450,7 +522,7 @@ defmodule FileSize do
       ** (FileSize.InvalidUnitSystemError) Invalid unit system: :unknown
   """
   @spec convert(t, unit | Keyword.t()) :: t
-  def convert(size, unit_or_unit_info_or_opts)
+  def convert(size, symbol_or_unit_or_unit_info_or_opts)
 
   def convert(size, opts) when is_list(opts) do
     do_convert(size, opts)
@@ -482,7 +554,7 @@ defmodule FileSize do
       #FileSize<"2 GB">
 
       iex> FileSize.scale(FileSize.new(2_000_000, :kb), :iec)
-      #FileSize<"1.86264514923095703125 GiB">
+      #FileSize<"1.862645149230957 GiB">
 
       iex> FileSize.scale(FileSize.new(2000, :b), :unknown)
       ** (FileSize.InvalidUnitSystemError) Invalid unit system: :unknown
@@ -493,7 +565,27 @@ defmodule FileSize do
     convert(size, Units.appropriate_unit_for_size!(size, unit_system))
   end
 
-  defdelegate compare(size, other_size), to: Comparable
+  @doc """
+  Compares two file sizes and returns an atom indicating whether the first value
+  is less than, greater than or equal to the second one.
+
+  ## Example
+
+      iex> FileSize.compare(FileSize.new(2, :b), FileSize.new(16, :bit))
+      :eq
+
+      iex> FileSize.compare(FileSize.new(1, :b), FileSize.new(16, :bit))
+      :lt
+
+      iex> FileSize.compare(FileSize.new(3, :b), FileSize.new(16, :bit))
+      :gt
+  """
+  @spec compare(t | String.t(), t | String.t()) :: :lt | :eq | :gt
+  def compare(size, other_size) do
+    size = parse!(size)
+    other_size = parse!(other_size)
+    Comparable.compare(size, other_size)
+  end
 
   @doc """
   Determines whether two file sizes are equal.
@@ -511,7 +603,7 @@ defmodule FileSize do
   """
   @spec equals?(t, t) :: boolean
   def equals?(size, other_size) do
-    compare(size, other_size) == 0
+    compare(size, other_size) == :eq
   end
 
   @doc """
@@ -528,7 +620,7 @@ defmodule FileSize do
   @doc since: "1.2.0"
   @spec lt?(t, t) :: boolean
   def lt?(size, other_size) do
-    compare(size, other_size) == -1
+    compare(size, other_size) == :lt
   end
 
   @doc """
@@ -549,18 +641,7 @@ defmodule FileSize do
   @doc since: "2.0.0"
   @spec lte?(t, t) :: boolean
   def lte?(size, other_size) do
-    compare(size, other_size) <= 0
-  end
-
-  @doc """
-  Determines whether the first file size is less or equal to than the second
-  one.
-  """
-  @doc since: "1.2.0"
-  @deprecated "Use lte?/2 instead"
-  @spec lteq?(t, t) :: boolean
-  def lteq?(size, other_size) do
-    lte?(size, other_size)
+    compare(size, other_size) in [:lt, :eq]
   end
 
   @doc """
@@ -577,7 +658,7 @@ defmodule FileSize do
   @doc since: "1.2.0"
   @spec gt?(t, t) :: boolean
   def gt?(size, other_size) do
-    compare(size, other_size) == 1
+    compare(size, other_size) == :gt
   end
 
   @doc """
@@ -598,18 +679,7 @@ defmodule FileSize do
   @doc since: "2.0.0"
   @spec gte?(t, t) :: boolean
   def gte?(size, other_size) do
-    compare(size, other_size) >= 0
-  end
-
-  @doc """
-  Determines whether the first file size is less or equal to than the second
-  one.
-  """
-  @doc since: "1.2.0"
-  @deprecated "Use gte?/2 instead"
-  @spec gteq?(t, t) :: boolean
-  def gteq?(size, other_size) do
-    gte?(size, other_size)
+    compare(size, other_size) in [:eq, :gt]
   end
 
   defdelegate add(size, other_size), to: Calculable
@@ -637,10 +707,10 @@ defmodule FileSize do
       #FileSize<"2.9296875 KiB">
   """
   @spec add(t, t, unit | Keyword.t()) :: t
-  def add(size, other_size, unit_or_unit_info_or_opts) do
+  def add(size, other_size, symbol_or_unit_or_unit_info_or_opts) do
     size
     |> add(other_size)
-    |> convert(unit_or_unit_info_or_opts)
+    |> convert(symbol_or_unit_or_unit_info_or_opts)
   end
 
   defdelegate subtract(size, other_size), to: Calculable
@@ -668,10 +738,10 @@ defmodule FileSize do
       #FileSize<"1.953125 KiB">
   """
   @spec subtract(t, t, unit | Keyword.t()) :: t
-  def subtract(size, other_size, unit_or_unit_info_or_opts) do
+  def subtract(size, other_size, symbol_or_unit_or_unit_info_or_opts) do
     size
     |> subtract(other_size)
-    |> convert(unit_or_unit_info_or_opts)
+    |> convert(symbol_or_unit_or_unit_info_or_opts)
   end
 
   @doc """
@@ -687,7 +757,7 @@ defmodule FileSize do
   def to_integer(size) do
     size
     |> Convertible.normalized_value()
-    |> Decimal.to_integer()
+    |> trunc()
   end
 
   @doc """
@@ -704,6 +774,6 @@ defmodule FileSize do
   @doc since: "2.1.0"
   @spec value_to_float(t) :: float
   def value_to_float(size) do
-    Decimal.to_float(size.value)
+    size.value / 1
   end
 end

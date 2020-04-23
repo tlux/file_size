@@ -1,23 +1,15 @@
 defmodule FileSize.Parser do
-  @moduledoc """
-  A module that provides functions to convert values to file sizes.
-  """
+  @moduledoc false
 
   alias FileSize.Bit
   alias FileSize.Byte
   alias FileSize.ParseError
   alias FileSize.Units
 
-  @doc """
-  Converts the given value into a value of type `t:FileSize.t/0`. Returns a
-  tuple containing the status and value or error.
-  """
   @spec parse(any) :: {:ok, FileSize.t()} | {:error, ParseError.t()}
   def parse(value)
 
-  def parse(%Bit{} = size), do: {:ok, size}
-
-  def parse(%Byte{} = size), do: {:ok, size}
+  def parse(%struct{} = size) when struct in [Bit, Byte], do: {:ok, size}
 
   def parse(str) when is_binary(str) do
     with {:ok, value_type, value_str, unit_symbol} <- extract_parts(str),
@@ -33,10 +25,6 @@ defmodule FileSize.Parser do
     {:error, %ParseError{reason: :format, value: value}}
   end
 
-  @doc """
-  Converts the given value into a value of type `t:FileSize.t/0`. Returns the
-  value on success or raises `FileSize.ParseError` on error.
-  """
   @spec parse!(any) :: FileSize.t() | no_return
   def parse!(value) do
     case parse(value) do

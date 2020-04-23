@@ -13,62 +13,48 @@ defmodule FileSize.BitTest do
 
   describe "new/2" do
     test "new byte" do
-      assert Bit.new(1, :bit) == %Bit{
-               value: Decimal.new(1),
-               unit: :bit,
-               bits: Decimal.new(1)
-             }
-
-      assert Bit.new(1.2, :bit) == %Bit{
-               value: Decimal.new("1.2"),
-               unit: :bit,
-               bits: Decimal.new("1.2")
-             }
-
-      assert Bit.new(1.6, :bit) == %Bit{
-               value: Decimal.new("1.6"),
-               unit: :bit,
-               bits: Decimal.new("1.6")
-             }
+      assert Bit.new(1, :bit) == %Bit{value: 1, unit: :bit, bits: 1}
+      assert Bit.new(1.2, :bit) == %Bit{value: 1.2, unit: :bit, bits: 1.2}
+      assert Bit.new(1.6, :bit) == %Bit{value: 1.6, unit: :bit, bits: 1.6}
     end
 
     test "new kilobit" do
       assert Bit.new(1, :kbit) == %Bit{
-               value: Decimal.new(1),
+               value: 1,
                unit: :kbit,
-               bits: Decimal.new("1E+3")
+               bits: 1000
              }
 
       assert Bit.new(1.23, :kbit) == %Bit{
-               value: Decimal.new("1.23"),
+               value: 1.23,
                unit: :kbit,
-               bits: Decimal.new("1.23E+3")
+               bits: 1230
              }
 
       assert Bit.new(1.67, :kbit) == %Bit{
-               value: Decimal.new("1.67"),
+               value: 1.67,
                unit: :kbit,
-               bits: Decimal.new("1.67E+3")
+               bits: 1670
              }
     end
 
     test "new kibibit" do
       assert Bit.new(1, :kibit) == %Bit{
-               value: Decimal.new(1),
+               value: 1,
                unit: :kibit,
-               bits: Decimal.new(1024)
+               bits: 1024
              }
 
       assert Bit.new(1.23, :kibit) == %Bit{
-               value: Decimal.from_float(1.23),
+               value: 1.23,
                unit: :kibit,
-               bits: Decimal.mult(1024, "1.23")
+               bits: 1.23 * 1024
              }
 
       assert Bit.new(1.67, :kibit) == %Bit{
-               value: Decimal.from_float(1.67),
+               value: 1.67,
                unit: :kibit,
-               bits: Decimal.mult(1024, "1.67")
+               bits: 1.67 * 1024
              }
     end
 

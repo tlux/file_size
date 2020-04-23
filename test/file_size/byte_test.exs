@@ -13,62 +13,50 @@ defmodule FileSize.ByteTest do
 
   describe "new/2" do
     test "new byte" do
-      assert Byte.new(1, :b) == %Byte{
-               value: Decimal.new(1),
-               unit: :b,
-               bytes: Decimal.new(1)
-             }
-
-      assert Byte.new(1.2, :b) == %Byte{
-               value: Decimal.new("1.2"),
-               unit: :b,
-               bytes: Decimal.new("1.2")
-             }
-
-      assert Byte.new(1.6, :b) == %Byte{
-               value: Decimal.new("1.6"),
-               unit: :b,
-               bytes: Decimal.new("1.6")
-             }
+      assert Byte.new(1, :b) == %Byte{value: 1, unit: :b, bytes: 1}
+      assert Byte.new(1.2, :b) == %Byte{value: 1.2, unit: :b, bytes: 1.2}
+      assert Byte.new(1.6, :b) == %Byte{value: 1.6, unit: :b, bytes: 1.6}
+      assert Byte.new(1, "B") == %Byte{value: 1, unit: :b, bytes: 1}
+      assert Byte.new(1.2, "B") == %Byte{value: 1.2, unit: :b, bytes: 1.2}
+      assert Byte.new(1.6, "B") == %Byte{value: 1.6, unit: :b, bytes: 1.6}
     end
 
     test "new kilobyte" do
-      assert Byte.new(1, :kb) == %Byte{
-               value: Decimal.new(1),
-               unit: :kb,
-               bytes: Decimal.new("1E+3")
-             }
-
-      assert Byte.new(1.23, :kb) == %Byte{
-               value: Decimal.new("1.23"),
-               unit: :kb,
-               bytes: Decimal.new("1.23E+3")
-             }
-
-      assert Byte.new(1.67, :kb) == %Byte{
-               value: Decimal.new("1.67"),
-               unit: :kb,
-               bytes: Decimal.new("1.67E+3")
-             }
+      assert Byte.new(1, :kb) == %Byte{value: 1, unit: :kb, bytes: 1000}
+      assert Byte.new(1.23, :kb) == %Byte{value: 1.23, unit: :kb, bytes: 1230}
+      assert Byte.new(1.67, :kb) == %Byte{value: 1.67, unit: :kb, bytes: 1670}
+      assert Byte.new(1, "kB") == %Byte{value: 1, unit: :kb, bytes: 1000}
+      assert Byte.new(1.23, "kB") == %Byte{value: 1.23, unit: :kb, bytes: 1230}
+      assert Byte.new(1.67, "kB") == %Byte{value: 1.67, unit: :kb, bytes: 1670}
     end
 
     test "new kibibyte" do
-      assert Byte.new(1, :kib) == %Byte{
-               value: Decimal.new(1),
-               unit: :kib,
-               bytes: Decimal.new(1024)
-             }
+      assert Byte.new(1, :kib) == %Byte{value: 1, unit: :kib, bytes: 1024}
 
       assert Byte.new(1.23, :kib) == %Byte{
-               value: Decimal.from_float(1.23),
+               value: 1.23,
                unit: :kib,
-               bytes: Decimal.mult(1024, "1.23")
+               bytes: 1024 * 1.23
              }
 
       assert Byte.new(1.67, :kib) == %Byte{
-               value: Decimal.from_float(1.67),
+               value: 1.67,
                unit: :kib,
-               bytes: Decimal.mult(1024, "1.67")
+               bytes: 1024 * 1.67
+             }
+
+      assert Byte.new(1, "KiB") == %Byte{value: 1, unit: :kib, bytes: 1024}
+
+      assert Byte.new(1.23, "KiB") == %Byte{
+               value: 1.23,
+               unit: :kib,
+               bytes: 1024 * 1.23
+             }
+
+      assert Byte.new(1.67, "KiB") == %Byte{
+               value: 1.67,
+               unit: :kib,
+               bytes: 1024 * 1.67
              }
     end
 

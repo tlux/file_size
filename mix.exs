@@ -4,7 +4,7 @@ defmodule FileSize.MixProject do
   def project do
     [
       app: :file_size,
-      version: "2.1.1",
+      version: "3.0.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       description: description(),
@@ -31,11 +31,6 @@ defmodule FileSize.MixProject do
             FileSize.Bit,
             FileSize.Byte
           ],
-          "Parsing & Formatting": [
-            FileSize.Parser,
-            FileSize.Sigil,
-            FileSize.Formatter
-          ],
           Protocols: [
             FileSize.Calculable,
             FileSize.Comparable,
@@ -53,19 +48,18 @@ defmodule FileSize.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: []
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:credo, "~> 1.0.5", only: [:dev, :test], runtime: false},
-      {:decimal, "~> 1.7"},
-      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:decimal, ">= 1.0.0 and < 3.0.0", optional: true},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.20.2", only: :dev, runtime: false},
       {:excoveralls, "~> 0.11.0", only: :test},
-      {:math, "~> 0.3"},
       {:number, "~> 1.0"}
     ]
   end
