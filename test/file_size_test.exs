@@ -612,11 +612,34 @@ defmodule FileSizeTest do
   end
 
   describe "compare/2" do
-    test "delegate to Calculable" do
+    test "compare FileSizes" do
       a = FileSize.new(1, :b)
       b = FileSize.new(2, :b)
 
       assert FileSize.compare(a, b) == Comparable.compare(a, b)
+    end
+
+    test "compare strings" do
+      assert FileSize.compare("2 kB", "1 MB") == :lt
+      assert FileSize.compare("2 kB", "2000 B") == :eq
+      assert FileSize.compare("1 MB", "2 kB") == :gt
+    end
+
+    if Version.compare(System.version(), "1.10.0") in [:gt, :eq] do
+      @list ["1 kB", "2 B", "3 GB", "4 MB"]
+
+      test "sortable ascending" do
+        assert Enum.sort(@list, FileSize) == ["2 B", "1 kB", "4 MB", "3 GB"]
+      end
+
+      test "sortable descending" do
+        assert Enum.sort(@list, {:desc, FileSize}) == [
+                 "3 GB",
+                 "4 MB",
+                 "1 kB",
+                 "2 B"
+               ]
+      end
     end
   end
 

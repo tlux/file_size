@@ -580,8 +580,12 @@ defmodule FileSize do
       iex> FileSize.compare(FileSize.new(3, :b), FileSize.new(16, :bit))
       :gt
   """
-  @spec compare(t, t) :: :lt | :eq | :gt
-  defdelegate compare(size, other_size), to: Comparable
+  @spec compare(t | String.t, t | String.t) :: :lt | :eq | :gt
+  def compare(size, other_size) do
+    size = parse!(size)
+    other_size = parse!(other_size)
+    Comparable.compare(size, other_size)
+  end
 
   @doc """
   Determines whether two file sizes are equal.
