@@ -35,7 +35,7 @@ defmodule FileSize.Parser do
 
   defp extract_parts(str) do
     case Regex.named_captures(
-           ~r/\A((?<int_value>\d+)|(?<float_value>\d+.\d+)){1} (?<unit>.+)\z/,
+           ~r/\A((?<int_value>\d+)|(?<float_value>\d+.\d+)){1}[\W]?(?<unit>.+)\z/,
            str
          ) do
       %{"float_value" => "", "int_value" => ""} ->
